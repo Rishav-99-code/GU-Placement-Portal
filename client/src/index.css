@@ -1,0 +1,15 @@
+/* frontend/src/index.css or globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom fonts or global styles */
+body {
+  font-family: 'Inter', sans-serif; /* A good modern font, ensure it's imported or available */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: #f8fafc; /* Very light gray */
+  color: #334155; /* Dark gray for general text */
+  scroll-behavior: smooth; /* For smooth scrolling to sections */
+}
