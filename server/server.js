@@ -2,10 +2,10 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
-const authRoutes = require('./routes/authRoutes'); // Import auth routes
-const userRoutes = require('./routes/userRoutes'); // Will rename/refine this later for specific user data
-const errorHandler = require('./middleware/errorHandler'); // For centralized error handling
-const cors = require('cors'); // Import cors
+const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
+const errorHandler = require('./middleware/errorHandler');
+const cors = require('cors'); // <--- Ensure this import is here
 
 // Load environment variables
 dotenv.config();
@@ -17,13 +17,20 @@ const app = express();
 
 // Middleware
 app.use(express.json()); // Body parser for JSON data
-app.use(cors()); // Enable CORS for all origins (adjust for production)
+app.use(cors()); // <--- This line is CRUCIAL and should be before your routes
+// If you want to be more specific (recommended for production):
+// app.use(cors({
+//   origin: 'http://localhost:3000', // Only allow your frontend origin
+//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//   credentials: true // If you're sending cookies/auth headers
+// }));
 
 // Mount Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes); // General user-related routes, will include profile updates
+app.use('/api/users', userRoutes);
+// ... other routes
 
-// Error Handling Middleware (should be last middleware)
+// Error Handling Middleware
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;

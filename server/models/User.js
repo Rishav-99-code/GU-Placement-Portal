@@ -1,14 +1,17 @@
+// backend/models/User.js
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const userSchema = mongoose.Schema(
   {
+    name: {
+      type: String,
+      required: true,
+    },
     email: {
       type: String,
       required: true,
       unique: true,
-      trim: true,
-      lowercase: true,
     },
     password: {
       type: String,
@@ -17,44 +20,50 @@ const userSchema = mongoose.Schema(
     role: {
       type: String,
       required: true,
-      enum: ['student', 'recruiter', 'coordinator'], // Ensure only allowed roles
+      enum: ['student', 'recruiter', 'coordinator'],
     },
-    isProfileComplete: { // To track if profile details are filled
+    isProfileComplete: { // <--- Ensure this exists and has a default
       type: Boolean,
       default: false,
     },
-    // You might add fields like name here or keep them in separate profile models
-    name: {
-      type: String,
-        required: true,
-        trim: true,
-     },
-     isApproved: {
+    isApproved: { // <--- Ensure this exists and has a default
       type: Boolean,
-      default: true, // For now, assume approved by default unless admin approval is mandatory
-    }
+      default: false, // For new users, they are usually pending approval
+    },
+    studentProfile: {
+      usn: { type: String, unique: true, sparse: true }, // sparse allows null values to not violate unique constraint
+      branch: { type: String },
+      cgpa: { type: Number },
+      // ... other student specific fields
+    },
+    recruiterProfile: {
+      companyName: { type: String },
+      companyWebsite: { type: String },
+      // ... other recruiter specific fields
+    },
+    coordinatorProfile: {
+      department: { type: String },
+      // ... other coordinator specific fields
+    },
   },
-
   {
-    timestamps: true, // Adds createdAt and updatedAt fields
+    timestamps: true,
   }
 );
 
-// Pre-save middleware to hash password
+// Encrypt password before saving
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     next();
   }
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
-  next();
 });
 
-// Method to compare entered password with hashed password
+// Match user entered password to hashed password in database
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
 const User = mongoose.model('User', userSchema);
-
 module.exports = User;

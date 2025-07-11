@@ -27,36 +27,29 @@ const StudentDashboard = () => <div>Student Dashboard Content</div>;
 const RecruiterDashboard = () => <div>Recruiter Dashboard Content</div>;
 const CoordinatorDashboard = () => <div>Coordinator Dashboard Content</div>;
 
+// frontend/src/App.jsx
+// ... imports
+
 function App() {
   const { authState } = useContext(AuthContext);
 
-  // Helper function to get the correct profile route for the logged-in user
   const getProfileRoute = (user) => {
-    if (!user) return '/login';
+    if (!user) return '/login'; // Fallback if no user data
     switch (user.role) {
-      case 'student':
-        return '/student/profile';
-      case 'recruiter':
-        return '/recruiter/profile';
-      case 'coordinator':
-        return '/coordinator/profile';
-      default:
-        return '/';
+      case 'student': return '/student/profile';
+      case 'recruiter': return '/recruiter/profile';
+      case 'coordinator': return '/coordinator/profile';
+      default: return '/';
     }
   };
 
-  // Helper function to get the correct dashboard route
   const getDashboardRoute = (user) => {
-    if (!user) return '/login';
+    if (!user) return '/login'; // Fallback if no user data
     switch (user.role) {
-      case 'student':
-        return '/student/dashboard';
-      case 'recruiter':
-        return '/recruiter/dashboard';
-      case 'coordinator':
-        return '/coordinator/dashboard';
-      default:
-        return '/';
+      case 'student': return '/student/dashboard';
+      case 'recruiter': return '/recruiter/dashboard';
+      case 'coordinator': return '/coordinator/dashboard';
+      default: return '/';
     }
   };
 
@@ -70,34 +63,28 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
 
-            {/* Routes that redirect based on auth state */}
+            {/* Dynamic redirect after login/register */}
             <Route
-              path="/dashboard"
+              path="/dashboard" // This is a general route users might try to access
               element={
-                authState.isAuthenticated
-                  ? <Navigate to={getDashboardRoute(authState.user)} replace />
-                  : <Navigate to="/login" replace />
+                authState.isAuthenticated ? (
+                  authState.user?.isProfileComplete ? (
+                    <Navigate to={getDashboardRoute(authState.user)} replace />
+                  ) : (
+                    <Navigate to={getProfileRoute(authState.user)} replace />
+                  )
+                ) : (
+                  <Navigate to="/login" replace />
+                )
               }
             />
-            <Route
-              path="/profile"
-              element={
-                authState.isAuthenticated
-                  ? <Navigate to={getProfileRoute(authState.user)} replace />
-                  : <Navigate to="/login" replace />
-              }
-            />
-
-            {/* PROTECTED ROUTES */}
-            {/* Student */}
+            {/* Specific profile/dashboard routes are protected by PrivateRoute */}
             <Route path="/student/dashboard" element={<PrivateRoute allowedRoles={['student']}><StudentDashboardPage /></PrivateRoute>} />
             <Route path="/student/profile" element={<PrivateRoute allowedRoles={['student']}><StudentProfilePage /></PrivateRoute>} />
 
-            {/* Recruiter */}
             <Route path="/recruiter/dashboard" element={<PrivateRoute allowedRoles={['recruiter']}><RecruiterDashboardPage /></PrivateRoute>} />
             <Route path="/recruiter/profile" element={<PrivateRoute allowedRoles={['recruiter']}><RecruiterProfilePage /></PrivateRoute>} />
 
-            {/* Coordinator */}
             <Route path="/coordinator/dashboard" element={<PrivateRoute allowedRoles={['coordinator']}><CoordinatorDashboardPage /></PrivateRoute>} />
             <Route path="/coordinator/profile" element={<PrivateRoute allowedRoles={['coordinator']}><CoordinatorProfilePage /></PrivateRoute>} />
 
