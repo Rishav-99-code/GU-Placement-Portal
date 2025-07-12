@@ -1,22 +1,23 @@
-// frontend/src/pages/HomePage.js
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { useInView } from 'react-intersection-observer';
-import { Users, Building, Briefcase, Mail, Phone, GraduationCap, BriefcaseBusiness, UserCog } from 'lucide-react'; // Added GraduationCap, BriefcaseBusiness, UserCog icons
+import { Users, Building, Briefcase, Mail, Phone, GraduationCap, BriefcaseBusiness, UserCog } from 'lucide-react'; 
+import guistImage from '../assets/images/guist.jpg';
 
-// Placeholder image for past recruiters (you'll replace with actual company logos)
+
 const PlaceholderCompanyLogo = ({ src, alt }) => (
   <img
-    src={src || `https://via.placeholder.com/150x80?text=${alt}`} // Placeholder
+    src={src || `https://via.placeholder.com/150x80?text=${alt}`} 
     alt={alt}
     className="h-20 w-auto object-contain transition-transform duration-300 hover:scale-105"
   />
 );
 
 const HomePage = () => {
-  // Use useInView for simple fade-in animations on scroll
+  
   const [heroRef, heroInView] = useInView({ triggerOnce: true, threshold: 0.2 });
   const [overviewRef, overviewInView] = useInView({ triggerOnce: true, threshold: 0.2 });
   const [whyRecruitRef, whyRecruitInView] = useInView({ triggerOnce: true, threshold: 0.2 });
@@ -25,51 +26,47 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section
-        ref={heroRef}
-        className={`relative bg-gradient-to-r from-blue-700 to-indigo-800 text-white py-20 md:py-32 overflow-hidden
-          transition-opacity duration-1000 ease-out ${heroInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-      >
-        <div className="container mx-auto text-center px-4 relative z-10">
-          <h1 className="text-4xl md:text-6xl font-extrabold mb-4 leading-tight drop-shadow-lg">
-            Empowering Futures, Connecting Opportunities
-          </h1>
-          <p className="text-lg md:text-xl mb-8 opacity-90 max-w-3xl mx-auto">
-            Your trusted partner in bridging the gap between exceptional talent and leading industries.
-          </p>
-          {/* MODIFICATION HERE: Replaced single Register button with three role-based buttons */}
-          <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <Link to="/register?role=student">
-              <Button size="lg" className="bg-white text-blue-700 hover:bg-gray-100 font-bold px-6 py-4 rounded-full shadow-lg transition-transform transform hover:scale-105 w-full sm:w-auto flex items-center justify-center">
-                <GraduationCap className="mr-2 h-5 w-5" /> Student
-              </Button>
-            </Link>
-            <Link to="/register?role=recruiter">
-              <Button size="lg" className="bg-white text-blue-700 hover:bg-gray-100 font-bold px-6 py-4 rounded-full shadow-lg transition-transform transform hover:scale-105 w-full sm:w-auto flex items-center justify-center">
-                <BriefcaseBusiness className="mr-2 h-5 w-5" /> Recruiter
-              </Button>
-            </Link>
-            <Link to="/register?role=coordinator">
-              <Button size="lg" className="bg-white text-blue-700 hover:bg-gray-100 font-bold px-6 py-4 rounded-full shadow-lg transition-transform transform hover:scale-105 w-full sm:w-auto flex items-center justify-center">
-                <UserCog className="mr-2 h-5 w-5" /> Coordinator
-              </Button>
-            </Link>
-            {/* Optional: Keep "Explore Jobs" if desired, or remove it */}
-            <Link to="/jobs">
-              <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-blue-700 font-bold px-6 py-4 rounded-full shadow-lg transition-transform transform hover:scale-105 w-full sm:w-auto">
-                Explore Jobs
-              </Button>
-            </Link>
-          </div>
-        </div>
-        {/* Decorative background elements (optional) */}
-        <div className="absolute top-0 left-0 w-full h-full bg-pattern-dots opacity-10"></div>
-      </section>
+      
+        <section ref={heroRef} className={`transition-opacity duration-1000 ease-out ${heroInView ? 'opacity-100' : 'opacity-0'}`}>
+  
+  <div className="w-full">
+    <img
+      src={guistImage} 
+      alt="GUIST College"
+      className="w-full h-auto object-cover"
+    />
+  </div>
 
-      {/* Rest of the HomePage.js content remains the same */}
+  
+  <div className="container mx-auto px-4 py-10 text-center">
+    <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+      <Link to="/register?role=student">
+        <Button size="lg" className="bg-blue-700 text-white hover:bg-blue-800 font-bold px-6 py-4 rounded-full shadow-lg w-full sm:w-auto flex items-center justify-center">
+          <GraduationCap className="mr-2 h-5 w-5" /> Student
+        </Button>
+      </Link>
+      <Link to="/register?role=recruiter">
+        <Button size="lg" className="bg-blue-700 text-white hover:bg-blue-800 font-bold px-6 py-4 rounded-full shadow-lg w-full sm:w-auto flex items-center justify-center">
+          <BriefcaseBusiness className="mr-2 h-5 w-5" /> Recruiter
+        </Button>
+      </Link>
+      <Link to="/register?role=coordinator">
+        <Button size="lg" className="bg-blue-700 text-white hover:bg-blue-800 font-bold px-6 py-4 rounded-full shadow-lg w-full sm:w-auto flex items-center justify-center">
+          <UserCog className="mr-2 h-5 w-5" /> Coordinator
+        </Button>
+      </Link>
+      <Link to="/jobs">
+        <Button size="lg" variant="outline" className="border-2 border-blue-700 text-blue-700 hover:bg-blue-700 hover:text-white font-bold px-6 py-4 rounded-full shadow-lg w-full sm:w-auto">
+          Explore Jobs
+        </Button>
+      </Link>
+    </div>
+  </div>
+</section>
 
-      {/* Overview Section */}
+
+
+      
       <section
         id="overview"
         ref={overviewRef}
@@ -93,7 +90,7 @@ const HomePage = () => {
             </div>
             <div className="flex justify-center items-center">
               <img
-                src="https://via.placeholder.com/600x400?text=Overview+Image" // Replace with a relevant image
+                src="https://via.placeholder.com/600x400?text=Overview+Image" 
                 alt="Overview"
                 className="rounded-lg shadow-xl max-w-full h-auto transform transition-transform duration-500 hover:scale-105"
               />
@@ -102,7 +99,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Why Recruit Section */}
+      
       <section
         id="why-recruit"
         ref={whyRecruitRef}
@@ -155,7 +152,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Past Recruiters Section */}
+      
       <section
         id="past-recruiters"
         ref={pastRecruitersRef}
@@ -169,7 +166,7 @@ const HomePage = () => {
             We are proud to have partnered with a wide range of industry leaders who trust us to find their next generation of talent.
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 items-center justify-center">
-            {/* Replace these with actual company logos from your assets */}
+            
             <PlaceholderCompanyLogo src="" alt="Google" />
             <PlaceholderCompanyLogo src="" alt="Microsoft" />
             <PlaceholderCompanyLogo src="" alt="Amazon" />
@@ -180,12 +177,12 @@ const HomePage = () => {
             <PlaceholderCompanyLogo src="" alt="Infosys" />
             <PlaceholderCompanyLogo src="" alt="Wipro" />
             <PlaceholderCompanyLogo src="" alt="HCL" />
-            {/* Add more logos as needed */}
+            
           </div>
         </div>
       </section>
 
-      {/* Contact Us Section */}
+      
       <section
         id="contact-us"
         ref={contactUsRef}
@@ -204,7 +201,7 @@ const HomePage = () => {
               <h3 className="text-xl font-semibold mb-2">Email Us</h3>
               <p className="text-gray-700 mb-4">For general inquiries or support.</p>
               <a href="mailto:placements@example.com" className="text-blue-600 hover:underline font-medium">
-                placements@example.com
+                t&pcellgu@gmail.com
               </a>
             </div>
             <div className="bg-white p-8 rounded-lg shadow-lg flex flex-col items-center text-center">

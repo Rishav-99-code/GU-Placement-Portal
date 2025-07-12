@@ -1,20 +1,20 @@
-// frontend/src/components/common/Navbar.js
+
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Button } from '../ui/button'; // Adjust path if needed
-import { Menu, X } from 'lucide-react'; // Install lucide-react: npm install lucide-react
+import { Button } from '../ui/button'; 
+import { Menu, X } from 'lucide-react'; 
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 
   const handleNavLinkClick = (id) => {
-    setIsOpen(false); // Close mobile menu on click
+    setIsOpen(false); 
     if (location.pathname !== '/') {
-      // If not on homepage, navigate to homepage and then scroll
-      window.location.href = `/#${id}`; // Direct browser navigation to ID
+      
+      window.location.href = `/#${id}`; 
     } else {
-      // If on homepage, just scroll
+      
       const element = document.getElementById(id);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });

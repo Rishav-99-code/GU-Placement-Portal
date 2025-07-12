@@ -1,4 +1,4 @@
-// frontend/src/pages/Coordinator/CoordinatorDashboardPage.js
+
 import React, { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { Button } from '../../components/ui/button';
@@ -18,7 +18,7 @@ const CoordinatorDashboardPage = () => {
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {/* Card 1: Manage Students */}
+        
         <Card className="hover:shadow-xl transition-shadow duration-300">
           <CardHeader>
             <CardTitle className="text-blue-600">Manage Students</CardTitle>
@@ -32,7 +32,7 @@ const CoordinatorDashboardPage = () => {
           </CardContent>
         </Card>
 
-        {/* Card 2: Manage Companies */}
+        
         <Card className="hover:shadow-xl transition-shadow duration-300">
           <CardHeader>
             <CardTitle className="text-green-600">Manage Companies</CardTitle>
@@ -46,7 +46,7 @@ const CoordinatorDashboardPage = () => {
           </CardContent>
         </Card>
 
-        {/* Card 3: Job Listing Approvals */}
+        
         <Card className="hover:shadow-xl transition-shadow duration-300">
           <CardHeader>
             <CardTitle className="text-red-600">Job Approvals</CardTitle>

@@ -1,12 +1,8 @@
-// backend/controllers/authController.js
+
 const asyncHandler = require('express-async-handler');
 const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
-// const bcrypt = require('bcryptjs'); // You might not need this here anymore if only User model uses it
 
-// @desc    Register a new user
-// @route   POST /api/auth/register
-// @access  Public
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, role } = req.body;
 
@@ -22,8 +18,7 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('User already exists');
   }
 
-  // **** IMPORTANT CHANGE: Remove explicit password hashing here ****
-  // The hashing will now be handled automatically by the pre('save') hook in your User model.
+  
   const user = await User.create({
     name,
     email,
@@ -37,9 +32,9 @@ const registerUser = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
-      isProfileComplete: user.isProfileComplete, // Add these back from your schema
-      isApproved: user.isApproved,             // Add these back from your schema
-      token: generateToken(user._id, user.role), // Pass both _id and role to generateToken
+      isProfileComplete: user.isProfileComplete, 
+      isApproved: user.isApproved,             
+      token: generateToken(user._id, user.role), 
     });
   } else {
     res.status(400);

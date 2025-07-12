@@ -1,8 +1,8 @@
-// frontend/src/pages/Student/StudentDashboardPage.js
+
 import React, { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import { Button } from '../../components/ui/button'; // Assuming you have this
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card'; // Assuming you have these
+import { Button } from '../../components/ui/button'; 
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card'; 
 
 const StudentDashboardPage = () => {
   const { authState } = useContext(AuthContext);

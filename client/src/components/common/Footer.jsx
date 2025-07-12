@@ -32,8 +32,8 @@ const Footer = () => {
           <h3 className="text-lg font-semibold mb-4 text-blue-300">Contact Info</h3>
           <p className="text-sm text-gray-400">
             Placement Office, <br />
-            [Your University/College Name], <br />
-            [Your Address, City, State, Zip Code]
+            [Gauhati University], <br />
+            [Jalukbari, Guwahati, Assam , 781014]
           </p>
           <p className="text-sm text-gray-400 mt-2">Email: <a href="mailto:placements@example.com" className="hover:underline">placements@example.com</a></p>
           <p className="text-sm text-gray-400">Phone: [+91-XXX-XXXXXXX]</p>

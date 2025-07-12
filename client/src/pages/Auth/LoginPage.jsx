@@ -1,21 +1,21 @@
-// frontend/src/pages/Auth/LoginPage.js
+
 import React, { useState, useContext, useEffect } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom'; // Import Link
+import { useNavigate, useLocation, Link } from 'react-router-dom'; 
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import AuthLayout from '../../components/common/AuthLayout';
 import { AuthContext } from '../../context/AuthContext';
-import authService from '../../services/authService'; // Import authService
+import authService from '../../services/authService'; 
 import toast from 'react-hot-toast';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('student'); // Default role
+  const [role, setRole] = useState('student'); 
   const navigate = useNavigate();
   const location = useLocation();
-  const { login } = useContext(AuthContext); // Get the login function from AuthContext
+  const { login } = useContext(AuthContext); 
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -34,15 +34,15 @@ const LoginPage = () => {
     }
 
     try {
-      // Call the actual backend login service
+      
       const userData = await authService.login({ email, password });
 
-      // Update AuthContext state
+      
       login(userData.token, userData);
 
       toast.success(`Logged in successfully as ${userData.role}!`);
 
-      // Redirect based on role and profile completion status
+      
       if (userData.isProfileComplete) {
         switch (userData.role) {
           case 'student':
@@ -58,7 +58,7 @@ const LoginPage = () => {
             navigate('/');
         }
       } else {
-        // Redirect to profile completion if not complete
+        
         switch (userData.role) {
           case 'student':
             navigate('/student/profile');

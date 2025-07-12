@@ -1,4 +1,4 @@
-// frontend/src/pages/Recruiter/RecruiterDashboardPage.js
+
 import React, { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { Button } from '../../components/ui/button';
@@ -18,7 +18,7 @@ const RecruiterDashboardPage = () => {
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {/* Card 1: Post New Job */}
+        
         <Card className="hover:shadow-xl transition-shadow duration-300">
           <CardHeader>
             <CardTitle className="text-blue-600">Post New Job</CardTitle>
@@ -46,7 +46,7 @@ const RecruiterDashboardPage = () => {
           </CardContent>
         </Card>
 
-        {/* Card 3: View Applicants */}
+        
         <Card className="hover:shadow-xl transition-shadow duration-300">
           <CardHeader>
             <CardTitle className="text-orange-600">View Applicants</CardTitle>
