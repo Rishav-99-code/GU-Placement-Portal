@@ -1,24 +1,19 @@
-
+// frontend/src/services/authService.js
 import axios from 'axios'; // We'll use Axios for cleaner HTTP requests
 
-
-const API_URL = 'http://localhost:5000/api/auth'; 
-
+const API_URL = 'http://localhost:5000/api/auth';
 
 const register = async (userData) => {
   const response = await axios.post(`${API_URL}/register`, userData);
-  // Backend returns user data and token on successful registration
-  if (response.data) {
-    localStorage.setItem('token', response.data.token);
-    localStorage.setItem('user', JSON.stringify(response.data));
-  }
+  // Important: Do NOT store token or user data here after registration.
+  // The user will be redirected to the login page.
   return response.data;
 };
 
-// Login user
+// Login user (remains unchanged as it correctly handles token and user storage)
 const login = async (userData) => {
   const response = await axios.post(`${API_URL}/login`, userData);
-  
+
   if (response.data) {
     localStorage.setItem('token', response.data.token);
     localStorage.setItem('user', JSON.stringify(response.data));
@@ -26,7 +21,7 @@ const login = async (userData) => {
   return response.data;
 };
 
-// Logout user
+// Logout user (remains unchanged)
 const logout = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('user');

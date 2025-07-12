@@ -1,7 +1,7 @@
-
+// backend/controllers/authController.js
 const asyncHandler = require('express-async-handler');
 const User = require('../models/User');
-const generateToken = require('../utils/generateToken');
+const generateToken = require('../utils/generateToken'); // Still needed for login
 
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, role } = req.body;
@@ -18,7 +18,6 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('User already exists');
   }
 
-  
   const user = await User.create({
     name,
     email,
@@ -28,13 +27,13 @@ const registerUser = asyncHandler(async (req, res) => {
 
   if (user) {
     res.status(201).json({
-      _id: user._id, // Use user._id, not user.id (mongoose typically uses _id)
+      _id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,
-      isProfileComplete: user.isProfileComplete, 
-      isApproved: user.isApproved,             
-      token: generateToken(user._id, user.role), 
+      isProfileComplete: user.isProfileComplete,
+      isApproved: user.isApproved,
+      // Removed: token generation on registration
     });
   } else {
     res.status(400);
@@ -45,7 +44,6 @@ const registerUser = asyncHandler(async (req, res) => {
 // @desc    Authenticate user & get token
 // @route   POST /api/auth/login
 // @access  Public
-
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
@@ -72,7 +70,7 @@ const loginUser = asyncHandler(async (req, res) => {
         role: user.role,
         isProfileComplete: user.isProfileComplete,
         isApproved: user.isApproved,
-        token: generateToken(user._id, user.role),
+        token: generateToken(user._id, user.role), // Token is generated ONLY on successful login
       });
       console.log('Login successful for user:', user.email);
     } else {
