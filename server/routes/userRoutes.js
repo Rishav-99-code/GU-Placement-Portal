@@ -1,11 +1,17 @@
 // backend/routes/userRoutes.js
 const express = require('express');
-const { protect } = require('../middleware/authMiddleware'); // We'll create this next
-const { getUserProfile, updateProfile } = require('../controllers/userController'); // We'll create these next
+const {
+  getUserProfile,
+  updateProfile,
+  forgotPassword, // New import
+  resetPassword,  // New import
+} = require('../controllers/userController');
+const { protect } = require('../middleware/authMiddleware'); // Assuming you have this middleware
+
 const router = express.Router();
 
-// Protected routes
-router.get('/profile', protect, getUserProfile); // Get logged-in user's profile
-router.put('/profile', protect, updateProfile); // Update logged-in user's profile
+router.route('/profile').get(protect, getUserProfile).put(protect, updateProfile);
+router.post('/forgotpassword', forgotPassword); // New route
+router.put('/resetpassword/:resettoken', resetPassword); // New route
 
 module.exports = router;

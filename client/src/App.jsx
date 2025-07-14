@@ -1,13 +1,13 @@
-
 import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthContext } from './context/AuthContext'; // Import AuthContext
 
-
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/Auth/LoginPage';
 import RegisterPage from './pages/Auth/RegisterPage';
+import ForgotPasswordPage from './pages/Auth/ForgotPassword'; // NEW: Import ForgotPasswordPage
+import ResetPasswordPage from './pages/Auth/ResetPasswordPage';   // NEW: Import ResetPasswordPage
 
 import StudentDashboardPage from './pages/Student/StudentDashboardPage';
 import RecruiterDashboardPage from './pages/Recruiter/RecruiterDashboardPage';
@@ -17,23 +17,22 @@ import StudentProfilePage from './pages/Student/StudentProfilePage';
 import RecruiterProfilePage from './pages/Recruiter/RecruiterProfilePage';
 import CoordinatorProfilePage from './pages/Coordinator/CoordinatorProfilePage';
 
-
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
 import PrivateRoute from './components/common/PrivateRoute';
 
 
-const StudentDashboard = () => <div>Student Dashboard Content</div>;
-const RecruiterDashboard = () => <div>Recruiter Dashboard Content</div>;
-const CoordinatorDashboard = () => <div>Coordinator Dashboard Content</div>;
-
+// These mock components are not needed if you have actual page components
+// const StudentDashboard = () => <div>Student Dashboard Content</div>;
+// const RecruiterDashboard = () => <div>Recruiter Dashboard Content</div>;
+// const CoordinatorDashboard = () => <div>Coordinator Dashboard Content</div>;
 
 
 function App() {
   const { authState } = useContext(AuthContext);
 
   const getProfileRoute = (user) => {
-    if (!user) return '/login'; 
+    if (!user) return '/login';
     switch (user.role) {
       case 'student': return '/student/profile';
       case 'recruiter': return '/recruiter/profile';
@@ -58,11 +57,14 @@ function App() {
         <Navbar />
         <main className="flex-grow">
           <Routes>
+            {/* Public Routes */}
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} /> {/* NEW: Forgot Password Route */}
+            <Route path="/reset-password/:resettoken" element={<ResetPasswordPage />} /> {/* NEW: Reset Password Route */}
 
-            {/* Dynamic redirect after login/register */}
+            {/* Dynamic redirect after login/register (or if trying to access /dashboard directly) */}
             <Route
               path="/dashboard" // This is a general route users might try to access
               element={
@@ -77,6 +79,7 @@ function App() {
                 )
               }
             />
+
             {/* Specific profile/dashboard routes are protected by PrivateRoute */}
             <Route path="/student/dashboard" element={<PrivateRoute allowedRoles={['student']}><StudentDashboardPage /></PrivateRoute>} />
             <Route path="/student/profile" element={<PrivateRoute allowedRoles={['student']}><StudentProfilePage /></PrivateRoute>} />
@@ -87,8 +90,8 @@ function App() {
             <Route path="/coordinator/dashboard" element={<PrivateRoute allowedRoles={['coordinator']}><CoordinatorDashboardPage /></PrivateRoute>} />
             <Route path="/coordinator/profile" element={<PrivateRoute allowedRoles={['coordinator']}><CoordinatorProfilePage /></PrivateRoute>} />
 
-            
-            <Route path="/overview" element={<HomePage />} />
+            {/* General marketing/info pages */}
+            <Route path="/overview" element={<HomePage />} /> {/* Assuming HomePage serves as a general content page */}
             <Route path="/why-recruit" element={<HomePage />} />
             <Route path="/past-recruiters" element={<HomePage />} />
             <Route path="/contact-us" element={<HomePage />} />

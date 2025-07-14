@@ -36,11 +36,10 @@ const LoginPage = () => {
     try {
       const userData = await authService.login({ email, password });
 
-      login(userData.token, userData); // This correctly updates AuthContext and localStorage
+      login(userData.token, userData);
 
       toast.success(`Logged in successfully as ${userData.role}!`);
 
-      // Redirect based on profile completion status
       if (userData.isProfileComplete) {
         switch (userData.role) {
           case 'student':
@@ -56,7 +55,6 @@ const LoginPage = () => {
             navigate('/');
         }
       } else {
-        // Redirect to profile completion if not complete
         switch (userData.role) {
           case 'student':
             navigate('/student/profile');
