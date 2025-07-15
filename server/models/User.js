@@ -43,16 +43,19 @@ userSchema.pre('save', async function (next) {
   }
 
   // Update isProfileComplete based on role-specific requirements
-  if (this.isModified('studentProfile') || this.isModified('role')) {
+  if (
+    this.isModified('studentProfile') ||
+    this.isModified('recruiterProfile') ||
+    this.isModified('coordinatorProfile') ||
+    this.isModified('role')
+  ) {
     if (this.role === 'student' && this.studentProfile) {
       this.isProfileComplete = !!(
         this.studentProfile.usn &&
         this.studentProfile.program &&
         this.studentProfile.branch &&
-        this.studentProfile.phoneNumber && // New check
-        this.studentProfile.currentSemester // New check
-        // We'll consider resume and profile pic optional for profile completion for now,
-        // but you can add them here if they are mandatory.
+        this.studentProfile.phoneNumber &&
+        this.studentProfile.currentSemester
       );
     } else if (this.role === 'recruiter' && this.recruiterProfile) {
       this.isProfileComplete = !!(
@@ -62,7 +65,7 @@ userSchema.pre('save', async function (next) {
     } else if (this.role === 'coordinator' && this.coordinatorProfile) {
       this.isProfileComplete = !!this.coordinatorProfile.department;
     } else {
-      this.isProfileComplete = false; // If profile type isn't filled or recognized
+      this.isProfileComplete = false;
     }
   }
 
