@@ -1,62 +1,220 @@
-
-import React, { useContext } from 'react';
+// frontend/src/pages/Coordinator/CoordinatorDashboardPage.jsx
+import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../context/AuthContext';
+import { useNavigate, Link } from 'react-router-dom';
+import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
+import { Separator } from '../../components/ui/separator';
+import profileService from '../../services/profileService';
+import toast from 'react-hot-toast';
+
+// Import Lucide React Icons for better UI
+import {
+  UsersIcon,
+  BriefcaseBusinessIcon,
+  CalendarCheckIcon,
+  ClipboardListIcon,
+  GraduationCapIcon,
+  SettingsIcon,
+  LogOutIcon,
+  BellIcon
+} from 'lucide-react';
 
 const CoordinatorDashboardPage = () => {
-  const { authState } = useContext(AuthContext);
-  const user = authState.user;
+  const { authState, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+  // Store the entire user object fetched from profileService, not just coordinatorProfile
+  const [fullUserDetails, setFullUserDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!authState.isAuthenticated || authState.user?.role !== 'coordinator') {
+      navigate('/login', { replace: true });
+      return;
+    }
+
+    const fetchCoordinatorProfile = async () => {
+      try {
+        // Fetch the complete user object, which includes coordinatorProfile nested within
+        const data = await profileService.getProfile();
+        setFullUserDetails(data); // Set the entire fetched user object
+        setLoading(false);
+      } catch (error) {
+        console.error('Failed to fetch coordinator profile for dashboard:', error);
+        toast.error('Failed to load dashboard data. Please try logging in again.');
+        setLoading(false);
+        if (error.response && error.response.status === 401) {
+          logout();
+        }
+      }
+    };
+    fetchCoordinatorProfile();
+  }, [authState, navigate, logout]);
+
+  if (loading || !fullUserDetails) { // Ensure fullUserDetails is available
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-900 text-gray-300">
+        <p className="text-xl">Loading coordinator dashboard...</p>
+      </div>
+    );
+  }
+
+  // Use fullUserDetails for all dynamic data
+  const coordinatorName = fullUserDetails.name || 'Coordinator';
+  const coordinatorEmail = fullUserDetails.email || 'coordinator@example.com';
+  const coordinatorProfile = fullUserDetails.coordinatorProfile || {}; // Access the nested coordinatorProfile
+
+  const coordinatorAvatar = fullUserDetails.profilePicUrl || `https://ui-avatars.com/api/?name=${coordinatorName.split(' ').join('+')}&background=8B5CF6&color=fff&size=128`;
 
   return (
-    <div className="container mx-auto p-8 py-12">
-      <h1 className="text-4xl font-bold mb-2 text-gray-900">
-        Coordinator Dashboard, {user?.name}! ⚙️
-      </h1>
-      <p className="text-lg text-gray-600 mb-10">
-        Manage student and company approvals, and oversee the placement process.
-      </p>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div className="flex flex-col lg:flex-row min-h-[calc(100vh-64px)] overflow-hidden bg-gray-900 text-gray-200">
+      {/* Left Panel: Profile, Welcome, and Quick Actions */}
+      <div className="w-full lg:w-1/2 bg-gray-800 p-4 sm:p-8 lg:p-12 flex flex-col justify-between">
         
-        <Card className="hover:shadow-xl transition-shadow duration-300">
-          <CardHeader>
-            <CardTitle className="text-blue-600">Manage Students</CardTitle>
-            <CardDescription>View, approve, or manage student accounts.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-700 mb-4">
-              Approve new student registrations and update student profiles.
-            </p>
-            <Button className="w-full">View Students</Button>
-          </CardContent>
-        </Card>
+        {/* Coordinator Profile Section */}
+        <div className="mb-8">
+          <div className="flex items-center mb-6">
+            <Avatar className="w-24 h-24 mr-4 ring-2 ring-purple-600 ring-offset-2 ring-offset-gray-800">
+              <AvatarImage src={coordinatorAvatar} alt={`${coordinatorName} Avatar`} />
+              <AvatarFallback className="text-3xl font-bold text-gray-300">{coordinatorName.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <div>
+              <h2 className="text-lg font-semibold text-gray-200">Welcome, {coordinatorName}!</h2>
+              <p className="text-sm text-gray-400">{coordinatorEmail}</p>
+            </div>
+          </div>
 
-        
-        <Card className="hover:shadow-xl transition-shadow duration-300">
-          <CardHeader>
-            <CardTitle className="text-green-600">Manage Companies</CardTitle>
-            <CardDescription>Approve companies and manage their access.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-700 mb-4">
-              Review new company registrations and manage company details.
-            </p>
-            <Button variant="outline" className="w-full">View Companies</Button>
-          </CardContent>
-        </Card>
+          <div className="space-y-2 text-gray-300">
+            {/* Use coordinatorProfile for specific fields */}
+            <p><strong className="font-medium text-gray-100">Role:</strong> {coordinatorProfile.coordinatorType || 'N/A'}</p>
+            <p><strong className="font-medium text-gray-100">Department:</strong> {coordinatorProfile.department || 'N/A'}</p>
+            <p><strong className="font-medium text-gray-100">Branch:</strong> {coordinatorProfile.branch || 'N/A'}</p>
+          </div>
+          <Button
+            className="mt-6 w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-2 rounded-md transition-all duration-200 active:scale-[0.98] active:shadow-inner"
+            asChild
+          >
+            <Link to="/coordinator/profile">Edit Coordinator Profile</Link>
+          </Button>
+        </div>
 
+        {/* Quick Actions / Coordinator Tools */}
+        <div>
+          <h3 className="text-xl font-bold text-gray-50 mb-4">Coordinator Tools</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Button
+              className="group h-28 text-md bg-gray-700 text-gray-200 shadow-md hover:bg-gray-600 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 ease-in-out flex flex-col justify-center items-center rounded-lg active:scale-[0.98] active:shadow-inner"
+              asChild
+            >
+              <Link to="/coordinator/manage-students">
+                <UsersIcon className="text-4xl mb-2 transition-transform duration-300 group-hover:-translate-y-1" />
+                <span className="font-medium text-center">Manage Students</span>
+              </Link>
+            </Button>
+            <Button
+              className="group h-28 text-md bg-gray-700 text-gray-200 shadow-md hover:bg-gray-600 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 ease-in-out flex flex-col justify-center items-center rounded-lg active:scale-[0.98] active:shadow-inner"
+              asChild
+            >
+              <Link to="/coordinator/manage-recruiters">
+                <BriefcaseBusinessIcon className="text-4xl mb-2 transition-transform duration-300 group-hover:-translate-y-1" />
+                <span className="font-medium text-center">Manage Recruiters</span>
+              </Link>
+            </Button>
+            <Button
+              className="group h-28 text-md bg-gray-700 text-gray-200 shadow-md hover:bg-gray-600 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 ease-in-out flex flex-col justify-center items-center rounded-lg active:scale-[0.98] active:shadow-inner"
+              asChild
+            >
+              <Link to="/coordinator/manage-jobs">
+                <ClipboardListIcon className="text-4xl mb-2 transition-transform duration-300 group-hover:-translate-y-1" />
+                <span className="font-medium text-center">Manage Job Postings</span>
+              </Link>
+            </Button>
+            <Button
+              className="group h-28 text-md bg-gray-700 text-gray-200 shadow-md hover:bg-gray-600 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 ease-in-out flex flex-col justify-center items-center rounded-lg active:scale-[0.98] active:shadow-inner"
+              asChild
+            >
+              <Link to="/coordinator/approve-profiles">
+                <CalendarCheckIcon className="text-4xl mb-2 transition-transform duration-300 group-hover:-translate-y-1" />
+                <span className="font-medium text-center">Approve Profiles</span>
+              </Link>
+            </Button>
+             <Button
+              className="group h-28 text-md bg-gray-700 text-gray-200 shadow-md hover:bg-gray-600 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 ease-in-out flex flex-col justify-center items-center rounded-lg active:scale-[0.98] active:shadow-inner"
+              asChild
+            >
+              <Link to="/coordinator/manage-batches">
+                <GraduationCapIcon className="text-4xl mb-2 transition-transform duration-300 group-hover:-translate-y-1" />
+                <span className="font-medium text-center">Manage Batches</span>
+              </Link>
+            </Button>
+             <Button
+              className="group h-28 text-md bg-gray-700 text-gray-200 shadow-md hover:bg-gray-600 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 ease-in-out flex flex-col justify-center items-center rounded-lg active:scale-[0.98] active:shadow-inner"
+              asChild
+            >
+              <Link to="/coordinator/manage-events">
+                <BellIcon className="text-4xl mb-2 transition-transform duration-300 group-hover:-translate-y-1" />
+                <span className="font-medium text-center">Manage Events</span>
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Panel: Alerts and Quick Facts */}
+      <div className="w-full lg:w-1/2 bg-gray-900 text-gray-200 p-4 sm:p-8 lg:p-12 flex flex-col justify-between">
         
-        <Card className="hover:shadow-xl transition-shadow duration-300">
-          <CardHeader>
-            <CardTitle className="text-red-600">Job Approvals</CardTitle>
-            <CardDescription>Review and approve new job listings.</CardDescription>
+        {/* Top Right Controls (Logout, Change Password, Theme Toggle) */}
+        <div className="flex justify-end items-center space-x-4 mb-8">
+            <Button variant="ghost" className="text-purple-400 hover:text-purple-300 active:scale-[0.98]">
+              <Link to="#">Change Password</Link>
+            </Button>
+            <Button variant="ghost" className="text-red-400 hover:text-red-300 active:scale-[0.98]" onClick={logout}>
+              <LogOutIcon className="inline-block h-4 w-4 mr-1" /> Logout
+            </Button>
+            <button className="text-gray-400 hover:text-gray-300 active:scale-[0.98]">☀️</button>
+        </div>
+
+        {/* Important Alerts / Announcements */}
+        <div className="mb-8">
+          <h3 className="text-2xl font-bold text-gray-50 mb-4">Important Alerts</h3>
+          <div className="space-y-4">
+            <Card className="p-4 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+              <p className="font-semibold text-red-400">Action Required: Pending Approvals ⚠️</p>
+              <p className="text-sm mb-1">You have <strong>7 pending student profile approvals</strong> and <strong>2 recruiter approvals</strong>.</p>
+              <p className="text-xs text-gray-400">15 minutes ago</p>
+            </Card>
+            <Card className="p-4 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+              <p className="font-semibold text-purple-400">Upcoming Placement Drive 📢</p>
+              <p className="text-sm mb-1">Mega placement drive for 2025 batch scheduled for **August 15-20**. Please prepare logistics.</p>
+              <p className="text-xs text-gray-400">2 hours ago</p>
+            </Card>
+            <Card className="p-4 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+              <p className="font-semibold text-emerald-400">New Job Posting ✨</p>
+              <p className="text-sm mb-1">A new **Data Scientist** role from **Innovate Corp.** has been posted and is awaiting review.</p>
+              <p className="text-xs text-gray-400">Yesterday</p>
+            </Card>
+            <Card className="p-4 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+              <p className="font-semibold text-sky-400">Interview Schedule Update 📅</p>
+              <p className="text-sm mb-1">Interviews for **XYZ Solutions** have been confirmed for **July 20th** in Seminar Hall 1.</p>
+              <p className="text-xs text-gray-400">3 days ago</p>
+            </Card>
+          </div>
+        </div>
+
+        {/* Coordinator Quick Stats */}
+        <Card className="p-6 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 mt-auto">
+          <CardHeader className="p-0 mb-4">
+            <CardTitle className="text-xl font-bold text-gray-50">Overall Stats</CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-gray-700 mb-4">
-              Ensure job postings meet guidelines before going live.
-            </p>
-            <Button variant="secondary" className="w-full">Approve Jobs</Button>
+          <Separator className="w-full mb-4 bg-gray-700" />
+          <CardContent className="p-0 text-gray-300 space-y-2">
+            <p><strong className="font-semibold text-gray-100">Total Registered Students:</strong> 550</p>
+            <p><strong className="font-semibold text-gray-100">Approved Student Profiles:</strong> 520</p>
+            <p><strong className="font-semibold text-gray-100">Total Registered Recruiters:</strong> 85</p>
+            <p><strong className="font-semibold text-gray-100">Approved Recruiter Profiles:</strong> 83</p>
+            <p><strong className="font-semibold text-gray-100">Active Job Postings:</strong> 60</p>
+            <p><strong className="font-semibold text-gray-100">Interviews Scheduled (This Week):</strong> 12</p>
           </CardContent>
         </Card>
       </div>

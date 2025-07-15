@@ -49,8 +49,23 @@ const AuthProvider = ({ children }) => {
     });
   };
 
+  // NEW: Add the updateUser function
+  const updateUser = (updatedUser) => {
+    setAuthState(prevState => {
+      const newState = {
+        ...prevState,
+        user: updatedUser, // Update the user object in state
+      };
+      // Also update localStorage if a token exists (meaning a user is logged in)
+      if (prevState.token) {
+        localStorage.setItem('user', JSON.stringify(updatedUser)); // Update localStorage with the new user object
+      }
+      return newState;
+    });
+  };
+
   return (
-    <AuthContext.Provider value={{ authState, login, logout }}>
+    <AuthContext.Provider value={{ authState, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
