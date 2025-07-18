@@ -29,7 +29,7 @@ const Footer = () => {
 
         {/* Contact Info Column */}
         <div>
-          <h3 className="text-lg font-semibold mb-4 text-blue-300">Contact Info</h3>
+          <h3 className="text-lg font-semibold mb-4 text-blue-300">Contact Info. </h3>
           <p className="text-sm text-gray-400">
             Placement Office, <br />
             [Gauhati University], <br />
@@ -51,7 +51,7 @@ const Footer = () => {
         </div>
       </div>
       <div className="border-t border-gray-700 mt-8 pt-6 text-center text-sm text-gray-500">
-        &copy; {new Date().getFullYear()} Placement Portal. All rights reserved.
+        &copy; {new Date().getFullYear()} GU Placement Portal. All rights reserved.
       </div>
     </footer>
   );
