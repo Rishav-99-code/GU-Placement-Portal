@@ -11,7 +11,7 @@ import profileService from '../../services/profileService';
 import toast from 'react-hot-toast';
 
 const StudentDashboardPage = () => {
-  const { authState } = useContext(AuthContext);
+  const { authState, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [studentDetails, setStudentDetails] = useState({});
   const [loading, setLoading] = useState(true);
@@ -141,8 +141,15 @@ const StudentDashboardPage = () => {
             <Button variant="ghost" className="text-purple-400 hover:text-purple-300 active:scale-[0.98]">
               <Link to="#">Change Password</Link>
             </Button>
-            <Button variant="ghost" className="text-red-400 hover:text-red-300 active:scale-[0.98]">
-              <Link to="#" onClick={() => { /* Implement logout logic here */ }}>Logout</Link>
+            <Button
+              variant="ghost"
+              className="text-red-400 hover:text-red-300 active:scale-[0.98]"
+              onClick={() => {
+                logout();
+                navigate('/login');
+              }}
+            >
+              Logout
             </Button>
             {/* Dark mode toggle - already in dark mode so this would be a light mode toggle */}
             <button className="text-gray-400 hover:text-gray-300 active:scale-[0.98]">☀️</button>

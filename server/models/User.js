@@ -27,6 +27,8 @@ const userSchema = mongoose.Schema(
     },
     coordinatorProfile: {
       department: { type: String },
+      coordinatorType: { type: String }, // Added
+      branch: { type: String }, // Added
     },
     resetPasswordToken: String,
     resetPasswordExpire: Date,

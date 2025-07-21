@@ -80,6 +80,8 @@ const updateProfile = asyncHandler(async (req, res) => {
         if (!user.coordinatorProfile) { user.coordinatorProfile = {}; }
         if (req.body.coordinatorProfile) {
           user.coordinatorProfile.department = req.body.coordinatorProfile.department || user.coordinatorProfile.department;
+          user.coordinatorProfile.coordinatorType = req.body.coordinatorProfile.coordinatorType || user.coordinatorProfile.coordinatorType;
+          user.coordinatorProfile.branch = req.body.coordinatorProfile.branch || user.coordinatorProfile.branch;
         }
         // isProfileComplete logic is now handled in the User model's pre('save') hook
         break;
