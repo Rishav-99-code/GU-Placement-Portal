@@ -10,19 +10,19 @@ import profileService from '../../services/profileService';
 import toast from 'react-hot-toast';
 
 const StudentProfilePage = () => {
-  const { authState, login } = useContext(AuthContext);
+  const { authState, login, updateUser } = useContext(AuthContext); // Added updateUser
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     usn: '',
     program: '',
     branch: '',
-    phoneNumber: '', // New
-    currentSemester: '', // New
-    resumeFile: null,    // New for file input
-    profilePicFile: null, // New for file input
-    resumeUrl: '', // To display existing URL or save new one
-    profilePicUrl: '', // To display existing URL or save new one
+    phoneNumber: '',
+    currentSemester: '',
+    resumeFile: null,
+    profilePicFile: null,
+    resumeUrl: '',
+    profilePicUrl: '',
   });
 
   const [loading, setLoading] = useState(true);
@@ -32,43 +32,57 @@ const StudentProfilePage = () => {
     const fetchProfile = async () => {
       try {
         setLoading(true);
+        // The getProfile() call should return the full user object,
+        // which contains studentDetails as a nested object.
         const data = await profileService.getProfile();
-        if (data.studentDetails) {
-          setFormData({
-            usn: data.studentDetails.usn || '',
-            program: data.studentDetails.program || '',
-            branch: data.studentDetails.branch || '',
-            phoneNumber: data.studentDetails.phoneNumber || '', // Populate new field
-            currentSemester: data.studentDetails.currentSemester || '', // Populate new field
-            resumeUrl: data.studentDetails.resumeUrl || '', // Populate existing URL
-            profilePicUrl: data.studentDetails.profilePicUrl || '', // Populate existing URL
-            resumeFile: null, // Reset file input
-            profilePicFile: null, // Reset file input
-          });
+
+        // Populate formData from the fetched data
+        setFormData({
+            usn: data.studentDetails?.usn || '',
+            program: data.studentDetails?.program || '',
+            branch: data.studentDetails?.branch || '',
+            phoneNumber: data.studentDetails?.phoneNumber || '',
+            currentSemester: data.studentDetails?.currentSemester || '',
+            resumeUrl: data.studentDetails?.resumeUrl || '',
+            profilePicUrl: data.studentDetails?.profilePicUrl || '',
+            resumeFile: null,
+            profilePicFile: null,
+        });
+
+        // Also update the AuthContext user if it's not already complete
+        // This is a safety measure to ensure AuthContext is in sync
+        if (!authState.user?.isProfileComplete && data.studentDetails && data.studentDetails.usn && data.studentDetails.program) {
+             // Assuming the backend returns the isProfileComplete status
+             updateUser({ ...authState.user, isProfileComplete: true, ...data }); // Merge current user with full profile data
         }
+
         setLoading(false);
       } catch (err) {
         console.error('Error fetching student profile:', err);
         setError('Failed to load profile data.');
         setLoading(false);
         toast.error('Failed to load profile. Please try again.');
+        // If 401, potentially token expired, so log out
+        if (err.response && err.response.status === 401) {
+            // Assuming `logout` is available in AuthContext if needed here
+            // logout();
+        }
       }
     };
 
     if (authState.isAuthenticated && authState.user?.role === 'student') {
       fetchProfile();
     } else if (!authState.isAuthenticated) {
-      navigate('/login'); // If not authenticated, redirect to login
+      navigate('/login');
     }
-  }, [authState.isAuthenticated, authState.user, navigate]);
-
+  }, [authState.isAuthenticated, authState.user, navigate, updateUser]); // Added updateUser to dependencies
 
   const handleChange = (e) => {
     const { id, value, files } = e.target;
-    if (files) {
+    if (files && files.length > 0) { // Check if files exist and not empty
       setFormData((prevData) => ({
         ...prevData,
-        [id]: files[0], // For file inputs
+        [id]: files[0],
       }));
     } else {
       setFormData((prevData) => ({
@@ -93,41 +107,26 @@ const StudentProfilePage = () => {
       return;
     }
 
-    // You will need to implement actual file upload logic here.
-    // For a real application, you'd send formData.resumeFile and formData.profilePicFile
-    // to a file upload service (e.g., Cloudinary, S3) and get back a URL.
-    // For this example, we'll assume the URLs are somehow generated or mock-uploaded.
-    // A simple approach for now is to just send a placeholder URL if a file is selected.
-
+    // Placeholder for actual file upload logic
     let resumeUrlToSend = formData.resumeUrl;
     let profilePicUrlToSend = formData.profilePicUrl;
 
-    // --- Placeholder for actual file upload logic ---
-    // If you have a file selected, you'd upload it and get a URL back.
-    // Example:
-    // if (formData.resumeFile) {
-    //   const uploadedResumeResponse = await fileUploadService.upload(formData.resumeFile);
-    //   resumeUrlToSend = uploadedResumeResponse.url;
-    // }
-    // if (formData.profilePicFile) {
-    //   const uploadedProfilePicResponse = await fileUploadService.upload(formData.profilePicFile);
-    //   profilePicUrlToSend = uploadedProfilePicResponse.url;
-    // }
-    // --- End Placeholder ---
-
-    // For demonstration, if a new file is selected, create a dummy URL
-    if (formData.resumeFile && !formData.resumeUrl) {
-      resumeUrlToSend = `https://example.com/resumes/${authState.user?._id}-${Date.now()}.pdf`;
-      toast('Simulating resume upload...');
+    // IMPORTANT: In a real app, integrate with a file upload service (e.g., Cloudinary, S3)
+    // For now, we'll use dummy URLs if a new file is selected.
+    if (formData.resumeFile) {
+        // Simulate upload and get a URL. Replace with actual upload logic.
+        resumeUrlToSend = `https://example.com/resumes/${authState.user?._id}-${Date.now()}.pdf`;
+        toast.success('Resume uploaded (simulated)!');
     }
-    if (formData.profilePicFile && !formData.profilePicUrl) {
-      profilePicUrlToSend = `https://example.com/profilepics/${authState.user?._id}-${Date.now()}.jpg`;
-      toast('Simulating profile picture upload...');
+    if (formData.profilePicFile) {
+        // Simulate upload and get a URL. Replace with actual upload logic.
+        profilePicUrlToSend = `https://example.com/profilepics/${authState.user?._id}-${Date.now()}.jpg`;
+        toast.success('Profile picture uploaded (simulated)!');
     }
-
 
     try {
-      const updatedProfileData = {
+      // The data sent to the backend should match what your backend expects for updating
+      const updatedStudentProfileData = {
         studentProfile: {
           usn: formData.usn,
           program: formData.program,
@@ -139,21 +138,16 @@ const StudentProfilePage = () => {
         }
       };
 
-      const response = await profileService.updateProfile(updatedProfileData);
+      await profileService.updateProfile(updatedStudentProfileData);
 
-      // Update the user object in AuthContext and localStorage with the new profile data
-      login(response.token, response);
-
-      toast.success('Profile updated successfully!');
-
-      // Redirect to student dashboard after profile completion
-      navigate('/student/dashboard');
+      toast.success('Profile updated successfully! Please log in.');
+      navigate('/login');
 
     } catch (error) {
       const message =
         (error.response && error.response.data && error.response.data.message) ||
         error.message ||
-        error.toString();
+        'Failed to update profile.';
       toast.error(message);
       console.error('Error updating profile:', error);
     }
@@ -168,37 +162,38 @@ const StudentProfilePage = () => {
   }
 
   return (
-    <div className="container mx-auto p-8 max-w-4xl">
-      <h1 className="text-4xl font-bold mb-2">Welcome, {authState.user?.name}!</h1>
-      <p className="text-lg text-gray-600 mb-8">
+    <div className="container mx-auto p-8 max-w-4xl bg-gray-900 text-gray-200 min-h-screen"> {/* Adjusted for dark mode consistency */}
+      <h1 className="text-4xl font-bold mb-2 text-gray-50">Welcome, {authState.user?.name}!</h1>
+      <p className="text-lg text-gray-400 mb-8">
         Please complete your profile to access all features.
       </p>
 
-      <div className="bg-white shadow-lg rounded-lg p-8">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6">Student Profile Details</h2>
+      <div className="bg-gray-800 shadow-lg rounded-lg p-8"> {/* Adjusted for dark mode consistency */}
+        <h2 className="text-2xl font-semibold text-gray-50 mb-6">Student Profile Details</h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <Label htmlFor="usn">Roll Number</Label>
+            <Label htmlFor="usn" className="text-gray-300">Roll Number</Label>
             <Input
               id="usn"
               placeholder="e.g., 20XXXXXX"
               value={formData.usn}
               onChange={handleChange}
+              className="bg-gray-700 border-gray-600 text-gray-200 focus:ring-purple-500 focus:border-purple-500"
               required
             />
           </div>
           <div>
-            <Label htmlFor="program">Program</Label>
+            <Label htmlFor="program" className="text-gray-300">Program</Label>
             <Select
               value={formData.program}
               onValueChange={(value) => handleSelectChange(value, 'program')}
               required
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full bg-gray-700 border-gray-600 text-gray-200 focus:ring-purple-500 focus:border-purple-500">
                 <SelectValue placeholder="Select your program" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-gray-700 text-gray-200 border-gray-600">
                 <SelectItem value="B.Tech">B.Tech</SelectItem>
                 <SelectItem value="M.Tech">M.Tech</SelectItem>
                 <SelectItem value="Ph.D.">Ph.D.</SelectItem>
@@ -206,29 +201,31 @@ const StudentProfilePage = () => {
             </Select>
           </div>
           <div>
-            <Label htmlFor="branch">Branch</Label>
+            <Label htmlFor="branch" className="text-gray-300">Branch</Label>
             <Input
               id="branch"
               placeholder="e.g., Computer Science and Engineering"
               value={formData.branch}
               onChange={handleChange}
+              className="bg-gray-700 border-gray-600 text-gray-200 focus:ring-purple-500 focus:border-purple-500"
               required
             />
           </div>
           {/* New Fields */}
           <div>
-            <Label htmlFor="phoneNumber">Phone Number</Label>
+            <Label htmlFor="phoneNumber" className="text-gray-300">Phone Number</Label>
             <Input
               id="phoneNumber"
               type="tel"
               placeholder="e.g., +919876543210"
               value={formData.phoneNumber}
               onChange={handleChange}
+              className="bg-gray-700 border-gray-600 text-gray-200 focus:ring-purple-500 focus:border-purple-500"
               required
             />
           </div>
           <div>
-            <Label htmlFor="currentSemester">Current Semester</Label>
+            <Label htmlFor="currentSemester" className="text-gray-300">Current Semester</Label>
             <Input
               id="currentSemester"
               type="number"
@@ -236,48 +233,50 @@ const StudentProfilePage = () => {
               value={formData.currentSemester}
               onChange={handleChange}
               min="1"
-              max="10" // Adjust max as needed
+              max="10"
+              className="bg-gray-700 border-gray-600 text-gray-200 focus:ring-purple-500 focus:border-purple-500"
               required
             />
           </div>
 
           {/* File Uploads */}
           <div>
-            <Label htmlFor="resumeFile">Upload Resume (PDF)</Label>
+            <Label htmlFor="resumeFile" className="text-gray-300">Upload Resume (PDF)</Label>
             <Input
               id="resumeFile"
               type="file"
               accept=".pdf"
               onChange={handleChange}
+              className="bg-gray-700 border-gray-600 text-gray-200 file:bg-purple-600 file:text-white file:border-none file:hover:bg-purple-700 file:cursor-pointer"
             />
             {formData.resumeUrl && (
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-400 mt-1">
                 Current Resume:{' '}
-                <a href={formData.resumeUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                <a href={formData.resumeUrl} target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:underline">
                   View
                 </a>
               </p>
             )}
           </div>
           <div>
-            <Label htmlFor="profilePicFile">Upload Profile Picture (JPG/PNG)</Label>
+            <Label htmlFor="profilePicFile" className="text-gray-300">Upload Profile Picture (JPG/PNG)</Label>
             <Input
               id="profilePicFile"
               type="file"
               accept=".jpg,.jpeg,.png"
               onChange={handleChange}
+              className="bg-gray-700 border-gray-600 text-gray-200 file:bg-purple-600 file:text-white file:border-none file:hover:bg-purple-700 file:cursor-pointer"
             />
             {formData.profilePicUrl && (
               <div className="mt-1">
-                <p className="text-sm text-gray-500">Current Profile Picture:</p>
-                <img src={formData.profilePicUrl} alt="Profile" className="w-20 h-20 rounded-full object-cover mt-2" />
+                <p className="text-sm text-gray-400">Current Profile Picture:</p>
+                <img src={formData.profilePicUrl} alt="Profile" className="w-20 h-20 rounded-full object-cover mt-2 ring-2 ring-purple-600 ring-offset-2 ring-offset-gray-800" />
               </div>
             )}
           </div>
 
-
           <div className="pt-4">
-            <Button type="submit" className="w-full">Save Profile</Button>
+            <Button type="submit" className="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-2 rounded-md transition-all duration-200 active:scale-[0.98] active:shadow-inner">Save Profile</Button>
           </div>
         </form>
       </div>

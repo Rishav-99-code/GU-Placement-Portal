@@ -1,3 +1,4 @@
+// frontend/src/App.js
 import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
@@ -6,8 +7,8 @@ import { AuthContext } from './context/AuthContext'; // Import AuthContext
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/Auth/LoginPage';
 import RegisterPage from './pages/Auth/RegisterPage';
-import ForgotPasswordPage from './pages/Auth/ForgotPassword'; // NEW: Import ForgotPasswordPage
-import ResetPasswordPage from './pages/Auth/ResetPasswordPage';   // NEW: Import ResetPasswordPage
+import ForgotPasswordPage from './pages/Auth/ForgotPassword';
+import ResetPasswordPage from './pages/Auth/ResetPasswordPage';
 
 import StudentDashboardPage from './pages/Student/StudentDashboardPage';
 import RecruiterDashboardPage from './pages/Recruiter/RecruiterDashboardPage';
@@ -17,15 +18,12 @@ import StudentProfilePage from './pages/Student/StudentProfilePage';
 import RecruiterProfilePage from './pages/Recruiter/RecruiterProfilePage';
 import CoordinatorProfilePage from './pages/Coordinator/CoordinatorProfilePage';
 
+import AvailableJobsPage from './pages/Student/AvailableJobsPage';
+import StudentApplicationsPage from './pages/Student/StudentApplicationsPage'; // NEW: Import StudentApplicationsPage
+
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
 import PrivateRoute from './components/common/PrivateRoute';
-
-
-// These mock components are not needed if you have actual page components
-// const StudentDashboard = () => <div>Student Dashboard Content</div>;
-// const RecruiterDashboard = () => <div>Recruiter Dashboard Content</div>;
-// const CoordinatorDashboard = () => <div>Coordinator Dashboard Content</div>;
 
 
 function App() {
@@ -61,8 +59,8 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} /> {/* NEW: Forgot Password Route */}
-            <Route path="/reset-password/:resettoken" element={<ResetPasswordPage />} /> {/* NEW: Reset Password Route */}
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password/:resettoken" element={<ResetPasswordPage />} />
 
             {/* Dynamic redirect after login/register (or if trying to access /dashboard directly) */}
             <Route
@@ -83,6 +81,8 @@ function App() {
             {/* Specific profile/dashboard routes are protected by PrivateRoute */}
             <Route path="/student/dashboard" element={<PrivateRoute allowedRoles={['student']}><StudentDashboardPage /></PrivateRoute>} />
             <Route path="/student/profile" element={<PrivateRoute allowedRoles={['student']}><StudentProfilePage /></PrivateRoute>} />
+            <Route path="/student/jobs" element={<PrivateRoute allowedRoles={['student']}><AvailableJobsPage /></PrivateRoute>} />
+            <Route path="/student/applications" element={<PrivateRoute allowedRoles={['student']}><StudentApplicationsPage /></PrivateRoute>} /> {/* NEW: StudentApplicationsPage Route */}
 
             <Route path="/recruiter/dashboard" element={<PrivateRoute allowedRoles={['recruiter']}><RecruiterDashboardPage /></PrivateRoute>} />
             <Route path="/recruiter/profile" element={<PrivateRoute allowedRoles={['recruiter']}><RecruiterProfilePage /></PrivateRoute>} />
@@ -91,10 +91,13 @@ function App() {
             <Route path="/coordinator/profile" element={<PrivateRoute allowedRoles={['coordinator']}><CoordinatorProfilePage /></PrivateRoute>} />
 
             {/* General marketing/info pages */}
-            <Route path="/overview" element={<HomePage />} /> {/* Assuming HomePage serves as a general content page */}
+            <Route path="/overview" element={<HomePage />} />
             <Route path="/why-recruit" element={<HomePage />} />
             <Route path="/past-recruiters" element={<HomePage />} />
             <Route path="/contact-us" element={<HomePage />} />
+
+            {/* Fallback for unmatched routes */}
+            <Route path="*" element={<p className="text-center mt-20 text-gray-700 dark:text-gray-300">404 - Page Not Found</p>} />
           </Routes>
         </main>
         <Footer />

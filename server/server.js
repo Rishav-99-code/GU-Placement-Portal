@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
+const applicationRoutes = require('./routes/applicationRoutes');
 const errorHandler = require('./middleware/errorHandler');
 const cors = require('cors'); // <--- Ensure this import is here
 
@@ -17,20 +18,28 @@ const app = express();
 
 // Middleware
 app.use(express.json()); // Body parser for JSON data
-app.use(cors()); // <--- This line is CRUCIAL and should be before your routes
-// If you want to be more specific (recommended for production):
-// app.use(cors({
-//   origin: 'http://localhost:3000', // Only allow your frontend origin
-//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-//   credentials: true // If you're sending cookies/auth headers
-// }));
+
+// CORS Middleware: This line is CRUCIAL and should be before your routes
+// Using a specific origin is recommended for production for security.
+// For development, app.use(cors()); is fine if your frontend is on a different port.
+app.use(cors({
+  origin: 'http://localhost:5173', // Assuming your Vite frontend runs on port 5173
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Add PATCH for updates if used
+  credentials: true // Important if you use cookies or send Authorization headers with credentials
+}));
+
 
 // Mount Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-// ... other routes
+app.use('/api/auth', authRoutes); // Handles authentication (register, login, etc.)
+app.use('/api/users', userRoutes); // Handles general user-related operations (e.g., fetching user details)
+app.use('/api/applications', applicationRoutes); // Handles all routes defined in applicationRoutes.js (e.g., /api/applications/student)
 
-// Error Handling Middleware
+// You will likely need a 'jobs' route as well if you haven't added it yet:
+// const jobRoutes = require('./routes/jobRoutes');
+// app.use('/api/jobs', jobRoutes);
+
+
+// Error Handling Middleware (should be the last middleware)
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;

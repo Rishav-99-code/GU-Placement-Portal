@@ -1,0 +1,110 @@
+// backend/routes/jobRoutes.js
+const express = require('express');
+const router = express.Router();
+// Assuming you have middleware for authentication and authorization
+const { protect, authorize } = require('../middleware/authMiddleware');
+
+// Dummy Job Data (Replace with real database interaction)
+let jobsData = [
+  {
+    _id: 'job1',
+    title: 'Software Development Engineer I',
+    company: 'Tech Innovations Inc.',
+    location: 'Bengaluru, India',
+    type: 'Full-time',
+    description: 'We are seeking a passionate SDE I to join our dynamic team and contribute to cutting-edge projects. Responsibilities include designing, developing, and maintaining software applications, collaborating with cross-functional teams, and ensuring high-quality code. Strong problem-solving skills and a solid understanding of data structures are essential.',
+    postedDate: new Date('2025-07-15'),
+    salary: '₹8-12 LPA',
+    requirements: ['Node.js', 'React', 'MongoDB', 'AWS', 'Strong CS fundamentals'],
+  },
+  {
+    _id: 'job2',
+    title: 'Data Science Intern',
+    company: 'Quant Analytics',
+    location: 'Mumbai, India',
+    type: 'Internship',
+    description: 'Gain hands-on experience in data analysis and machine learning. Work on real-world datasets, build predictive models, and derive actionable insights. Opportunity to learn from experienced data scientists and contribute to impactful projects.',
+    postedDate: new Date('2025-07-10'),
+    duration: '6 Months',
+    requirements: ['Python', 'SQL', 'Statistics', 'Machine Learning basics'],
+  },
+  {
+    _id: 'job3',
+    title: 'Junior Product Manager',
+    company: 'Innovate Solutions',
+    location: 'Hyderabad, India',
+    type: 'Full-time',
+    description: 'Lead product development from conception to launch. Define product vision, roadmaps, and requirements. Collaborate with engineering, design, and marketing teams to deliver innovative products that meet market needs.',
+    postedDate: new Date('2025-07-01'),
+    requirements: ['Agile methodologies', 'Market Research', 'Excellent Communication', 'Problem-solving'],
+  },
+  {
+    _id: 'job4',
+    title: 'UI/UX Designer',
+    company: 'Creative Studio',
+    location: 'Remote',
+    type: 'Full-time',
+    description: 'Design intuitive and engaging user interfaces and experiences for web and mobile applications. Conduct user research, create wireframes, prototypes, and high-fidelity designs. Work closely with developers to ensure design implementation accuracy.',
+    postedDate: new Date('2025-06-28'),
+    requirements: ['Figma', 'User Research', 'Prototyping', 'Adobe XD/Sketch'],
+  },
+  {
+    _id: 'job5',
+    title: 'Marketing Associate',
+    company: 'Global Brands',
+    location: 'New Delhi, India',
+    type: 'Full-time',
+    description: 'Assist in developing and executing marketing campaigns across various channels. Conduct market research, analyze campaign performance, and support brand initiatives.',
+    postedDate: new Date('2025-07-18'),
+    requirements: ['Digital Marketing', 'Content Creation', 'Analytics tools', 'Communication'],
+  },
+];
+
+
+// @desc    Get all available jobs
+// @route   GET /api/jobs
+// @access  Private (Students only) - Requires 'protect' and 'authorize' middleware
+router.get('/', protect, authorize(['student']), (req, res) => {
+  let filteredJobs = [...jobsData]; // Create a copy to filter
+
+  const { search, location, type } = req.query;
+
+  if (search) {
+    const searchTermLower = search.toLowerCase();
+    filteredJobs = filteredJobs.filter(job =>
+      job.title.toLowerCase().includes(searchTermLower) ||
+      job.company.toLowerCase().includes(searchTermLower) ||
+      job.description.toLowerCase().includes(searchTermLower)
+    );
+  }
+
+  if (location) {
+    const locationLower = location.toLowerCase();
+    filteredJobs = filteredJobs.filter(job =>
+      job.location.toLowerCase().includes(locationLower)
+    );
+  }
+
+  if (type) {
+    const typeLower = type.toLowerCase();
+    filteredJobs = filteredJobs.filter(job =>
+      job.type.toLowerCase() === typeLower
+    );
+  }
+
+  res.status(200).json(filteredJobs);
+});
+
+// @desc    Get single job details
+// @route   GET /api/jobs/:id
+// @access  Private (Students only) - Requires 'protect' and 'authorize' middleware
+router.get('/:id', protect, authorize(['student']), (req, res) => {
+  const job = jobsData.find(j => j._id === req.params.id);
+  if (job) {
+    res.status(200).json(job);
+  } else {
+    res.status(404).json({ message: 'Job not found' });
+  }
+});
+
+module.exports = router;

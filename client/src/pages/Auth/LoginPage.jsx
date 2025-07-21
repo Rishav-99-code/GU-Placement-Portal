@@ -35,39 +35,33 @@ const LoginPage = () => {
 
     try {
       const userData = await authService.login({ email, password });
-
+      console.log('Login response:', userData); // Debug log
       login(userData.token, userData);
-
       toast.success(`Logged in successfully as ${userData.role}!`);
 
-      if (userData.isProfileComplete) {
-        switch (userData.role) {
-          case 'student':
-            navigate('/student/dashboard');
-            break;
-          case 'recruiter':
-            navigate('/recruiter/dashboard');
-            break;
-          case 'coordinator':
-            navigate('/coordinator/dashboard');
-            break;
-          default:
-            navigate('/');
+      // Robust redirect logic
+      if (userData.role === 'student') {
+        if (userData.isProfileComplete) {
+          navigate('/student/dashboard');
+        } else {
+          navigate('/student/profile');
+        }
+      } else if (userData.role === 'recruiter') {
+        if (userData.isProfileComplete) {
+          navigate('/recruiter/dashboard');
+        } else {
+          navigate('/recruiter/profile');
+        }
+      } else if (userData.role === 'coordinator') {
+        if (userData.isProfileComplete) {
+          navigate('/coordinator/dashboard');
+        } else {
+          navigate('/coordinator/profile');
         }
       } else {
-        switch (userData.role) {
-          case 'student':
-            navigate('/student/profile');
-            break;
-          case 'recruiter':
-            navigate('/recruiter/profile');
-            break;
-          case 'coordinator':
-            navigate('/coordinator/profile');
-            break;
-          default:
-            navigate('/');
-        }
+        // Fallback: go to login if role is missing or unknown
+        toast.error('Unknown user role. Please contact support.');
+        navigate('/login');
       }
     } catch (error) {
       const message =
