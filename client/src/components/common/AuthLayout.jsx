@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Tabs, TabsList, TabsTrigger } from '../ui/tabs';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -57,7 +56,10 @@ const AuthLayout = ({ children, initialTab, type }) => {
         
         <div className="md:w-3/5 bg-white p-8 md:p-12 flex flex-col justify-center">
           <div className="flex justify-end mb-4">
-            <Link to={isLogin ? '/register' : '/login'} className="text-blue-600 hover:underline text-sm font-medium">
+            <Link
+              to={isLogin ? `/register?role=${initialTab}` : `/login?role=${initialTab}`}
+              className="text-blue-600 hover:underline text-sm font-medium"
+            >
               {isLogin ? 'Sign-up for a new account' : 'Sign-in to your account'}
             </Link>
           </div>
