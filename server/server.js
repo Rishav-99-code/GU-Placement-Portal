@@ -34,9 +34,8 @@ app.use('/api/auth', authRoutes); // Handles authentication (register, login, et
 app.use('/api/users', userRoutes); // Handles general user-related operations (e.g., fetching user details)
 app.use('/api/applications', applicationRoutes); // Handles all routes defined in applicationRoutes.js (e.g., /api/applications/student)
 
-// You will likely need a 'jobs' route as well if you haven't added it yet:
-// const jobRoutes = require('./routes/jobRoutes');
-// app.use('/api/jobs', jobRoutes);
+const jobRoutes = require('./routes/jobRoutes');
+app.use('/api/jobs', jobRoutes);
 
 
 // Error Handling Middleware (should be the last middleware)

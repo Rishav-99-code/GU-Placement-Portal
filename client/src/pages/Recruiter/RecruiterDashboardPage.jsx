@@ -8,10 +8,34 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/ca
 import { Separator } from '../../components/ui/separator';
 
 const RecruiterDashboardPage = () => {
-  const { authState } = useContext(AuthContext);
+  const { authState, logout } = useContext(AuthContext);
   const user = authState.user;
   const userName = user?.name || 'Recruiter';
-  const profilePic = user?.profilePicUrl || 'https://via.placeholder.com/150';
+  const profilePic = user?.profilePicUrl || 'https://placehold.co/150x150?text=Profile';
+
+  // State for dashboard stats
+  const [stats, setStats] = React.useState({ jobsPosted: 0, activeListings: 0, totalApplicants: 0, interviewsScheduled: 0 });
+  const [latestUpdates, setLatestUpdates] = React.useState([]);
+  React.useEffect(() => {
+    // Fetch jobs
+    fetch('/api/jobs')
+      .then(res => res.json())
+      .then(jobs => {
+        setStats(s => ({ ...s, jobsPosted: jobs.length, activeListings: jobs.filter(j => j.active !== false).length }));
+        setLatestUpdates([
+          { type: 'Reminder', color: 'blue', message: `Don’t forget to review pending applications for the ${jobs[1]?.title || 'Backend Developer'} role.`, time: '10 minutes ago' },
+          { type: 'New Applicants', color: 'green', message: `3 new candidates applied for ${jobs[0]?.title || 'Frontend Engineer'}.`, time: 'Today' },
+          { type: 'Event', color: 'purple', message: 'Join the Virtual Career Fair this Friday at 2 PM.', time: '2 days ago' },
+        ]);
+        // Fetch applicants for all jobs
+        Promise.all(jobs.map(job => fetch(`/api/jobs/${job.id}/applicants`).then(r => r.json()))).then(applicantsArr => {
+          const totalApplicants = applicantsArr.reduce((sum, arr) => sum + arr.length, 0);
+          // For demo, interviewsScheduled = applicants with status 'interview'
+          const interviewsScheduled = applicantsArr.flat().filter(a => a.status === 'interview').length;
+          setStats(s => ({ ...s, totalApplicants, interviewsScheduled }));
+        });
+      });
+  }, []);
 
   return (
     <div className="flex flex-col lg:flex-row min-h-[calc(100vh-64px)] overflow-hidden bg-gray-900 text-gray-200">
@@ -47,25 +71,25 @@ const RecruiterDashboardPage = () => {
           <h3 className="text-xl font-bold text-gray-50 mb-4">Quick Actions</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Button asChild className="group h-28 bg-gray-700 text-gray-200 hover:bg-gray-600 hover:scale-[1.02] shadow-md hover:shadow-lg transition-all duration-300 ease-in-out flex flex-col justify-center items-center rounded-lg active:scale-[0.98] active:shadow-inner">
-              <Link to="#">
+              <Link to="/recruiter/create-job">
                 <span className="text-4xl mb-2 group-hover:-translate-y-1">📝</span>
                 <span className="font-medium">Post Job</span>
               </Link>
             </Button>
             <Button asChild className="group h-28 bg-gray-700 text-gray-200 hover:bg-gray-600 hover:scale-[1.02] shadow-md hover:shadow-lg transition-all duration-300 ease-in-out flex flex-col justify-center items-center rounded-lg active:scale-[0.98] active:shadow-inner">
-              <Link to="#">
+              <Link to="/recruiter/manage-jobs">
                 <span className="text-4xl mb-2 group-hover:-translate-y-1">📄</span>
                 <span className="font-medium">Manage Jobs</span>
               </Link>
             </Button>
             <Button asChild className="group h-28 bg-gray-700 text-gray-200 hover:bg-gray-600 hover:scale-[1.02] shadow-md hover:shadow-lg transition-all duration-300 ease-in-out flex flex-col justify-center items-center rounded-lg active:scale-[0.98] active:shadow-inner">
-              <Link to="#">
+              <Link to="/recruiter/view-applications">
                 <span className="text-4xl mb-2 group-hover:-translate-y-1">👥</span>
                 <span className="font-medium">View Applicants</span>
               </Link>
             </Button>
             <Button asChild className="group h-28 bg-gray-700 text-gray-200 hover:bg-gray-600 hover:scale-[1.02] shadow-md hover:shadow-lg transition-all duration-300 ease-in-out flex flex-col justify-center items-center rounded-lg active:scale-[0.98] active:shadow-inner">
-              <Link to="#">
+              <Link to="/recruiter/analytics">
                 <span className="text-4xl mb-2 group-hover:-translate-y-1">📊</span>
                 <span className="font-medium">Analytics</span>
               </Link>
@@ -82,8 +106,8 @@ const RecruiterDashboardPage = () => {
           <Button variant="ghost" className="text-blue-400 hover:text-blue-300 active:scale-[0.98]">
             <Link to="#">Change Password</Link>
           </Button>
-          <Button variant="ghost" className="text-red-400 hover:text-red-300 active:scale-[0.98]">
-            <Link to="#">Logout</Link>
+          <Button variant="ghost" className="text-red-400 hover:text-red-300 active:scale-[0.98]" onClick={logout}>
+            Logout
           </Button>
           <button className="text-gray-400 hover:text-gray-300 active:scale-[0.98]">☀️</button>
         </div>
@@ -92,21 +116,13 @@ const RecruiterDashboardPage = () => {
         <div className="mb-8">
           <h3 className="text-2xl font-bold text-gray-50 mb-4">Latest Updates</h3>
           <div className="space-y-4">
-            <Card className="p-4 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
-              <p className="font-semibold text-blue-400">Reminder</p>
-              <p className="text-sm mb-1">Don’t forget to review pending applications for the <strong>Backend Developer</strong> role.</p>
-              <p className="text-xs text-gray-400">10 minutes ago</p>
-            </Card>
-            <Card className="p-4 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
-              <p className="font-semibold text-green-400">New Applicants</p>
-              <p className="text-sm mb-1">3 new candidates applied for <strong>Frontend Engineer</strong>.</p>
-              <p className="text-xs text-gray-400">Today</p>
-            </Card>
-            <Card className="p-4 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
-              <p className="font-semibold text-purple-400">Event</p>
-              <p className="text-sm mb-1">Join the <strong>Virtual Career Fair</strong> this Friday at 2 PM.</p>
-              <p className="text-xs text-gray-400">2 days ago</p>
-            </Card>
+            {latestUpdates.map((u, i) => (
+              <Card key={i} className="p-4 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+                <p className={`font-semibold text-${u.color}-400`}>{u.type}</p>
+                <p className="text-sm mb-1">{u.message}</p>
+                <p className="text-xs text-gray-400">{u.time}</p>
+              </Card>
+            ))}
           </div>
         </div>
 
@@ -117,10 +133,10 @@ const RecruiterDashboardPage = () => {
           </CardHeader>
           <Separator className="w-full mb-4 bg-gray-700" />
           <CardContent className="p-0 text-gray-300 space-y-2">
-            <p><strong className="font-semibold text-gray-100">Jobs Posted:</strong> 5</p>
-            <p><strong className="font-semibold text-gray-100">Active Listings:</strong> 3</p>
-            <p><strong className="font-semibold text-gray-100">Total Applicants:</strong> 27</p>
-            <p><strong className="font-semibold text-gray-100">Interviews Scheduled:</strong> 4</p>
+            <p><strong className="font-semibold text-gray-100">Jobs Posted:</strong> {stats.jobsPosted}</p>
+            <p><strong className="font-semibold text-gray-100">Active Listings:</strong> {stats.activeListings}</p>
+            <p><strong className="font-semibold text-gray-100">Total Applicants:</strong> {stats.totalApplicants}</p>
+            <p><strong className="font-semibold text-gray-100">Interviews Scheduled:</strong> {stats.interviewsScheduled}</p>
           </CardContent>
         </Card>
       </div>

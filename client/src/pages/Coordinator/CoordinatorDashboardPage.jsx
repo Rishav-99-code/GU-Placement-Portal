@@ -27,6 +27,8 @@ const CoordinatorDashboardPage = () => {
   // Store the entire user object fetched from profileService, not just coordinatorProfile
   const [fullUserDetails, setFullUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [pendingJobs, setPendingJobs] = useState([]);
+  const [approving, setApproving] = useState(false);
 
   useEffect(() => {
     if (!authState.isAuthenticated || authState.user?.role !== 'coordinator') {
@@ -50,6 +52,17 @@ const CoordinatorDashboardPage = () => {
       }
     };
     fetchCoordinatorProfile();
+    // Fetch pending jobs for approval
+    const fetchPendingJobs = async () => {
+      try {
+        const res = await fetch('/api/jobs/all');
+        const jobs = await res.json();
+        setPendingJobs(jobs.filter(j => !j.approved));
+      } catch (err) {
+        setPendingJobs([]);
+      }
+    };
+    fetchPendingJobs();
   }, [authState, navigate, logout]);
 
   if (loading || !fullUserDetails) { // Ensure fullUserDetails is available
@@ -161,7 +174,7 @@ const CoordinatorDashboardPage = () => {
         </div>
       </div>
 
-      {/* Right Panel: Alerts and Quick Facts */}
+      {/* Right Panel: Alerts, Pending Jobs, and Quick Facts */}
       <div className="w-full lg:w-1/2 bg-gray-900 text-gray-200 p-4 sm:p-8 lg:p-12 flex flex-col justify-between">
         
         {/* Top Right Controls (Logout, Change Password, Theme Toggle) */}
@@ -175,7 +188,45 @@ const CoordinatorDashboardPage = () => {
             <button className="text-gray-400 hover:text-gray-300 active:scale-[0.98]">☀️</button>
         </div>
 
-        {/* Important Alerts / Announcements */}
+        {/* Pending Job Approvals */}
+        <div className="mb-8">
+          <h3 className="text-2xl font-bold text-gray-50 mb-4">Pending Job Approvals</h3>
+          {pendingJobs.length === 0 ? (
+            <p className="text-gray-400">No jobs pending approval.</p>
+          ) : (
+            <div className="space-y-4">
+              {pendingJobs.map(job => (
+                <Card key={job.id} className="p-4 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+                  <CardTitle className="text-lg font-bold text-blue-400">{job.company}</CardTitle>
+                  <CardContent>
+                    <p><strong>Title:</strong> {job.title}</p>
+                    <p><strong>Location:</strong> {job.location}</p>
+                    <p><strong>Type:</strong> {job.type}</p>
+                    <p><strong>Description:</strong> {job.description}</p>
+                    <p><strong>Company Details:</strong> {job.companyDetails}</p>
+                    {job.logoUrl && <img src={job.logoUrl} alt="Logo" className="h-10 mt-2" />}
+                    <Button
+                      className="mt-4 bg-green-600 hover:bg-green-700 text-white"
+                      disabled={approving}
+                      onClick={async () => {
+                        setApproving(true);
+                        try {
+                          await fetch(`/api/jobs/${job.id}/approve`, { method: 'PATCH' });
+                          setPendingJobs(pendingJobs.filter(j => j.id !== job.id));
+                          toast.success('Job approved!');
+                        } catch (err) {
+                          toast.error('Failed to approve job');
+                        } finally {
+                          setApproving(false);
+                        }
+                      }}
+                    >Approve</Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
         <div className="mb-8">
           <h3 className="text-2xl font-bold text-gray-50 mb-4">Important Alerts</h3>
           <div className="space-y-4">

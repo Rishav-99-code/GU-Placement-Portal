@@ -11,6 +11,7 @@ import ForgotPasswordPage from './pages/Auth/ForgotPassword';
 import ResetPasswordPage from './pages/Auth/ResetPasswordPage';
 
 import StudentDashboardPage from './pages/Student/StudentDashboardPage';
+
 import RecruiterDashboardPage from './pages/Recruiter/RecruiterDashboardPage';
 import CoordinatorDashboardPage from './pages/Coordinator/CoordinatorDashboardPage';
 
@@ -20,6 +21,8 @@ import CoordinatorProfilePage from './pages/Coordinator/CoordinatorProfilePage';
 
 import AvailableJobsPage from './pages/Student/AvailableJobsPage';
 import StudentApplicationsPage from './pages/Student/StudentApplicationsPage'; // NEW: Import StudentApplicationsPage
+
+import CreateJobPage from './pages/Recruiter/CreateJobPage';
 
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
@@ -86,6 +89,7 @@ function App() {
 
             <Route path="/recruiter/dashboard" element={<PrivateRoute allowedRoles={['recruiter']}><RecruiterDashboardPage /></PrivateRoute>} />
             <Route path="/recruiter/profile" element={<PrivateRoute allowedRoles={['recruiter']}><RecruiterProfilePage /></PrivateRoute>} />
+            <Route path="/recruiter/create-job" element={<PrivateRoute allowedRoles={['recruiter']}><CreateJobPage /></PrivateRoute>} />
 
             <Route path="/coordinator/dashboard" element={<PrivateRoute allowedRoles={['coordinator']}><CoordinatorDashboardPage /></PrivateRoute>} />
             <Route path="/coordinator/profile" element={<PrivateRoute allowedRoles={['coordinator']}><CoordinatorProfilePage /></PrivateRoute>} />

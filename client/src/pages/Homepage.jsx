@@ -10,7 +10,7 @@ import guistImage from '../assets/images/guist.jpg';
 
 const PlaceholderCompanyLogo = ({ src, alt }) => (
   <img
-    src={src || `https://via.placeholder.com/150x80?text=${alt}`} 
+    src={src || `https://placehold.co/150x80?text=${alt}`} 
     alt={alt}
     className="h-20 w-auto object-contain transition-transform duration-300 hover:scale-105"
   />
@@ -90,7 +90,7 @@ const HomePage = () => {
             </div>
             <div className="flex justify-center items-center">
               <img
-                src="https://via.placeholder.com/600x400?text=Overview+Image" 
+                src="https://placehold.co/600x400?text=Overview+Image" 
                 alt="Overview"
                 className="rounded-lg shadow-xl max-w-full h-auto transform transition-transform duration-500 hover:scale-105"
               />

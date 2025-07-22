@@ -104,31 +104,53 @@ const AvailableJobsPage = () => {
         <p className="text-center text-lg text-gray-400">No jobs found matching your criteria.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {jobs.map((job) => (
-            <Card key={job._id} className="bg-gray-800 text-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg overflow-hidden">
-              <CardHeader className="border-b border-gray-700 pb-4">
-                <CardTitle className="text-xl font-semibold text-gray-50">{job.title}</CardTitle>
-                <CardDescription className="text-gray-400">{job.company}</CardDescription>
-              </CardHeader>
-              <CardContent className="p-4">
-                <div className="space-y-2 text-sm">
-                  <p><strong>Location:</strong> {job.location || 'N/A'}</p>
-                  <p><strong>Type:</strong> <Badge className="bg-purple-600 hover:bg-purple-700 text-white">{job.type || 'N/A'}</Badge></p>
-                  <p className="text-gray-300 line-clamp-3">{job.description || 'No description provided.'}</p>
-                </div>
-                <Separator className="my-4 bg-gray-700" />
-                <div className="flex justify-between items-center">
-                  <span className="text-xs text-gray-500">
-                    Posted: {job.postedDate ? new Date(job.postedDate).toLocaleDateString() : 'N/A'}
-                  </span>
-                  {/* Link to a detailed job page (you'll create this later) */}
-                  <Button asChild className="bg-purple-600 hover:bg-purple-700 text-white transition-colors duration-200">
-                    <Link to={`/student/jobs/${job._id}`}>View Details</Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+          {jobs.map((job) => {
+            // Map company names to their official websites
+            const companyWebsites = {
+              Google: 'https://www.google.com/careers',
+              Microsoft: 'https://careers.microsoft.com',
+              Amazon: 'https://www.amazon.jobs',
+              Meta: 'https://www.metacareers.com',
+              Apple: 'https://www.apple.com/careers',
+              IBM: 'https://www.ibm.com/employment',
+              Netflix: 'https://jobs.netflix.com',
+              Adobe: 'https://www.adobe.com/careers',
+              Cisco: 'https://jobs.cisco.com',
+              Samsung: 'https://www.samsungcareers.com',
+              Infosys: 'https://www.infosys.com/careers',
+              Wipro: 'https://careers.wipro.com',
+              TCS: 'https://www.tcs.com/careers',
+              Reliance: 'https://careers.ril.com',
+              HCL: 'https://www.hcltech.com/careers',
+            };
+            const companyUrl = companyWebsites[job.company] || `https://www.google.com/search?q=${encodeURIComponent(job.company + ' careers')}`;
+            return (
+              <Card key={job._id || job.id} className="bg-gray-800 text-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg overflow-hidden">
+                <CardHeader className="border-b border-gray-700 pb-4">
+                  <CardTitle className="text-xl font-bold text-blue-400">
+                    <a href={companyUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">{job.company}</a>
+                  </CardTitle>
+                  <CardDescription className="text-gray-400">{job.title}</CardDescription>
+                </CardHeader>
+                <CardContent className="p-4">
+                  <div className="space-y-2 text-sm">
+                    <p><strong>Location:</strong> {job.location || 'N/A'}</p>
+                    <p><strong>Type:</strong> <Badge className="bg-purple-600 hover:bg-purple-700 text-white">{job.type || 'N/A'}</Badge></p>
+                    <p className="text-gray-300 line-clamp-3">{job.description || 'No description provided.'}</p>
+                  </div>
+                  <Separator className="my-4 bg-gray-700" />
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-500">
+                      Posted: {job.postedDate ? new Date(job.postedDate).toLocaleDateString() : 'N/A'}
+                    </span>
+                    <Button asChild className="bg-purple-600 hover:bg-purple-700 text-white transition-colors duration-200">
+                      <Link to={`/student/jobs/${job._id || job.id}`}>View Details</Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
     </div>
