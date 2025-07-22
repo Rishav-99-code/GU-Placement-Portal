@@ -57,12 +57,14 @@ const CoordinatorDashboardPage = () => {
       try {
         const res = await fetch('/api/jobs/all');
         const jobs = await res.json();
-        setPendingJobs(jobs.filter(j => !j.approved));
+        setPendingJobs(jobs.filter(j => j.status === 'pending_approval'));
       } catch (err) {
         setPendingJobs([]);
       }
     };
     fetchPendingJobs();
+    // Save for later use
+    CoordinatorDashboardPage.fetchPendingJobs = fetchPendingJobs;
   }, [authState, navigate, logout]);
 
   if (loading || !fullUserDetails) { // Ensure fullUserDetails is available
@@ -196,7 +198,7 @@ const CoordinatorDashboardPage = () => {
           ) : (
             <div className="space-y-4">
               {pendingJobs.map(job => (
-                <Card key={job.id} className="p-4 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+                <Card key={job._id} className="p-4 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
                   <CardTitle className="text-lg font-bold text-blue-400">{job.company}</CardTitle>
                   <CardContent>
                     <p><strong>Title:</strong> {job.title}</p>
@@ -211,8 +213,9 @@ const CoordinatorDashboardPage = () => {
                       onClick={async () => {
                         setApproving(true);
                         try {
-                          await fetch(`/api/jobs/${job.id}/approve`, { method: 'PATCH' });
-                          setPendingJobs(pendingJobs.filter(j => j.id !== job.id));
+                          await fetch(`/api/jobs/${job._id}/approve`, { method: 'PATCH' });
+                          // Re-fetch jobs after approval
+                          await CoordinatorDashboardPage.fetchPendingJobs();
                           toast.success('Job approved!');
                         } catch (err) {
                           toast.error('Failed to approve job');

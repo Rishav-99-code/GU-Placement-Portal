@@ -141,7 +141,7 @@ const AvailableJobsPage = () => {
                   <Separator className="my-4 bg-gray-700" />
                   <div className="flex justify-between items-center">
                     <span className="text-xs text-gray-500">
-                      Posted: {job.postedDate ? new Date(job.postedDate).toLocaleDateString() : 'N/A'}
+                      Posted: {job.createdAt ? new Date(job.createdAt).toLocaleDateString() : 'N/A'}
                     </span>
                     <Button asChild className="bg-purple-600 hover:bg-purple-700 text-white transition-colors duration-200">
                       <Link to={`/student/jobs/${job._id || job.id}`}>View Details</Link>

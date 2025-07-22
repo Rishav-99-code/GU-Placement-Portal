@@ -40,6 +40,9 @@ const CreateJobPage = () => {
       const res = await fetch('/api/jobs', {
         method: 'POST',
         body: formData,
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
       });
       const data = await res.json();
       if (res.ok) {
