@@ -14,7 +14,33 @@ const RecruiterProfilePage = () => {
 
   const [companyName, setCompanyName] = useState(user?.recruiterDetails?.companyName || '');
   const [companyWebsite, setCompanyWebsite] = useState(user?.recruiterDetails?.companyWebsite || '');
+  const [logo, setLogo] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const handleLogoChange = (e) => {
+    setLogo(e.target.files[0]);
+  };
+
+  const handleLogoUpload = async () => {
+    if (!logo) {
+      toast.error('Please select a logo to upload.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append('logo', logo);
+
+      const response = await profileService.updateRecruiterLogo(formData);
+      login(response.token, response);
+      toast.success('Logo uploaded successfully!');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to upload logo');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -76,6 +102,25 @@ const RecruiterProfilePage = () => {
             </Button>
           </div>
         </form>
+
+        <div className="mt-8">
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">Company Logo</h3>
+          {user?.recruiterDetails?.logoUrl && (
+            <div className="mb-4">
+              <img
+                src={`http://localhost:5000${user.recruiterDetails.logoUrl}`}
+                alt="Company Logo"
+                className="w-32 h-32 object-cover rounded-md"
+              />
+            </div>
+          )}
+          <div className="flex items-center space-x-4">
+            <Input type="file" onChange={handleLogoChange} />
+            <Button onClick={handleLogoUpload} disabled={loading || !logo}>
+              {loading ? 'Uploading...' : 'Upload Logo'}
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

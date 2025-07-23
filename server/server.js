@@ -7,6 +7,7 @@ const userRoutes = require('./routes/userRoutes');
 const applicationRoutes = require('./routes/applicationRoutes');
 const errorHandler = require('./middleware/errorHandler');
 const cors = require('cors'); // <--- Ensure this import is here
+const path = require('path'); // Import the path module
 
 // Load environment variables
 dotenv.config();
@@ -18,6 +19,9 @@ const app = express();
 
 // Middleware
 app.use(express.json()); // Body parser for JSON data
+
+// Serve static files from the 'uploads' directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // CORS Middleware: This line is CRUCIAL and should be before your routes
 // Using a specific origin is recommended for production for security.

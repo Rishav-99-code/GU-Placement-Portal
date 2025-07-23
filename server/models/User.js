@@ -24,6 +24,7 @@ const userSchema = mongoose.Schema(
     recruiterProfile: {
       companyName: { type: String },
       companyWebsite: { type: String },
+      logoUrl: { type: String },
     },
     coordinatorProfile: {
       department: { type: String },
@@ -62,7 +63,8 @@ userSchema.pre('save', async function (next) {
     } else if (this.role === 'recruiter' && this.recruiterProfile) {
       this.isProfileComplete = !!(
         this.recruiterProfile.companyName &&
-        this.recruiterProfile.companyWebsite
+        this.recruiterProfile.companyWebsite &&
+        this.recruiterProfile.logoUrl
       );
     } else if (this.role === 'coordinator' && this.coordinatorProfile) {
       this.isProfileComplete = !!this.coordinatorProfile.department;

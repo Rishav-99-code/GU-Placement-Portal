@@ -13,7 +13,9 @@ const RecruiterDashboardPage = () => {
   const { authState, logout } = useContext(AuthContext);
   const user = authState.user;
   const userName = user?.name || 'Recruiter';
-  const profilePic = user?.profilePicUrl || 'https://placehold.co/150x150?text=Profile';
+  const logoUrl = user?.recruiterDetails?.logoUrl
+    ? `http://localhost:5000${user.recruiterDetails.logoUrl}`
+    : 'https://placehold.co/150x150?text=Logo';
 
   // State for dashboard stats
   const [stats, setStats] = React.useState({ jobsPosted: 0, activeListings: 0, totalApplicants: 0, interviewsScheduled: 0 });
@@ -51,7 +53,7 @@ const RecruiterDashboardPage = () => {
         <div className="mb-8">
           <div className="flex items-center mb-6">
             <Avatar className="w-24 h-24 mr-4 ring-2 ring-blue-600 ring-offset-2 ring-offset-gray-800">
-              <AvatarImage src={profilePic} alt="Profile Picture" />
+              <AvatarImage src={logoUrl} alt="Company Logo" />
               <AvatarFallback className="text-3xl font-bold text-gray-300">{userName.charAt(0)}</AvatarFallback>
             </Avatar>
             <div>

@@ -107,6 +107,37 @@ const updateProfile = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Update recruiter logo
+// @route   PUT /api/users/profile/logo
+// @access  Private (Recruiters only)
+const updateRecruiterLogo = asyncHandler(async (req, res) => {
+  if (!req.file) {
+    res.status(400);
+    throw new Error('Please upload a file');
+  }
+
+  const user = await User.findById(req.user._id);
+
+  if (user && user.role === 'recruiter') {
+    user.recruiterProfile.logoUrl = `/uploads/${req.file.filename}`;
+    const updatedUser = await user.save();
+
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      role: updatedUser.role,
+      isProfileComplete: updatedUser.isProfileComplete,
+      isApproved: updatedUser.isApproved,
+      token: generateToken(updatedUser._id, updatedUser.role),
+      recruiterDetails: updatedUser.recruiterProfile || {},
+    });
+  } else {
+    res.status(404);
+    throw new Error('User not found or not a recruiter');
+  }
+});
+
 // @desc    Request password reset email
 // @route   POST /api/users/forgotpassword
 // @access  Public
@@ -189,6 +220,7 @@ const resetPassword = asyncHandler(async (req, res) => {
 module.exports = {
   getUserProfile,
   updateProfile,
+  updateRecruiterLogo,
   forgotPassword, // New export
   resetPassword,  // New export
 };

@@ -25,9 +25,22 @@ const updateProfile = async (profileData) => {
   return response.data;
 };
 
+// Update recruiter logo
+const updateRecruiterLogo = async (logoData) => {
+  const token = localStorage.getItem('token');
+  const response = await axios.put(`${API_URL}/profile/logo`, logoData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
 const profileService = {
   getProfile,
   updateProfile,
+  updateRecruiterLogo,
 };
 
 export default profileService;
