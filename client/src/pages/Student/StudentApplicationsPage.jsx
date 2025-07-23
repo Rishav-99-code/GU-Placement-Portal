@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../..
 import { Badge } from '../../components/ui/badge';
 import { Separator } from '../../components/ui/separator';
 import applicationService from '../../services/applicationService';
+import interviewService from '../../services/interviewService';
 import toast from 'react-hot-toast';
 
 const StudentApplicationsPage = () => {
@@ -11,13 +12,24 @@ const StudentApplicationsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [interviewMap, setInterviewMap] = useState({});
+
   useEffect(() => {
     const fetchApplications = async () => {
       try {
         setLoading(true);
         setError(null);
-        const fetchedApplications = await applicationService.getStudentApplications();
-        setApplications(fetchedApplications);
+        const [apps, interviews] = await Promise.all([
+          applicationService.getStudentApplications(),
+          interviewService.getMySchedules(),
+        ]);
+
+        const iMap = {};
+        interviews.forEach(iv => {
+          if (iv.job) iMap[iv.job._id] = iv.dateTime;
+        });
+        setInterviewMap(iMap);
+        setApplications(apps);
       } catch (err) {
         console.error('Error fetching applications:', err);
         setError('Failed to load your applications. Please try again later.');
@@ -42,6 +54,8 @@ const StudentApplicationsPage = () => {
         return 'bg-red-600 hover:bg-red-700';
       case 'offered':
         return 'bg-green-600 hover:bg-green-700';
+      case 'applied':
+        return 'bg-gray-500 hover:bg-gray-600';
       default:
         return 'bg-gray-500 hover:bg-gray-600';
     }
@@ -82,9 +96,21 @@ const StudentApplicationsPage = () => {
                   <p><strong>Applied On:</strong> {app.appliedDate ? new Date(app.appliedDate).toLocaleDateString() : 'N/A'}</p>
                   <p>
                     <strong>Status:</strong>{' '}
-                    <Badge className={`${getStatusColor(app.status || 'Unknown')} text-white`}>
-                      {app.status || 'N/A'}
-                    </Badge>
+                    {(() => {
+                      const interviewDate = interviewMap[app.jobId];
+                      if (interviewDate) {
+                        return (
+                          <Badge className={`${getStatusColor('interview scheduled')} text-white`}>
+                            Interview: {new Date(interviewDate).toLocaleDateString()}
+                          </Badge>
+                        );
+                      }
+                      return (
+                        <Badge className={`${getStatusColor('applied')} text-white`}>
+                          Applied
+                        </Badge>
+                      );
+                    })()}
                   </p>
                   <p className="text-gray-300">
                     <strong>Location:</strong> {app.jobLocation || 'N/A'}
