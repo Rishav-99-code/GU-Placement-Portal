@@ -36,6 +36,16 @@ const jobService = {
     }
   },
 
+  getMyJobs: async () => {
+    try {
+      const response = await api.get('/api/jobs/my-jobs');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching my jobs:', error);
+      throw error;
+    }
+  },
+
   // You might add more functions later, e.g., applyForJob:
   // applyForJob: async (jobId, applicationData) => { ... }
 };

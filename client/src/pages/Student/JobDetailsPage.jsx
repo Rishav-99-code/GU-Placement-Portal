@@ -1,7 +1,7 @@
 // frontend/src/pages/Student/JobDetailsPage.js
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Separator } from '../../components/ui/separator';
 import { Badge } from '../../components/ui/badge';

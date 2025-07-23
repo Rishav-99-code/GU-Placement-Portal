@@ -4,7 +4,7 @@ const router = express.Router();
 const jobController = require('../controllers/jobController');
 const multer = require('multer');
 const path = require('path');
-const { protect } = require('../middleware/authMiddleware');
+const { protect, authorizeRoles } = require('../middleware/authMiddleware');
 
 // Set up multer storage for logo uploads
 const storage = multer.diskStorage({
@@ -28,12 +28,6 @@ const upload = multer({
   }
 });
 
-// Dummy GET route for job applicants
-router.get('/:id/applicants', (req, res) => {
-  // Return an empty array or dummy applicants for now
-  res.json([]);
-});
-
 // GET approved jobs for students
 router.get('/', jobController.getApprovedJobsWithLogo);
 
@@ -42,6 +36,15 @@ router.post('/', protect, upload.single('logoFile'), jobController.createJob);
 
 // GET all jobs (for coordinator dashboard)
 router.get('/all', jobController.getAllJobs);
+
+// GET jobs by recruiter
+router.get('/my-jobs', protect, authorizeRoles('recruiter'), jobController.getJobsByRecruiter);
+
+// GET all applicants for a specific job (recruiter view)
+router.get('/:jobId/applicants', protect, authorizeRoles('recruiter'), jobController.getJobApplicants);
+
+// GET a single job by ID (should be last to avoid conflicts)
+router.get('/:id', jobController.getJobById);
 
 // PATCH approve job (for coordinator)
 router.patch('/:id/approve', jobController.approveJob);

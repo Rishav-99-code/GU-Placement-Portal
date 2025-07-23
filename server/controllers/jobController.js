@@ -1,5 +1,6 @@
 const Job = require('../models/Job');
 const User = require('../models/User');
+const Application = require('../models/Application');
 
 // Get all approved jobs with recruiter logo
 const getApprovedJobsWithLogo = async (req, res) => {
@@ -23,6 +24,41 @@ const getApprovedJobsWithLogo = async (req, res) => {
     res.json(jobsWithLogo);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch jobs' });
+  }
+};
+
+// Get all applicants for a specific job
+const getJobApplicants = async (req, res) => {
+  try {
+    const { jobId } = req.params;
+    
+    // First check if the job exists
+    const job = await Job.findById(jobId);
+    if (!job) {
+      return res.status(404).json({ message: 'Job not found.' });
+    }
+
+    // Verify that the recruiter requesting is the one who posted the job
+    if (job.postedBy.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized to view these applications.' });
+    }
+
+    // Get applications with populated student data
+    const applications = await Application.find({ job: jobId })
+      .populate({
+        path: 'student',
+        select: 'name email studentProfile'
+      });
+
+    // Return empty array if no applications found
+    if (!applications || applications.length === 0) {
+      return res.json([]);
+    }
+
+    res.json(applications);
+  } catch (err) {
+    console.error('Error in getJobApplicants:', err);
+    res.status(500).json({ error: 'Failed to fetch job applicants', message: err.message });
   }
 };
 
@@ -88,4 +124,26 @@ const approveJob = async (req, res) => {
   }
 };
 
-module.exports = { getApprovedJobsWithLogo, createJob, getAllJobs, approveJob };
+// Get single job details by ID
+const getJobById = async (req, res) => {
+  try {
+    const job = await Job.findById(req.params.id);
+    if (!job) {
+      return res.status(404).json({ message: 'Job not found' });
+    }
+    res.json(job);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch job details' });
+  }
+};
+
+const getJobsByRecruiter = async (req, res) => {
+  try {
+    const jobs = await Job.find({ postedBy: req.user._id });
+    res.json(jobs);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch jobs' });
+  }
+};
+
+module.exports = { getApprovedJobsWithLogo, createJob, getAllJobs, approveJob, getJobById, getJobsByRecruiter, getJobApplicants };

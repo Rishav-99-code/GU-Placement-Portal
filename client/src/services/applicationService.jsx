@@ -26,10 +26,25 @@ const applicationService = {
   applyForJob: async (jobId, applicationData) => {
     try {
       // Endpoint for submitting an application
-      const response = await api.post(`/api/jobs/${jobId}/apply`, applicationData); // Example endpoint
+      const response = await api.post(`/api/applications/jobs/${jobId}/apply`, applicationData); // Corrected endpoint
       return response.data;
     } catch (error) {
       console.error(`Error applying for job ${jobId}:`, error);
+      throw error;
+    }
+  },
+
+  /**
+   * Fetches all applicants for a specific job (recruiter view).
+   * @param {string} jobId - The ID of the job.
+   * @returns {Promise<Array>} A promise that resolves to an array of application objects with student details.
+   */
+  getApplicantsForJob: async (jobId) => {
+    try {
+      const response = await api.get(`/api/jobs/${jobId}/applicants`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching applicants for job ${jobId}:`, error);
       throw error;
     }
   },

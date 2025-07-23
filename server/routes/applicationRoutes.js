@@ -3,6 +3,8 @@ const express = require('express');
 const router = express.Router();
 const { protect, authorizeRoles } = require('../middleware/authMiddleware');
 const Application = require('../models/Application');
+const Job = require('../models/Job');
+const User = require('../models/User');
 
 // @desc    Get all applications for the logged-in student
 // @route   GET /api/applications/student
@@ -37,48 +39,35 @@ router.get('/student', protect, authorizeRoles('student'), async (req, res) => {
   }
 });
 
-// NOTE: You will also need routes for creating applications (e.g., applying for a job).
-// For instance:
-// router.post('/jobs/:jobId/apply', protect, authorize(['student']), async (req, res) => {
-//   try {
-//     const { jobId } = req.params;
-//     const { coverLetter, resumeUrl } = req.body; // Example fields you might get from frontend
-
-//     // Basic validation
-//     if (!jobId) {
-//       return res.status(400).json({ message: 'Job ID is required.' });
-//     }
-
-//     // Check if job exists
-//     const job = await Job.findById(jobId); // Assuming you have a Job model
-//     if (!job) {
-//       return res.status(404).json({ message: 'Job not found.' });
-//     }
-
-//     // Check if student has already applied
-//     const existingApplication = await Application.findOne({ student: req.user._id, job: jobId });
-//     if (existingApplication) {
-//       return res.status(400).json({ message: 'You have already applied for this job.' });
-//     }
-
-//     const newApplication = new Application({
-//       student: req.user._id,
-//       job: jobId,
-//       appliedDate: new Date(),
-//       status: 'Pending', // Initial status
-//       coverLetter, // Save optional fields
-//       resumeUrl: resumeUrl || req.user.studentDetails.resumeUrl, // Use uploaded or profile resume
-//     });
-
-//     await newApplication.save();
-
-//     res.status(201).json({ message: 'Application submitted successfully!', application: newApplication });
-
-//   } catch (err) {
-//     console.error(err.message);
-//     res.status(500).json({ message: 'Server error: Could not submit application.' });
-//   }
-// });
-
+// @desc    Student applies for a job
+// @route   POST /api/applications/jobs/:jobId/apply
+// @access  Private (Students only)
+router.post('/jobs/:jobId/apply', protect, authorizeRoles('student'), async (req, res) => {
+  try {
+    const { jobId } = req.params;
+    // Check if job exists
+    const job = await Job.findById(jobId);
+    if (!job) {
+      return res.status(404).json({ message: 'Job not found.' });
+    }
+    // Check if already applied
+    const existing = await Application.findOne({ student: req.user._id, job: jobId });
+    if (existing) {
+      return res.status(400).json({ message: 'You have already applied for this job.' });
+    }
+    // Create application
+    const application = new Application({
+      student: req.user._id,
+      job: jobId,
+      status: 'applied',
+      appliedAt: new Date(),
+    });
+    await application.save();
+    res.status(201).json({ message: 'Application submitted successfully!', application });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: 'Server error: Could not submit application.' });
+  }
+});
 
 module.exports = router;

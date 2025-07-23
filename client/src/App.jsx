@@ -21,8 +21,10 @@ import CoordinatorProfilePage from './pages/Coordinator/CoordinatorProfilePage';
 
 import AvailableJobsPage from './pages/Student/AvailableJobsPage';
 import StudentApplicationsPage from './pages/Student/StudentApplicationsPage'; // NEW: Import StudentApplicationsPage
+import JobDetailsPage from './pages/Student/JobDetailsPage';
 
 import CreateJobPage from './pages/Recruiter/CreateJobPage';
+import ViewApplicationsPage from './pages/Recruiter/ViewApplicationsPage';
 
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
@@ -86,10 +88,12 @@ function App() {
             <Route path="/student/profile" element={<PrivateRoute allowedRoles={['student']}><StudentProfilePage /></PrivateRoute>} />
             <Route path="/student/jobs" element={<PrivateRoute allowedRoles={['student']}><AvailableJobsPage /></PrivateRoute>} />
             <Route path="/student/applications" element={<PrivateRoute allowedRoles={['student']}><StudentApplicationsPage /></PrivateRoute>} /> {/* NEW: StudentApplicationsPage Route */}
+            <Route path="/student/jobs/:jobId" element={<PrivateRoute allowedRoles={['student']}><JobDetailsPage /></PrivateRoute>} />
 
             <Route path="/recruiter/dashboard" element={<PrivateRoute allowedRoles={['recruiter']}><RecruiterDashboardPage /></PrivateRoute>} />
             <Route path="/recruiter/profile" element={<PrivateRoute allowedRoles={['recruiter']}><RecruiterProfilePage /></PrivateRoute>} />
             <Route path="/recruiter/create-job" element={<PrivateRoute allowedRoles={['recruiter']}><CreateJobPage /></PrivateRoute>} />
+            <Route path="/recruiter/view-applications" element={<PrivateRoute allowedRoles={['recruiter']}><ViewApplicationsPage /></PrivateRoute>} />
 
             <Route path="/coordinator/dashboard" element={<PrivateRoute allowedRoles={['coordinator']}><CoordinatorDashboardPage /></PrivateRoute>} />
             <Route path="/coordinator/profile" element={<PrivateRoute allowedRoles={['coordinator']}><CoordinatorProfilePage /></PrivateRoute>} />

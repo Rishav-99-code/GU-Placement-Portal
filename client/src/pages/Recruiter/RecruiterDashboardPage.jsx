@@ -6,6 +6,8 @@ import { Button } from '../../components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Separator } from '../../components/ui/separator';
+import jobService from '../../services/jobService';
+import applicationService from '../../services/applicationService';
 
 const RecruiterDashboardPage = () => {
   const { authState, logout } = useContext(AuthContext);
@@ -17,24 +19,26 @@ const RecruiterDashboardPage = () => {
   const [stats, setStats] = React.useState({ jobsPosted: 0, activeListings: 0, totalApplicants: 0, interviewsScheduled: 0 });
   const [latestUpdates, setLatestUpdates] = React.useState([]);
   React.useEffect(() => {
-    // Fetch jobs
-    fetch('/api/jobs')
-      .then(res => res.json())
-      .then(jobs => {
-        setStats(s => ({ ...s, jobsPosted: jobs.length, activeListings: jobs.filter(j => j.active !== false).length }));
+    const fetchData = async () => {
+      try {
+        const jobs = await jobService.getMyJobs();
+        setStats(s => ({ ...s, jobsPosted: jobs.length, activeListings: jobs.filter(j => j.status === 'active').length }));
+        
         setLatestUpdates([
           { type: 'Reminder', color: 'blue', message: `Don’t forget to review pending applications for the ${jobs[1]?.title || 'Backend Developer'} role.`, time: '10 minutes ago' },
           { type: 'New Applicants', color: 'green', message: `3 new candidates applied for ${jobs[0]?.title || 'Frontend Engineer'}.`, time: 'Today' },
           { type: 'Event', color: 'purple', message: 'Join the Virtual Career Fair this Friday at 2 PM.', time: '2 days ago' },
         ]);
-        // Fetch applicants for all jobs
-        Promise.all(jobs.map(job => fetch(`/api/jobs/${job.id}/applicants`).then(r => r.json()))).then(applicantsArr => {
-          const totalApplicants = applicantsArr.reduce((sum, arr) => sum + arr.length, 0);
-          // For demo, interviewsScheduled = applicants with status 'interview'
-          const interviewsScheduled = applicantsArr.flat().filter(a => a.status === 'interview').length;
-          setStats(s => ({ ...s, totalApplicants, interviewsScheduled }));
-        });
-      });
+
+        const applicantsArr = await Promise.all(jobs.map(job => applicationService.getApplicantsForJob(job._id)));
+        const totalApplicants = applicantsArr.reduce((sum, arr) => sum + arr.length, 0);
+        const interviewsScheduled = applicantsArr.flat().filter(a => a.status === 'interview').length;
+        setStats(s => ({ ...s, totalApplicants, interviewsScheduled }));
+      } catch (error) {
+        console.error("Failed to fetch dashboard data:", error);
+      }
+    };
+    fetchData();
   }, []);
 
   return (

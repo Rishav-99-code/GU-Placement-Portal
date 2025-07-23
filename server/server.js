@@ -29,16 +29,15 @@ app.use(cors({
 }));
 
 
-// Mount Routes
-app.use('/api/auth', authRoutes); // Handles authentication (register, login, etc.)
-app.use('/api/users', userRoutes); // Handles general user-related operations (e.g., fetching user details)
-app.use('/api/applications', applicationRoutes); // Handles all routes defined in applicationRoutes.js (e.g., /api/applications/student)
-
+// API Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 const jobRoutes = require('./routes/jobRoutes');
 app.use('/api/jobs', jobRoutes);
+app.use('/api/applications', applicationRoutes); // Handles all routes defined in applicationRoutes.js (e.g., /api/applications/student)
 
 
-// Error Handling Middleware (should be the last middleware)
+// Error Handling Middleware (should be last)
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
