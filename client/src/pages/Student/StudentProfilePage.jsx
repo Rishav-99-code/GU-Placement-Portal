@@ -38,20 +38,20 @@ const StudentProfilePage = () => {
 
         // Populate formData from the fetched data
         setFormData({
-            usn: data.studentDetails?.usn || '',
-            program: data.studentDetails?.program || '',
-            branch: data.studentDetails?.branch || '',
-            phoneNumber: data.studentDetails?.phoneNumber || '',
-            currentSemester: data.studentDetails?.currentSemester || '',
-            resumeUrl: data.studentDetails?.resumeUrl || '',
-            profilePicUrl: data.studentDetails?.profilePicUrl || '',
+            usn: data.studentProfile?.usn || '',
+            program: data.studentProfile?.program || '',
+            branch: data.studentProfile?.branch || '',
+            phoneNumber: data.studentProfile?.phoneNumber || '',
+            currentSemester: data.studentProfile?.currentSemester || '',
+            resumeUrl: data.studentProfile?.resumeUrl || '',
+            profilePicUrl: data.studentProfile?.profilePicUrl || '',
             resumeFile: null,
             profilePicFile: null,
         });
 
         // Also update the AuthContext user if it's not already complete
         // This is a safety measure to ensure AuthContext is in sync
-        if (!authState.user?.isProfileComplete && data.studentDetails && data.studentDetails.usn && data.studentDetails.program) {
+        if (!authState.user?.isProfileComplete && data.studentProfile && data.studentProfile.usn && data.studentProfile.program) {
              // Assuming the backend returns the isProfileComplete status
              updateUser({ ...authState.user, isProfileComplete: true, ...data }); // Merge current user with full profile data
         }
@@ -103,46 +103,32 @@ const StudentProfilePage = () => {
     e.preventDefault();
 
     if (!formData.usn || !formData.program || !formData.branch || !formData.phoneNumber || !formData.currentSemester) {
-      toast.error('Please fill in Roll Number, Program, Branch, Phone Number, and Current Semester.');
+      toast.error('Please fill in all required fields.');
       return;
     }
 
-    // Placeholder for actual file upload logic
-    let resumeUrlToSend = formData.resumeUrl;
-    let profilePicUrlToSend = formData.profilePicUrl;
+    const data = new FormData();
+    const studentProfile = {
+      usn: formData.usn,
+      program: formData.program,
+      branch: formData.branch,
+      phoneNumber: formData.phoneNumber,
+      currentSemester: formData.currentSemester,
+    };
+    data.append('studentProfile', JSON.stringify(studentProfile));
 
-    // IMPORTANT: In a real app, integrate with a file upload service (e.g., Cloudinary, S3)
-    // For now, we'll use dummy URLs if a new file is selected.
     if (formData.resumeFile) {
-        // Simulate upload and get a URL. Replace with actual upload logic.
-        resumeUrlToSend = `https://example.com/resumes/${authState.user?._id}-${Date.now()}.pdf`;
-        toast.success('Resume uploaded (simulated)!');
+      data.append('resume', formData.resumeFile);
     }
     if (formData.profilePicFile) {
-        // Simulate upload and get a URL. Replace with actual upload logic.
-        profilePicUrlToSend = `https://example.com/profilepics/${authState.user?._id}-${Date.now()}.jpg`;
-        toast.success('Profile picture uploaded (simulated)!');
+      data.append('profilePic', formData.profilePicFile);
     }
 
     try {
-      // The data sent to the backend should match what your backend expects for updating
-      const updatedStudentProfileData = {
-        studentProfile: {
-          usn: formData.usn,
-          program: formData.program,
-          branch: formData.branch,
-          phoneNumber: formData.phoneNumber,
-          currentSemester: formData.currentSemester,
-          resumeUrl: resumeUrlToSend,
-          profilePicUrl: profilePicUrlToSend,
-        }
-      };
-
-      await profileService.updateProfile(updatedStudentProfileData);
-
-      toast.success('Profile updated successfully! Please log in.');
-      navigate('/login');
-
+      const updatedUser = await profileService.updateStudentProfile(data);
+      updateUser(updatedUser); // Update user in AuthContext
+      toast.success('Profile updated successfully!');
+      navigate('/student/dashboard'); // Redirect to dashboard after successful update
     } catch (error) {
       const message =
         (error.response && error.response.data && error.response.data.message) ||
@@ -246,13 +232,13 @@ const StudentProfilePage = () => {
               id="resumeFile"
               type="file"
               accept=".pdf"
-              onChange={handleChange}
+              onChange={(e) => setFormData({ ...formData, resumeFile: e.target.files[0] })}
               className="bg-gray-700 border-gray-600 text-gray-200 file:bg-purple-600 file:text-white file:border-none file:hover:bg-purple-700 file:cursor-pointer"
             />
             {formData.resumeUrl && (
               <p className="text-sm text-gray-400 mt-1">
                 Current Resume:{' '}
-                <a href={formData.resumeUrl} target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:underline">
+                <a href={`http://localhost:5000${formData.resumeUrl}`} target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:underline">
                   View
                 </a>
               </p>
@@ -264,13 +250,13 @@ const StudentProfilePage = () => {
               id="profilePicFile"
               type="file"
               accept=".jpg,.jpeg,.png"
-              onChange={handleChange}
+              onChange={(e) => setFormData({ ...formData, profilePicFile: e.target.files[0] })}
               className="bg-gray-700 border-gray-600 text-gray-200 file:bg-purple-600 file:text-white file:border-none file:hover:bg-purple-700 file:cursor-pointer"
             />
             {formData.profilePicUrl && (
               <div className="mt-1">
                 <p className="text-sm text-gray-400">Current Profile Picture:</p>
-                <img src={formData.profilePicUrl} alt="Profile" className="w-20 h-20 rounded-full object-cover mt-2 ring-2 ring-purple-600 ring-offset-2 ring-offset-gray-800" />
+                <img src={`http://localhost:5000${formData.profilePicUrl}`} alt="Profile" className="w-20 h-20 rounded-full object-cover mt-2 ring-2 ring-purple-600 ring-offset-2 ring-offset-gray-800" />
               </div>
             )}
           </div>

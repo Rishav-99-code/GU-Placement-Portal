@@ -1,34 +1,42 @@
 // frontend/src/services/profileService.js
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/users'; // Base URL for user-related endpoints
+const API_URL = 'http://localhost:5000/api/profile'; // Corrected Base URL
 
 // Helper to get auth header with token
-const getAuthHeaders = () => {
+const getAuthHeaders = (isMultipart = false) => {
   const token = localStorage.getItem('token');
-  return {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+  const headers = {
+    Authorization: `Bearer ${token}`,
   };
+  if (isMultipart) {
+    headers['Content-Type'] = 'multipart/form-data';
+  }
+  return { headers };
 };
 
 // Get current user's profile
 const getProfile = async () => {
-  const response = await axios.get(`${API_URL}/profile`, getAuthHeaders());
+  const response = await axios.get(API_URL, getAuthHeaders());
   return response.data;
 };
 
-// Update current user's profile
+// Update student's profile
+const updateStudentProfile = async (formData) => {
+  const response = await axios.put(`${API_URL}/student`, formData, getAuthHeaders(true));
+  return response.data;
+};
+
+// Update current user's profile (for recruiter)
 const updateProfile = async (profileData) => {
-  const response = await axios.put(`${API_URL}/profile`, profileData, getAuthHeaders());
+  const response = await axios.put(API_URL, profileData, getAuthHeaders());
   return response.data;
 };
 
 // Update recruiter logo
 const updateRecruiterLogo = async (logoData) => {
   const token = localStorage.getItem('token');
-  const response = await axios.put(`${API_URL}/profile/logo`, logoData, {
+  const response = await axios.put(`http://localhost:5000/api/users/profile/logo`, logoData, {
     headers: {
       'Content-Type': 'multipart/form-data',
       Authorization: `Bearer ${token}`,
@@ -40,6 +48,7 @@ const updateRecruiterLogo = async (logoData) => {
 const profileService = {
   getProfile,
   updateProfile,
+  updateStudentProfile, // Added
   updateRecruiterLogo,
 };
 

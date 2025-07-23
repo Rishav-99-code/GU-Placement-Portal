@@ -105,24 +105,51 @@ const ViewApplicationsPage = () => {
               <table className="min-w-full bg-gray-900 text-gray-200 rounded-lg">
                 <thead>
                   <tr>
+                    <th className="px-4 py-2 text-left">Profile Picture</th>
                     <th className="px-4 py-2 text-left">Name</th>
                     <th className="px-4 py-2 text-left">Email</th>
                     <th className="px-4 py-2 text-left">USN</th>
                     <th className="px-4 py-2 text-left">Program</th>
                     <th className="px-4 py-2 text-left">Branch</th>
                     <th className="px-4 py-2 text-left">Phone</th>
+                    <th className="px-4 py-2 text-left">Resume</th>
                     <th className="px-4 py-2 text-left">Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {applicants.map((app) => (
                     <tr key={app._id} className="border-b border-gray-700">
+                      <td className="px-4 py-2">
+                        {app.student?.studentProfile?.profilePicUrl ? (
+                          <img
+                            src={`http://localhost:5000${app.student.studentProfile.profilePicUrl}`}
+                            alt={app.student.name}
+                            className="w-12 h-12 rounded-full object-cover"
+                          />
+                        ) : (
+                          '-'
+                        )}
+                      </td>
                       <td className="px-4 py-2">{app.student?.name || '-'}</td>
                       <td className="px-4 py-2">{app.student?.email || '-'}</td>
                       <td className="px-4 py-2">{app.student?.studentProfile?.usn || '-'}</td>
                       <td className="px-4 py-2">{app.student?.studentProfile?.program || '-'}</td>
                       <td className="px-4 py-2">{app.student?.studentProfile?.branch || '-'}</td>
                       <td className="px-4 py-2">{app.student?.studentProfile?.phoneNumber || '-'}</td>
+                      <td className="px-4 py-2">
+                        {app.student?.studentProfile?.resumeUrl ? (
+                          <a
+                            href={`http://localhost:5000${app.student.studentProfile.resumeUrl}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-purple-400 hover:underline"
+                          >
+                            View Resume
+                          </a>
+                        ) : (
+                          '-'
+                        )}
+                      </td>
                       <td className="px-4 py-2">{app.status || '-'}</td>
                     </tr>
                   ))}

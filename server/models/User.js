@@ -58,7 +58,9 @@ userSchema.pre('save', async function (next) {
         this.studentProfile.program &&
         this.studentProfile.branch &&
         this.studentProfile.phoneNumber &&
-        this.studentProfile.currentSemester
+        this.studentProfile.currentSemester &&
+        this.studentProfile.resumeUrl &&
+        this.studentProfile.profilePicUrl
       );
     } else if (this.role === 'recruiter' && this.recruiterProfile) {
       this.isProfileComplete = !!(
