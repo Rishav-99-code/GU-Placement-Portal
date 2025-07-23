@@ -101,13 +101,35 @@ const approveInterview = async (req, res) => {
       );
     }
 
-    await Promise.all(emailPromises);
+    try {
+      await Promise.all(emailPromises);
+    } catch (emailErr) {
+      console.error('Error sending interview notification emails:', emailErr);
+      // We continue; approval should not fail if emails fail.
+    }
 
-    res.json({ message: 'Interview approved and notifications sent.' });
+    res.json({ message: 'Interview approved.' });
   } catch (err) {
     console.error('Error approving interview:', err);
     res.status(500).json({ message: 'Server error approving interview.' });
   }
 };
 
-module.exports = { scheduleInterview, getPendingInterviews, approveInterview }; 
+module.exports = { scheduleInterview, getPendingInterviews, approveInterview };
+
+// Get approved interviews for logged-in student
+const getStudentInterviews = async (req, res) => {
+  try {
+    const interviews = await Interview.find({ status: 'approved', applicants: req.user._id })
+      .populate('job', 'title company')
+      .populate('recruiter', 'name email')
+      .sort({ dateTime: 1 });
+
+    res.json(interviews);
+  } catch (err) {
+    console.error('Error fetching student interviews:', err);
+    res.status(500).json({ message: 'Server error fetching interviews.' });
+  }
+};
+
+module.exports.getStudentInterviews = getStudentInterviews; 

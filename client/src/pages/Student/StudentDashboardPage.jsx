@@ -7,6 +7,7 @@ import { Button } from '../../components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
 import { Separator } from '../../components/ui/separator';
 import profileService from '../../services/profileService';
+import interviewService from '../../services/interviewService';
 import toast from 'react-hot-toast';
 
 const StudentDashboardPage = () => {
@@ -18,6 +19,7 @@ const StudentDashboardPage = () => {
     // This state might hold the top-level user details (like name, email, profilePicUrl)
     const [userDetails, setUserDetails] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [interviewSchedules, setInterviewSchedules] = useState([]);
 
     useEffect(() => {
         if (!authState.isAuthenticated || authState.user?.role !== 'student') {
@@ -42,6 +44,10 @@ const StudentDashboardPage = () => {
                 setUserDetails(data);
                 // Set nested student-specific details (studentProfile from backend)
                 setStudentDetails(data.studentProfile || {});
+
+                // Fetch interview schedules in parallel
+                const interviews = await interviewService.getMySchedules();
+                setInterviewSchedules(interviews);
 
                 setLoading(false);
             } catch (error) {
@@ -208,6 +214,24 @@ const StudentDashboardPage = () => {
                             <p className="text-xs text-gray-400">July 8, 2025</p>
                         </Card>
                     </div>
+                </div>
+
+                {/* Upcoming Interviews */}
+                <div className="mb-8">
+                    <h3 className="text-2xl font-bold text-gray-50 mb-4">Upcoming Interviews</h3>
+                    {interviewSchedules.length === 0 ? (
+                        <p className="text-gray-400">No upcoming interviews.</p>
+                    ) : (
+                        <div className="space-y-4 max-h-64 overflow-y-auto pr-2">
+                            {interviewSchedules.map(iv => (
+                                <Card key={iv._id} className="p-4 bg-gray-800 text-gray-300 rounded-lg shadow-md">
+                                    <p className="font-semibold text-purple-400">{iv.job?.title || 'Interview'}</p>
+                                    <p className="text-sm mb-1">Company: {iv.job?.company || 'N/A'}</p>
+                                    <p className="text-sm mb-1">Date/Time: {new Date(iv.dateTime).toLocaleString()}</p>
+                                </Card>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 {/* Quick Facts card */}

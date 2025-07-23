@@ -5,6 +5,7 @@ const {
   scheduleInterview,
   getPendingInterviews,
   approveInterview,
+  getStudentInterviews,
 } = require('../controllers/interviewController');
 
 // Recruiter schedules an interview for a specific job
@@ -12,6 +13,9 @@ router.post('/:jobId/schedule', protect, authorizeRoles('recruiter'), scheduleIn
 
 // Coordinator fetches pending interviews
 router.get('/pending', protect, authorizeRoles('coordinator'), getPendingInterviews);
+
+// Student fetches their approved interviews
+router.get('/student', protect, authorizeRoles('student'), getStudentInterviews);
 
 // Coordinator approves interview
 router.patch('/:interviewId/approve', protect, authorizeRoles('coordinator'), approveInterview);

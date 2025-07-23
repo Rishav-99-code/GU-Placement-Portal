@@ -7,6 +7,7 @@ import { Button } from '../../components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
 import { Separator } from '../../components/ui/separator';
 import profileService from '../../services/profileService';
+import interviewService from '../../services/interviewService';
 import toast from 'react-hot-toast';
 
 // Import Lucide React Icons for better UI
@@ -29,6 +30,10 @@ const CoordinatorDashboardPage = () => {
   const [loading, setLoading] = useState(true);
   const [pendingJobs, setPendingJobs] = useState([]);
   const [approving, setApproving] = useState(false);
+
+  // Interviews state
+  const [pendingInterviews, setPendingInterviews] = useState([]);
+  const [approvingInterview, setApprovingInterview] = useState(false);
 
   useEffect(() => {
     if (!authState.isAuthenticated || authState.user?.role !== 'coordinator') {
@@ -63,8 +68,21 @@ const CoordinatorDashboardPage = () => {
       }
     };
     fetchPendingJobs();
+
+    // Fetch pending interviews for approval
+    const fetchPendingInterviews = async () => {
+      try {
+        const data = await interviewService.getPending();
+        setPendingInterviews(data);
+      } catch (err) {
+        setPendingInterviews([]);
+      }
+    };
+    fetchPendingInterviews();
+
     // Save for later use
     CoordinatorDashboardPage.fetchPendingJobs = fetchPendingJobs;
+    CoordinatorDashboardPage.fetchPendingInterviews = fetchPendingInterviews;
   }, [authState, navigate, logout]);
 
   if (loading || !fullUserDetails) { // Ensure fullUserDetails is available
@@ -224,6 +242,49 @@ const CoordinatorDashboardPage = () => {
                         }
                       }}
                     >Approve</Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Pending Interview Approvals */}
+        <div className="mb-8">
+          <h3 className="text-2xl font-bold text-gray-50 mb-4">Pending Interview Schedules</h3>
+          {pendingInterviews.length === 0 ? (
+            <p className="text-gray-400">No interviews awaiting approval.</p>
+          ) : (
+            <div className="space-y-4">
+              {pendingInterviews.map((iv) => (
+                <Card key={iv._id} className="p-4 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+                  <CardTitle className="text-lg font-bold text-purple-400">
+                    {iv.job?.title || 'Job'} – {iv.applicants?.length} Applicant{iv.applicants?.length === 1 ? '' : 's'}
+                  </CardTitle>
+                  <CardContent>
+                    <p><strong>Company:</strong> {iv.job?.company || 'N/A'}</p>
+                    <p><strong>Date&nbsp;/&nbsp;Time:</strong> {new Date(iv.dateTime).toLocaleString()}</p>
+                    <p><strong>Recruiter:</strong> {iv.recruiter?.name || 'N/A'} ({iv.recruiter?.email})</p>
+                    <div className="mt-4 flex space-x-2">
+                      <Button
+                        className="bg-green-600 hover:bg-green-700 text-white"
+                        disabled={approvingInterview}
+                        onClick={async () => {
+                          setApprovingInterview(true);
+                          try {
+                            await interviewService.approve(iv._id);
+                            await CoordinatorDashboardPage.fetchPendingInterviews();
+                            toast.success('Interview approved – students notified.');
+                          } catch (err) {
+                            toast.error('Failed to approve interview');
+                          } finally {
+                            setApprovingInterview(false);
+                          }
+                        }}
+                      >
+                        Approve
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
