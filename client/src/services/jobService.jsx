@@ -46,6 +46,26 @@ const jobService = {
     }
   },
 
+  updateJob: async (jobId, jobData) => {
+    try {
+      const response = await api.patch(`/api/jobs/${jobId}`, jobData);
+      return response.data;
+    } catch (error) {
+      console.error('Error updating job:', error);
+      throw error;
+    }
+  },
+
+  deleteJob: async (jobId) => {
+    try {
+      const response = await api.delete(`/api/jobs/${jobId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting job:', error);
+      throw error;
+    }
+  },
+
   // You might add more functions later, e.g., applyForJob:
   // applyForJob: async (jobId, applicationData) => { ... }
 };

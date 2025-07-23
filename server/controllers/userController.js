@@ -21,7 +21,8 @@ const getUserProfile = asyncHandler(async (req, res) => {
       isProfileComplete: user.isProfileComplete,
       isApproved: user.isApproved,
       studentDetails: user.studentProfile || {},
-      recruiterDetails: user.recruiterProfile || {},
+      recruiterProfile: user.recruiterProfile || {}, // renamed for frontend consistency
+      recruiterDetails: user.recruiterProfile || {}, // kept for backward compatibility
       coordinatorDetails: user.coordinatorProfile || {},
     });
   } else {
@@ -98,7 +99,8 @@ const updateProfile = asyncHandler(async (req, res) => {
       isApproved: updatedUser.isApproved,
       token: generateToken(updatedUser._id, updatedUser.role),
       studentDetails: updatedUser.studentProfile || {},
-      recruiterDetails: updatedUser.recruiterProfile || {},
+      recruiterProfile: updatedUser.recruiterProfile || {}, // renamed for frontend consistency
+      recruiterDetails: updatedUser.recruiterProfile || {}, // kept for backward compatibility
       coordinatorDetails: updatedUser.coordinatorProfile || {},
     });
   } else {
@@ -130,7 +132,8 @@ const updateRecruiterLogo = asyncHandler(async (req, res) => {
       isProfileComplete: updatedUser.isProfileComplete,
       isApproved: updatedUser.isApproved,
       token: generateToken(updatedUser._id, updatedUser.role),
-      recruiterDetails: updatedUser.recruiterProfile || {},
+      recruiterProfile: updatedUser.recruiterProfile || {}, // renamed for frontend consistency
+      recruiterDetails: updatedUser.recruiterProfile || {}, // kept for backward compatibility
     });
   } else {
     res.status(404);

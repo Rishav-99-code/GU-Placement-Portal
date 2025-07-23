@@ -33,7 +33,7 @@ const updateProfile = async (profileData) => {
   return response.data;
 };
 
-// Update recruiter logo
+// Update recruiter logo (returns updated user object)
 const updateRecruiterLogo = async (logoData) => {
   const token = localStorage.getItem('token');
   const response = await axios.put(`http://localhost:5000/api/users/profile/logo`, logoData, {
@@ -42,7 +42,7 @@ const updateRecruiterLogo = async (logoData) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  return response.data;
+  return response.data; // updated user object containing recruiterProfile & isProfileComplete
 };
 
 const profileService = {

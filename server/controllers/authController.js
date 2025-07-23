@@ -70,6 +70,10 @@ const loginUser = asyncHandler(async (req, res) => {
         role: user.role,
         isProfileComplete: user.isProfileComplete,
         isApproved: user.isApproved,
+        // Include role-specific profile data for convenient access on the frontend
+        studentProfile: user.studentProfile,
+        recruiterProfile: user.recruiterProfile,
+        coordinatorProfile: user.coordinatorProfile,
         token: generateToken(user._id, user.role), // Token is generated ONLY on successful login
       });
       console.log('Login successful for user:', user.email);

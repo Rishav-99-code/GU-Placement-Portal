@@ -78,7 +78,7 @@ const CoordinatorDashboardPage = () => {
   // Use fullUserDetails for all dynamic datayut 
   const coordinatorName = fullUserDetails.name || 'Coordinator';
   const coordinatorEmail = fullUserDetails.email || 'coordinator@example.com';
-  const coordinatorProfile = fullUserDetails.coordinatorDetails || {}; // Use the correct key from backend response
+  const coordinatorProfile = fullUserDetails.coordinatorProfile || fullUserDetails.coordinatorDetails || {}; // Fallback for legacy key
 
   const coordinatorAvatar = fullUserDetails.profilePicUrl || `https://ui-avatars.com/api/?name=${coordinatorName.split(' ').join('+')}&background=8B5CF6&color=fff&size=128`;
 

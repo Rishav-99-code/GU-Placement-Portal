@@ -80,11 +80,11 @@ const CoordinatorProfilePage = () => {
     setIsSubmitting(true);
 
     try {
-      await profileService.updateProfile({ coordinatorProfile: formData });
+      // Send update to server and receive the updated user object
+      const updatedUser = await profileService.updateProfile({ coordinatorProfile: formData });
 
-      // After successful update, update the local auth state to reflect completion
-      const updatedUser = { ...authState.user, isProfileComplete: true, coordinatorProfile: formData };
-      updateUser(updatedUser); // This updates AuthContext and localStorage
+      // Persist in AuthContext/localStorage
+      updateUser(updatedUser);
 
       toast.success('Coordinator profile updated successfully!');
       navigate('/coordinator/dashboard', { replace: true });

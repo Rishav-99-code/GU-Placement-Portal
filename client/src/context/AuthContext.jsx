@@ -30,7 +30,9 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   const login = (token, user) => {
-    localStorage.setItem('token', token);
+    if (token) {
+      localStorage.setItem('token', token);
+    }
     localStorage.setItem('user', JSON.stringify(user)); // Stringify user object
     setAuthState({
       token,

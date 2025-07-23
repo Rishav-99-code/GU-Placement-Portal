@@ -44,7 +44,7 @@ const RegisterPage = () => {
       await authService.register({ name, email, password, role });
       // Important: Do NOT call login() here. User goes to login page first.
       toast.success(`Registration successful! Please log in.`);
-      navigate('/login'); // Redirect to login page
+      navigate(`/login?role=${role}`); // Redirect to role-specific login page
     } catch (error) {
       const message =
         (error.response?.data?.message) ||

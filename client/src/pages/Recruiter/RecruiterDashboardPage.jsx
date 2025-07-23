@@ -13,8 +13,8 @@ const RecruiterDashboardPage = () => {
   const { authState, logout } = useContext(AuthContext);
   const user = authState.user;
   const userName = user?.name || 'Recruiter';
-  const logoUrl = user?.recruiterDetails?.logoUrl
-    ? `http://localhost:5000${user.recruiterDetails.logoUrl}`
+  const logoUrl = user?.recruiterProfile?.logoUrl
+    ? `http://localhost:5000${user.recruiterProfile.logoUrl}`
     : 'https://placehold.co/150x150?text=Logo';
 
   // State for dashboard stats
@@ -58,7 +58,7 @@ const RecruiterDashboardPage = () => {
             </Avatar>
             <div>
               <h2 className="text-lg font-semibold text-gray-200">Welcome, {userName}!</h2>
-              <p className="text-sm text-gray-400">{user?.companyName || 'Your Company'}</p>
+              <p className="text-sm text-gray-400">{user?.recruiterProfile?.companyName || 'Your Company'}</p>
             </div>
           </div>
 

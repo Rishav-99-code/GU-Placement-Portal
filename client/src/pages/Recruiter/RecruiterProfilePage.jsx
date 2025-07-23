@@ -8,12 +8,12 @@ import {Label} from '../../components/ui/label';
 import {Button} from '../../components/ui/button';
 
 const RecruiterProfilePage = () => {
-  const { authState, login } = useContext(AuthContext);
+  const { authState, updateUser } = useContext(AuthContext);
   const user = authState.user;
   const navigate = useNavigate();
 
-  const [companyName, setCompanyName] = useState(user?.recruiterDetails?.companyName || '');
-  const [companyWebsite, setCompanyWebsite] = useState(user?.recruiterDetails?.companyWebsite || '');
+  const [companyName, setCompanyName] = useState(user?.recruiterProfile?.companyName || '');
+  const [companyWebsite, setCompanyWebsite] = useState(user?.recruiterProfile?.companyWebsite || '');
   const [logo, setLogo] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -32,9 +32,15 @@ const RecruiterProfilePage = () => {
       const formData = new FormData();
       formData.append('logo', logo);
 
-      const response = await profileService.updateRecruiterLogo(formData);
-      login(response.token, response);
+      // Upload logo and receive the updated user object (server handles saving & token generation)
+      const updatedUser = await profileService.updateRecruiterLogo(formData);
+
+      // Update AuthContext/localStorage
+      updateUser(updatedUser);
       toast.success('Logo uploaded successfully!');
+
+      // Redirect to dashboard if profile is now complete
+      navigate('/recruiter/dashboard');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to upload logo');
     } finally {
@@ -55,10 +61,10 @@ const RecruiterProfilePage = () => {
         },
       };
       // Update profile via API
-      const response = await profileService.updateProfile(updatedProfileData);
+      const updatedUser = await profileService.updateProfile(updatedProfileData);
 
-      // Update AuthContext and localStorage with new token and user data
-      login(response.token, response);
+      // Update AuthContext with the fresh user object
+      updateUser(updatedUser);
 
       toast.success('Profile updated successfully!');
       navigate('/recruiter/dashboard');
@@ -105,10 +111,10 @@ const RecruiterProfilePage = () => {
 
         <div className="mt-8">
           <h3 className="text-xl font-semibold text-gray-800 mb-4">Company Logo</h3>
-          {user?.recruiterDetails?.logoUrl && (
+          {user?.recruiterProfile?.logoUrl && (
             <div className="mb-4">
               <img
-                src={`http://localhost:5000${user.recruiterDetails.logoUrl}`}
+                src={`http://localhost:5000${user.recruiterProfile.logoUrl}`}
                 alt="Company Logo"
                 className="w-32 h-32 object-cover rounded-md"
               />

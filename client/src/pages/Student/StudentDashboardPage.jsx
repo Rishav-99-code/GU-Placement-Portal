@@ -40,8 +40,8 @@ const StudentDashboardPage = () => {
 
                 // Set top-level user details
                 setUserDetails(data);
-                // Set nested student-specific details
-                setStudentDetails(data.studentDetails || {});
+                // Set nested student-specific details (studentProfile from backend)
+                setStudentDetails(data.studentProfile || {});
 
                 setLoading(false);
             } catch (error) {
@@ -66,7 +66,10 @@ const StudentDashboardPage = () => {
 
     // Access properties from userDetails for top-level info
     const userName = userDetails.name || 'Student';
-    const profilePic = userDetails.profilePicUrl || `https://ui-avatars.com/api/?name=${userName.split(' ').join('+')}&background=8B5CF6&color=fff&size=128`;
+    // Prefer the uploaded profile picture if available, otherwise fall back to generated avatar
+    const profilePic = studentDetails.profilePicUrl
+        ? `http://localhost:5000${studentDetails.profilePicUrl}`
+        : `https://ui-avatars.com/api/?name=${userName.split(' ').join('+')}&background=8B5CF6&color=fff&size=128`;
 
     // Access properties from studentDetails state for student-specific info
     // The studentDetails state is already updated correctly from `data.studentDetails` above.

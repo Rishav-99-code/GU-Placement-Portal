@@ -57,11 +57,21 @@ router.put(
 // PUT /api/profile - Update current user's recruiter profile
 router.put('/', protect, async (req, res) => {
   try {
-    // Only update recruiterProfile if provided
+    // Update recruiter profile fields if provided
     if (req.body.recruiterProfile) {
-      req.user.recruiterProfile = req.body.recruiterProfile; // <-- FIXED
+      req.user.recruiterProfile = {
+        ...req.user.recruiterProfile,
+        ...req.body.recruiterProfile,
+      };
     }
-    // ...existing code...
+
+    // Update coordinator profile fields if provided
+    if (req.body.coordinatorProfile) {
+      req.user.coordinatorProfile = {
+        ...req.user.coordinatorProfile,
+        ...req.body.coordinatorProfile,
+      };
+    }
     // You can add more fields to update if needed
 
     await req.user.save();

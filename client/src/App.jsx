@@ -25,6 +25,8 @@ import JobDetailsPage from './pages/Student/JobDetailsPage';
 
 import CreateJobPage from './pages/Recruiter/CreateJobPage';
 import ViewApplicationsPage from './pages/Recruiter/ViewApplicationsPage';
+import ManageJobsPage from './pages/Recruiter/ManageJobsPage';
+import EditJobPage from './pages/Recruiter/EditJobPage';
 
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
@@ -93,7 +95,9 @@ function App() {
             <Route path="/recruiter/dashboard" element={<PrivateRoute allowedRoles={['recruiter']}><RecruiterDashboardPage /></PrivateRoute>} />
             <Route path="/recruiter/profile" element={<PrivateRoute allowedRoles={['recruiter']}><RecruiterProfilePage /></PrivateRoute>} />
             <Route path="/recruiter/create-job" element={<PrivateRoute allowedRoles={['recruiter']}><CreateJobPage /></PrivateRoute>} />
+            <Route path="/recruiter/edit-job/:jobId" element={<PrivateRoute allowedRoles={['recruiter']}><EditJobPage /></PrivateRoute>} />
             <Route path="/recruiter/view-applications" element={<PrivateRoute allowedRoles={['recruiter']}><ViewApplicationsPage /></PrivateRoute>} />
+            <Route path="/recruiter/manage-jobs" element={<PrivateRoute allowedRoles={['recruiter']}><ManageJobsPage /></PrivateRoute>} />
 
             <Route path="/coordinator/dashboard" element={<PrivateRoute allowedRoles={['coordinator']}><CoordinatorDashboardPage /></PrivateRoute>} />
             <Route path="/coordinator/profile" element={<PrivateRoute allowedRoles={['coordinator']}><CoordinatorProfilePage /></PrivateRoute>} />

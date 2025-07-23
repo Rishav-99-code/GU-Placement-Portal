@@ -2,6 +2,7 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
+import api from '../../services/api';
 
 const CreateJobPage = () => {
   const [form, setForm] = React.useState({
@@ -37,23 +38,17 @@ const CreateJobPage = () => {
       if (logoFile) {
         formData.append('logoFile', logoFile);
       }
-      const res = await fetch('/api/jobs', {
-        method: 'POST',
-        body: formData,
+      const response = await api.post('/api/jobs', formData, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       });
-      const data = await res.json();
-      if (res.ok) {
-        setSuccess('Job posted successfully!');
-        setForm({ title: '', company: '', location: '', companyDetails: '', description: '', type: '' });
-        setLogoFile(null);
-      } else {
-        setError(data.error || 'Failed to post job');
-      }
+      setSuccess('Job posted successfully!');
+      setForm({ title: '', company: '', location: '', companyDetails: '', description: '', type: '' });
+      setLogoFile(null);
     } catch (err) {
-      setError('Network error');
+      const message = err.response?.data?.error || err.response?.data?.message || err.message || 'Failed to post job';
+      setError(message);
     } finally {
       setLoading(false);
     }
