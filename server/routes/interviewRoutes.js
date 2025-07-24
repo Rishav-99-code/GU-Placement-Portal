@@ -9,7 +9,7 @@ const {
 } = require('../controllers/interviewController');
 
 // Recruiter schedules an interview for a specific job
-router.post('/:jobId/schedule', protect, authorizeRoles('recruiter'), scheduleInterview);
+router.post('/:jobId/schedule', protect, authorizeRoles('recruiter','coordinator'), scheduleInterview);
 
 // Coordinator fetches pending interviews
 router.get('/pending', protect, authorizeRoles('coordinator'), getPendingInterviews);

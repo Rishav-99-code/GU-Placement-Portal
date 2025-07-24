@@ -12,6 +12,9 @@ const ManageRecruitersPage = () => {
   const [jobsModalOpen, setJobsModalOpen] = useState(false);
   const [jobsList, setJobsList] = useState([]);
   const [jobsLoading, setJobsLoading] = useState(false);
+  const [appsModalOpen, setAppsModalOpen] = useState(false);
+  const [appsList, setAppsList] = useState([]);
+  const [appsLoading, setAppsLoading] = useState(false);
 
   useEffect(() => {
     const fetchRecruiters = async () => {
@@ -100,11 +103,13 @@ const ManageRecruitersPage = () => {
                         setJobsLoading(false);
                       }}>Jobs</Button>
                       <Button size="sm" variant="secondary" onClick={async () => {
+                        setAppsModalOpen(true);
+                        setAppsLoading(true);
                         try {
                           const apps = await recruiterService.getApplications(r._id);
-                          console.table(apps);
-                          toast('Check console for applications list');
-                        } catch(err) { toast.error('Failed to fetch applications'); }
+                          setAppsList(apps);
+                        } catch(err){ toast.error('Failed to fetch applications'); }
+                        setAppsLoading(false);
                       }}>Applications</Button>
                     </td>
                   </tr>
@@ -136,6 +141,42 @@ const ManageRecruitersPage = () => {
             )}
             <div className="text-right mt-4">
               <Button onClick={()=>setJobsModalOpen(false)}>Close</Button>
+            </div>
+          </div>
+        </div>
+      )}
+      {appsModalOpen && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-gray-800 p-6 rounded-lg w-full max-w-3xl max-h-[80vh] overflow-y-auto">
+            <h2 className="text-xl font-bold mb-4 text-gray-50">Applications</h2>
+            {appsLoading ? (<p>Loading…</p>) : appsList.length===0 ? (<p>No applications.</p>) : (
+              <table className="min-w-full text-left text-sm">
+                <thead>
+                  <tr>
+                    <th className="px-2 py-1">Student</th>
+                    <th className="px-2 py-1">Email</th>
+                    <th className="px-2 py-1">USN</th>
+                    <th className="px-2 py-1">Branch</th>
+                    <th className="px-2 py-1">Job</th>
+                    <th className="px-2 py-1">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {appsList.map(app=> (
+                    <tr key={app._id} className="border-b border-gray-700">
+                      <td className="px-2 py-1">{app.student?.name}</td>
+                      <td className="px-2 py-1">{app.student?.email}</td>
+                      <td className="px-2 py-1">{app.student?.studentProfile?.usn || '-'}</td>
+                      <td className="px-2 py-1">{app.student?.studentProfile?.branch || '-'}</td>
+                      <td className="px-2 py-1">{app.job?.title}</td>
+                      <td className="px-2 py-1 capitalize">{app.status}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+            <div className="text-right mt-4">
+              <Button onClick={()=>setAppsModalOpen(false)}>Close</Button>
             </div>
           </div>
         </div>

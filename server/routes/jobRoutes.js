@@ -41,13 +41,16 @@ router.get('/all', jobController.getAllJobs);
 router.get('/my-jobs', protect, authorizeRoles('recruiter'), jobController.getJobsByRecruiter);
 
 // GET all applicants for a specific job (recruiter view)
-router.get('/:jobId/applicants', protect, authorizeRoles('recruiter'), jobController.getJobApplicants);
+router.get('/:jobId/applicants', protect, authorizeRoles('recruiter','coordinator'), jobController.getJobApplicants);
 
 // GET a single job by ID (should be last to avoid conflicts)
 router.get('/:id', jobController.getJobById);
 
 // PATCH approve job (for coordinator)
 router.patch('/:id/approve', jobController.approveJob);
+
+// PATCH reject job (for coordinator)
+router.patch('/:id/reject', protect, authorizeRoles('coordinator'), jobController.rejectJob);
 
 // Coordinator: jobs by recruiter id
 router.get('/recruiter/:recruiterId', protect, authorizeRoles('coordinator'), jobController.getJobsByRecruiterId);

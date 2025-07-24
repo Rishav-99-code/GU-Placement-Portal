@@ -14,7 +14,8 @@ const jobSchema = mongoose.Schema(
     salary: { type: Number, min: 0, default: 0 },
     applicationDeadline: { type: Date },
     postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    status: { type: String, enum: ['active', 'closed', 'pending_approval'], default: 'active' },
+    status: { type: String, enum: ['active', 'closed', 'pending_approval', 'rejected', 'draft'], default: 'active' },
+    rejectionReason: { type: String },
   },
   {
     timestamps: true, // This is crucial for sorting by creation date

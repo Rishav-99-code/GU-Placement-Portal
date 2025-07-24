@@ -1,6 +1,7 @@
 const Job = require('../models/Job');
 const User = require('../models/User');
 const Application = require('../models/Application');
+const sendEmail = require('../utils/sendEmail');
 
 // Get all approved jobs with recruiter logo
 const getApprovedJobsWithLogo = async (req, res) => {
@@ -39,7 +40,7 @@ const getJobApplicants = async (req, res) => {
     }
 
     // Verify that the recruiter requesting is the one who posted the job
-    if (job.postedBy.toString() !== req.user._id.toString()) {
+    if (req.user.role === 'recruiter' && job.postedBy.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: 'Not authorized to view these applications.' });
     }
 
@@ -85,7 +86,7 @@ const createJob = async (req, res) => {
       salary: salary || 0,
       applicationDeadline: applicationDeadline || null,
       postedBy: req.user ? req.user._id : null, // If using auth middleware
-      status: 'pending_approval',
+      status: req.user && req.user.role === 'coordinator' ? 'active' : 'pending_approval',
       logoUrl,
     });
     await job.save();
@@ -124,6 +125,38 @@ const approveJob = async (req, res) => {
   }
 };
 
+// Reject a job (coordinator) with reason
+const rejectJob = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { reason } = req.body;
+    if (!reason || reason.trim().length === 0) {
+      return res.status(400).json({ message: 'Rejection reason is required' });
+    }
+    const job = await Job.findById(id).populate('postedBy', 'email name');
+    if (!job) return res.status(404).json({ message: 'Job not found' });
+
+    job.status = 'rejected';
+    job.rejectionReason = reason;
+    await job.save();
+
+    // Notify recruiter if exists
+    if (job.postedBy && job.postedBy.email) {
+      const message = `Your job posting "${job.title}" has been rejected by the coordinator. Reason: ${reason}`;
+      try {
+        await sendEmail({ email: job.postedBy.email, subject: 'Job Posting Rejected', message });
+      } catch (e) {
+        console.error('Failed to send rejection email', e);
+      }
+    }
+
+    res.json({ message: 'Job rejected', job });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to reject job' });
+  }
+};
+
 // Get single job details by ID
 const getJobById = async (req, res) => {
   try {
@@ -157,5 +190,5 @@ const getJobsByRecruiterId = async (req, res) => {
   }
 };
 
-module.exports = { getApprovedJobsWithLogo, createJob, getAllJobs, approveJob, getJobById, getJobsByRecruiter, getJobApplicants };
+module.exports = { getApprovedJobsWithLogo, createJob, getAllJobs, approveJob, rejectJob, getJobById, getJobsByRecruiter, getJobApplicants };
 module.exports.getJobsByRecruiterId = getJobsByRecruiterId;

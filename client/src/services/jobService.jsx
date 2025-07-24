@@ -66,6 +66,11 @@ const jobService = {
     }
   },
 
+  rejectJob: async (jobId, reason) => {
+    const res = await api.patch(`/api/jobs/${jobId}/reject`, { reason });
+    return res.data;
+  },
+
   // You might add more functions later, e.g., applyForJob:
   // applyForJob: async (jobId, applicationData) => { ... }
 };
