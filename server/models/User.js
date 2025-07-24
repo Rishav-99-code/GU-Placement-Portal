@@ -24,6 +24,7 @@ const userSchema = mongoose.Schema(
     recruiterProfile: {
       companyName: { type: String },
       companyWebsite: { type: String },
+      contactNumber: { type: String, default: '00000000' },
       logoUrl: { type: String },
     },
     coordinatorProfile: {
@@ -63,10 +64,9 @@ userSchema.pre('save', async function (next) {
         this.studentProfile.profilePicUrl
       );
     } else if (this.role === 'recruiter' && this.recruiterProfile) {
-      this.isProfileComplete = !!(
-        this.recruiterProfile.companyName &&
-        this.recruiterProfile.companyWebsite &&
-        this.recruiterProfile.logoUrl
+      this.isProfileComplete = (
+        typeof this.recruiterProfile.companyName === 'string' && this.recruiterProfile.companyName.trim().length > 0 &&
+        typeof this.recruiterProfile.companyWebsite === 'string' && this.recruiterProfile.companyWebsite.trim().length > 0
       );
     } else if (this.role === 'coordinator' && this.coordinatorProfile) {
       this.isProfileComplete = !!this.coordinatorProfile.department;

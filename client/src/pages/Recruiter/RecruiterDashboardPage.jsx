@@ -64,7 +64,7 @@ const RecruiterDashboardPage = () => {
 
           <div className="space-y-2 text-gray-300">
             <p><strong className="font-medium text-gray-100">Email:</strong> {user?.email || 'unknown@company.com'}</p>
-            <p><strong className="font-medium text-gray-100">Contact:</strong> {user?.phoneNumber || '0000000000'}</p>
+            <p><strong className="font-medium text-gray-100">Contact:</strong> {user?.recruiterProfile?.contactNumber || '00000000'}</p>
           </div>
 
           <Button className="mt-6 w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold py-2 rounded-md transition-all duration-200 active:scale-[0.98] active:shadow-inner">

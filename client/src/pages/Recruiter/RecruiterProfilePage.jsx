@@ -14,6 +14,7 @@ const RecruiterProfilePage = () => {
 
   const [companyName, setCompanyName] = useState(user?.recruiterProfile?.companyName || '');
   const [companyWebsite, setCompanyWebsite] = useState(user?.recruiterProfile?.companyWebsite || '');
+  const [contactNumber, setContactNumber] = useState(user?.recruiterProfile?.contactNumber || '');
   const [logo, setLogo] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -31,16 +32,11 @@ const RecruiterProfilePage = () => {
     try {
       const formData = new FormData();
       formData.append('logo', logo);
-
       // Upload logo and receive the updated user object (server handles saving & token generation)
       const updatedUser = await profileService.updateRecruiterLogo(formData);
-
-      // Update AuthContext/localStorage
       updateUser(updatedUser);
       toast.success('Logo uploaded successfully!');
-
-      // Redirect to dashboard if profile is now complete
-      navigate('/recruiter/dashboard');
+      // Do NOT redirect or mark profile complete here
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to upload logo');
     } finally {
@@ -58,6 +54,7 @@ const RecruiterProfilePage = () => {
         recruiterProfile: {
           companyName,
           companyWebsite,
+          contactNumber,
         },
       };
       // Update profile via API
@@ -99,6 +96,15 @@ const RecruiterProfilePage = () => {
               id="companyWebsite"
               value={companyWebsite}
               onChange={e => setCompanyWebsite(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="contactNumber">Contact Number</Label>
+            <Input
+              id="contactNumber"
+              value={contactNumber}
+              onChange={e => setContactNumber(e.target.value)}
               required
             />
           </div>

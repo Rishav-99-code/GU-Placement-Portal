@@ -12,17 +12,18 @@ const CreateJobPage = () => {
     companyDetails: '',
     description: '',
     type: '',
+    salary: '',
+    skillsRequired: '',
+    applicationDeadline: '',
+    responsibilities: '',
+    qualifications: '',
   });
-  const [logoFile, setLogoFile] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
   const [success, setSuccess] = React.useState(null);
   const [error, setError] = React.useState(null);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
-  const handleFileChange = (e) => {
-    setLogoFile(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
@@ -31,21 +32,29 @@ const CreateJobPage = () => {
     setError(null);
     setSuccess(null);
     try {
-      const formData = new FormData();
-      Object.entries(form).forEach(([key, value]) => {
-        formData.append(key, value);
-      });
-      if (logoFile) {
-        formData.append('logoFile', logoFile);
-      }
-      const response = await api.post('/api/jobs', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const jobData = {
+        ...form,
+        salary: form.salary ? parseFloat(form.salary) : 0,
+        skillsRequired: form.skillsRequired.split(',').map(s => s.trim()).filter(Boolean),
+        responsibilities: form.responsibilities.split(',').map(s => s.trim()).filter(Boolean),
+        qualifications: form.qualifications.split(',').map(s => s.trim()).filter(Boolean),
+        applicationDeadline: form.applicationDeadline ? new Date(form.applicationDeadline) : null,
+      };
+      const response = await api.post('/api/jobs', jobData);
       setSuccess('Job posted successfully!');
-      setForm({ title: '', company: '', location: '', companyDetails: '', description: '', type: '' });
-      setLogoFile(null);
+      setForm({
+        title: '',
+        company: '',
+        location: '',
+        companyDetails: '',
+        description: '',
+        type: '',
+        salary: '',
+        skillsRequired: '',
+        applicationDeadline: '',
+        responsibilities: '',
+        qualifications: '',
+      });
     } catch (err) {
       const message = err.response?.data?.error || err.response?.data?.message || err.message || 'Failed to post job';
       setError(message);
@@ -92,8 +101,24 @@ const CreateJobPage = () => {
               <textarea id="description" name="description" value={form.description} onChange={handleChange} rows={3} className="w-full px-3 py-2 rounded bg-gray-700 text-gray-100" placeholder="Describe the job role and requirements" />
             </div>
             <div>
-              <label className="block mb-1 font-medium" htmlFor="logoFile">Company Logo (PNG, JPG, PDF)</label>
-              <input type="file" id="logoFile" name="logoFile" accept=".png,.jpg,.jpeg,.pdf" onChange={handleFileChange} className="w-full px-3 py-2 rounded bg-gray-700 text-gray-100" />
+              <label className="block mb-1 font-medium" htmlFor="salary">Salary (₹)</label>
+              <input type="number" id="salary" name="salary" value={form.salary} onChange={handleChange} className="w-full px-3 py-2 rounded bg-gray-700 text-gray-100" placeholder="e.g. 500000" />
+            </div>
+            <div>
+              <label className="block mb-1 font-medium" htmlFor="skillsRequired">Skills Required (comma separated)</label>
+              <input type="text" id="skillsRequired" name="skillsRequired" value={form.skillsRequired} onChange={handleChange} className="w-full px-3 py-2 rounded bg-gray-700 text-gray-100" placeholder="e.g. React, Node.js, MongoDB" />
+            </div>
+            <div>
+              <label className="block mb-1 font-medium" htmlFor="applicationDeadline">Application Deadline</label>
+              <input type="date" id="applicationDeadline" name="applicationDeadline" value={form.applicationDeadline} onChange={handleChange} className="w-full px-3 py-2 rounded bg-gray-700 text-gray-100" />
+            </div>
+            <div>
+              <label className="block mb-1 font-medium" htmlFor="responsibilities">Responsibilities (comma separated)</label>
+              <input type="text" id="responsibilities" name="responsibilities" value={form.responsibilities} onChange={handleChange} className="w-full px-3 py-2 rounded bg-gray-700 text-gray-100" placeholder="e.g. Develop features, Write tests" />
+            </div>
+            <div>
+              <label className="block mb-1 font-medium" htmlFor="qualifications">Qualifications (comma separated)</label>
+              <input type="text" id="qualifications" name="qualifications" value={form.qualifications} onChange={handleChange} className="w-full px-3 py-2 rounded bg-gray-700 text-gray-100" placeholder="e.g. B.Tech, MCA" />
             </div>
             <Button type="submit" className="bg-blue-700 text-white w-full" disabled={loading}>
               {loading ? 'Posting...' : 'Post Job'}

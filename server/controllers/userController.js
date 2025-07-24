@@ -73,6 +73,8 @@ const updateProfile = asyncHandler(async (req, res) => {
         if (req.body.recruiterProfile) {
           user.recruiterProfile.companyName = req.body.recruiterProfile.companyName || user.recruiterProfile.companyName;
           user.recruiterProfile.companyWebsite = req.body.recruiterProfile.companyWebsite || user.recruiterProfile.companyWebsite;
+          // Always persist logoUrl if it exists in DB or is sent in request
+          user.recruiterProfile.logoUrl = req.body.recruiterProfile.logoUrl || user.recruiterProfile.logoUrl || '';
         }
         // isProfileComplete logic is now handled in the User model's pre('save') hook
         break;
