@@ -285,6 +285,49 @@ const toggleBlacklistStudent = asyncHandler(async (req, res) => {
   res.json({ message: `Student ${blacklisted ? 'blacklisted' : 'unblacklisted'}`, student });
 });
 
+// @desc    List recruiter users (for coordinator)
+// @route   GET /api/users/recruiters
+// @access  Private (coordinator)
+const listRecruiters = asyncHandler(async (req, res) => {
+  const { approved } = req.query;
+  const filter = { role: 'recruiter' };
+  if (approved === 'true') filter.isApproved = true;
+  if (approved === 'false') filter.isApproved = false;
+  const recruiters = await User.find(filter).select('-password');
+  res.json(recruiters);
+});
+
+// @desc Approve recruiter profile
+// @route PATCH /api/users/recruiters/:recruiterId/approve
+// @access Private (coordinator)
+const approveRecruiter = asyncHandler(async (req, res) => {
+  const { recruiterId } = req.params;
+  const recruiter = await User.findById(recruiterId);
+  if (!recruiter || recruiter.role !== 'recruiter') {
+    res.status(404);
+    throw new Error('Recruiter not found');
+  }
+  recruiter.isApproved = true;
+  await recruiter.save();
+  res.json({ message: 'Recruiter approved', recruiter });
+});
+
+// @desc Toggle suspend/activate recruiter account
+// @route PATCH /api/users/recruiters/:recruiterId/suspend
+// @access Private (coordinator)
+const toggleSuspendRecruiter = asyncHandler(async (req, res) => {
+  const { recruiterId } = req.params;
+  const { suspended } = req.body;
+  const recruiter = await User.findById(recruiterId);
+  if (!recruiter || recruiter.role !== 'recruiter') {
+    res.status(404);
+    throw new Error('Recruiter not found');
+  }
+  recruiter.isSuspended = !!suspended;
+  await recruiter.save();
+  res.json({ message: `Recruiter ${suspended ? 'suspended' : 'activated'}`, recruiter });
+});
+
 module.exports = {
   getUserProfile,
   updateProfile,
@@ -296,3 +339,6 @@ module.exports = {
   updateStudentResume,
   toggleBlacklistStudent,
 };
+module.exports.listRecruiters = listRecruiters;
+module.exports.approveRecruiter = approveRecruiter;
+module.exports.toggleSuspendRecruiter = toggleSuspendRecruiter;

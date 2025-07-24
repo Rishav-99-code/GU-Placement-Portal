@@ -4,11 +4,13 @@ import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/ca
 import studentService from '../../services/studentService';
 import { Button } from '../../components/ui/button';
 import toast from 'react-hot-toast';
+import applicationService from '../../services/applicationService';
 
 const ManageStudentProfiles = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [approvingId, setApprovingId] = useState(null);
+  const [companiesMap, setCompaniesMap] = useState({});
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -22,7 +24,26 @@ const ManageStudentProfiles = () => {
         setLoading(false);
       }
     };
+    const fetchApplications = async () => {
+      try {
+        const apps = await applicationService.getAllForCoordinator();
+        const map = {};
+        apps.forEach(app => {
+          const sid = app.student?._id;
+          const company = app.job?.company;
+          if (sid && company) {
+            if (!map[sid]) map[sid] = new Set();
+            map[sid].add(company);
+          }
+        });
+        // convert set to array
+        const obj = {};
+        for (const k in map) obj[k] = Array.from(map[k]);
+        setCompaniesMap(obj);
+      } catch(err){ console.error(err); }
+    };
     fetchStudents();
+    fetchApplications();
   }, []);
 
   const handleApprove = async (id) => {
@@ -62,6 +83,7 @@ const ManageStudentProfiles = () => {
                     <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase">Contact</th>
                     <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase">Resume</th>
                     <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase">Blacklist</th>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase">Companies Applied</th>
                     <th className="px-4 py-2" />
                   </tr>
                 </thead>
@@ -114,6 +136,9 @@ const ManageStudentProfiles = () => {
                         }}>
                           {student.isBlacklisted? 'Unblacklist':'Blacklist'}
                         </Button>
+                      </td>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm">
+                        {companiesMap[student._id]?.join(', ') || '—'}
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap">
                         {!student.isApproved && (

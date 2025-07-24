@@ -11,6 +11,7 @@ const userSchema = mongoose.Schema(
     isProfileComplete: { type: Boolean, default: false },
     isApproved: { type: Boolean, default: false },
     isBlacklisted: { type: Boolean, default: false },
+    isSuspended: { type: Boolean, default: false },
 
     studentProfile: {
       usn: { type: String, unique: true, sparse: true }, // Roll No

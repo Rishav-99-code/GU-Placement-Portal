@@ -49,6 +49,12 @@ const applicationService = {
     }
   },
 
+  // Coordinator: get all applications
+  getAllForCoordinator: async () => {
+    const res = await api.get('/api/applications/all');
+    return res.data;
+  },
+
   // You might add functions to withdraw an application, etc.
   // withdrawApplication: async (applicationId) => { ... }
 };

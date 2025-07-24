@@ -146,4 +146,16 @@ const getJobsByRecruiter = async (req, res) => {
   }
 };
 
+// Get jobs by recruiter id (coordinator view)
+const getJobsByRecruiterId = async (req, res) => {
+  try {
+    const { recruiterId } = req.params;
+    const jobs = await Job.find({ postedBy: recruiterId });
+    res.json(jobs);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch jobs' });
+  }
+};
+
 module.exports = { getApprovedJobsWithLogo, createJob, getAllJobs, approveJob, getJobById, getJobsByRecruiter, getJobApplicants };
+module.exports.getJobsByRecruiterId = getJobsByRecruiterId;

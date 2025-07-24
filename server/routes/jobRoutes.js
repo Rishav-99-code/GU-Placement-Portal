@@ -49,6 +49,9 @@ router.get('/:id', jobController.getJobById);
 // PATCH approve job (for coordinator)
 router.patch('/:id/approve', jobController.approveJob);
 
+// Coordinator: jobs by recruiter id
+router.get('/recruiter/:recruiterId', protect, authorizeRoles('coordinator'), jobController.getJobsByRecruiterId);
+
 // You can add more job-related routes here as needed
 
 module.exports = router;

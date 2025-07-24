@@ -74,4 +74,31 @@ router.post('/jobs/:jobId/apply', protect, authorizeRoles('student'), async (req
   }
 });
 
+// Coordinator: get applications for a recruiter
+router.get('/recruiter/:recruiterId', protect, authorizeRoles('coordinator'), async (req, res) => {
+  try {
+    const { recruiterId } = req.params;
+    const jobs = await Job.find({ postedBy: recruiterId }).select('_id');
+    const jobIds = jobs.map(j=>j._id);
+    const applications = await Application.find({ job: { $in: jobIds } }).populate('job').populate('student', 'name email studentProfile');
+    res.json(applications);
+  } catch(err){
+    console.error(err);
+    res.status(500).json({ message:'Server error'});
+  }
+});
+
+// Coordinator: get all applications with job & student details
+router.get('/all', protect, authorizeRoles('coordinator'), async (req, res) => {
+  try {
+    const applications = await Application.find()
+      .populate('student', 'name email studentProfile')
+      .populate('job', 'company');
+    res.json(applications);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 module.exports = router;

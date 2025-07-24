@@ -10,6 +10,9 @@ const {
   approveStudent,
   updateStudentResume,
   toggleBlacklistStudent,
+  listRecruiters,
+  approveRecruiter,
+  toggleSuspendRecruiter,
 } = require('../controllers/userController');
 const { protect, authorizeRoles } = require('../middleware/authMiddleware'); // Assuming you have this middleware
 const multer = require('multer');
@@ -40,5 +43,8 @@ router.get('/students', protect, authorizeRoles('coordinator'), listStudents);
 router.patch('/students/:studentId/approve', protect, authorizeRoles('coordinator'), approveStudent);
 router.put('/students/:studentId/resume', protect, authorizeRoles('coordinator'), upload.single('resume'), updateStudentResume);
 router.patch('/students/:studentId/blacklist', protect, authorizeRoles('coordinator'), toggleBlacklistStudent);
+router.get('/recruiters', protect, authorizeRoles('coordinator'), listRecruiters);
+router.patch('/recruiters/:recruiterId/approve', protect, authorizeRoles('coordinator'), approveRecruiter);
+router.patch('/recruiters/:recruiterId/suspend', protect, authorizeRoles('coordinator'), toggleSuspendRecruiter);
 
 module.exports = router;
