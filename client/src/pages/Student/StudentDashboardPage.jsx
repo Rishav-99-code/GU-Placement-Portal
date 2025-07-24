@@ -9,6 +9,7 @@ import { Separator } from '../../components/ui/separator';
 import profileService from '../../services/profileService';
 import interviewService from '../../services/interviewService';
 import toast from 'react-hot-toast';
+import eventService from '../../services/eventService';
 
 const StudentDashboardPage = () => {
     const { authState, logout } = useContext(AuthContext);
@@ -20,6 +21,7 @@ const StudentDashboardPage = () => {
     const [userDetails, setUserDetails] = useState(null);
     const [loading, setLoading] = useState(true);
     const [interviewSchedules, setInterviewSchedules] = useState([]);
+    const [events, setEvents] = useState([]);
 
     useEffect(() => {
         if (!authState.isAuthenticated || authState.user?.role !== 'student') {
@@ -61,6 +63,26 @@ const StudentDashboardPage = () => {
         };
         fetchStudentProfile();
     }, [authState, navigate, logout]);
+
+    useEffect(()=>{
+      const fetchEvents = async () => {
+        try {
+          const data = await eventService.getEvents();
+          setEvents(data.slice(0,4)); // latest 4
+        } catch(err) { console.error(err); }
+      };
+      fetchEvents();
+    },[]);
+
+    const typeColor = (type)=>{
+      switch(type.toLowerCase()){
+        case 'hackathon': return 'text-amber-400';
+        case 'workshop': return 'text-sky-400';
+        case 'opportunity': return 'text-emerald-400';
+        case 'seminar': return 'text-indigo-400';
+        default: return 'text-purple-400';
+      }
+    };
 
     if (loading || !userDetails) { // Check for userDetails instead of fullUserDetails
         return (
@@ -189,31 +211,20 @@ const StudentDashboardPage = () => {
                     <button className="text-gray-400 hover:text-gray-300 active:scale-[0.98]">☀️</button>
                 </div>
 
-                {/* Announcements Section - Focused on Jobs, Placements, Internships */}
+                {/* Announcements Section */}
                 <div className="mb-8">
-                    <h3 className="text-2xl font-bold text-gray-50 mb-4">Latest Opportunities</h3>
-                    <div className="space-y-4">
-                        <Card className="p-4 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
-                            <p className="font-semibold text-purple-400">Job Alert 🚀</p>
-                            <p className="text-sm mb-1">New **Software Engineer** openings at **Tech Solutions Inc.** Apply by July 25th!</p>
-                            <p className="text-xs text-gray-400">5 minutes ago</p>
-                        </Card>
-                        <Card className="p-4 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
-                            <p className="font-semibold text-emerald-400">Placement Drive</p>
-                            <p className="text-sm mb-1">**Infosys Campus Drive** for 2026 Batch - Registrations open now!</p>
-                            <p className="text-xs text-gray-400">Yesterday</p>
-                        </Card>
-                        <Card className="p-4 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
-                            <p className="font-semibold text-amber-400">Internship Opportunity</p>
-                            <p className="text-sm mb-1">Summer **Data Science Internship** at **Analytics Corp.** Apply ASAP!</p>
-                            <p className="text-xs text-gray-400">3 days ago</p>
-                        </Card>
-                        <Card className="p-4 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
-                            <p className="font-semibold text-sky-400">Career Workshop 🎓</p>
-                            <p className="text-sm mb-1">Workshop on **'Cracking Technical Interviews'** this Friday, 3 PM.</p>
-                            <p className="text-xs text-gray-400">July 8, 2025</p>
-                        </Card>
-                    </div>
+                    <h3 className="text-2xl font-bold text-gray-50 mb-4">Latest Events & Opportunities</h3>
+                    {events.length === 0 ? <p className="text-gray-400">No recent announcements.</p> : (
+                      <div className="space-y-4">
+                        {events.map(ev => (
+                          <Card key={ev._id} className="p-4 bg-gray-800 text-gray-300 rounded-lg shadow-md">
+                            <p className={`font-semibold ${typeColor(ev.eventType)}`}>{ev.eventType}</p>
+                            <p className="text-sm mb-1">{ev.title}</p>
+                            <p className="text-xs text-gray-400">{new Date(ev.dateTime).toLocaleString()}</p>
+                          </Card>
+                        ))}
+                      </div>
+                    )}
                 </div>
 
                 {/* Upcoming Interviews */}
