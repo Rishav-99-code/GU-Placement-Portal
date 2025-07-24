@@ -10,6 +10,7 @@ const cors = require('cors'); // <--- Ensure this import is here
 const path = require('path'); // Import the path module
 const profileRoutes = require('./routes/profile');
 const interviewRoutes = require('./routes/interviewRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
 
 // Load environment variables
 dotenv.config();
@@ -43,6 +44,7 @@ app.use('/api/jobs', jobRoutes);
 app.use('/api/applications', applicationRoutes); // Handles all routes defined in applicationRoutes.js (e.g., /api/applications/student)
 app.use('/api/profile', profileRoutes);
 app.use('/api/interviews', interviewRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 
 // Error Handling Middleware (should be last)

@@ -9,6 +9,7 @@ import { Separator } from '../../components/ui/separator';
 import profileService from '../../services/profileService';
 import interviewService from '../../services/interviewService';
 import toast from 'react-hot-toast';
+import dashboardService from '../../services/dashboardService';
 
 // Import Lucide React Icons for better UI
 import {
@@ -34,6 +35,9 @@ const CoordinatorDashboardPage = () => {
   // Interviews state
   const [pendingInterviews, setPendingInterviews] = useState([]);
   const [approvingInterview, setApprovingInterview] = useState(false);
+  // Stats state
+  const [stats, setStats] = useState(null);
+  const [statsLoading, setStatsLoading] = useState(true);
 
   useEffect(() => {
     if (!authState.isAuthenticated || authState.user?.role !== 'coordinator') {
@@ -84,6 +88,22 @@ const CoordinatorDashboardPage = () => {
     CoordinatorDashboardPage.fetchPendingJobs = fetchPendingJobs;
     CoordinatorDashboardPage.fetchPendingInterviews = fetchPendingInterviews;
   }, [authState, navigate, logout]);
+
+  // Fetch coordinator dashboard stats once on mount
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await dashboardService.getCoordinatorStats();
+        setStats(data);
+      } catch (err) {
+        console.error('Failed to fetch coordinator stats:', err);
+        toast.error('Failed to load coordinator statistics');
+      } finally {
+        setStatsLoading(false);
+      }
+    };
+    fetchStats();
+  }, []);
 
   if (loading || !fullUserDetails) { // Ensure fullUserDetails is available
     return (
@@ -324,12 +344,12 @@ const CoordinatorDashboardPage = () => {
           </CardHeader>
           <Separator className="w-full mb-4 bg-gray-700" />
           <CardContent className="p-0 text-gray-300 space-y-2">
-            <p><strong className="font-semibold text-gray-100">Total Registered Students:</strong> 550</p>
-            <p><strong className="font-semibold text-gray-100">Approved Student Profiles:</strong> 520</p>
-            <p><strong className="font-semibold text-gray-100">Total Registered Recruiters:</strong> 85</p>
-            <p><strong className="font-semibold text-gray-100">Approved Recruiter Profiles:</strong> 83</p>
-            <p><strong className="font-semibold text-gray-100">Active Job Postings:</strong> 60</p>
-            <p><strong className="font-semibold text-gray-100">Interviews Scheduled (This Week):</strong> 12</p>
+            <p><strong className="font-semibold text-gray-100">Total Registered Students:</strong> {statsLoading ? '…' : stats?.totalStudents ?? '-'}</p>
+            <p><strong className="font-semibold text-gray-100">Approved Student Profiles:</strong> {statsLoading ? '…' : stats?.approvedStudentProfiles ?? '-'}</p>
+            <p><strong className="font-semibold text-gray-100">Total Registered Recruiters:</strong> {statsLoading ? '…' : stats?.totalRecruiters ?? '-'}</p>
+            <p><strong className="font-semibold text-gray-100">Approved Recruiter Profiles:</strong> {statsLoading ? '…' : stats?.approvedRecruiterProfiles ?? '-'}</p>
+            <p><strong className="font-semibold text-gray-100">Active Job Postings:</strong> {statsLoading ? '…' : stats?.activeJobPostings ?? '-'}</p>
+            <p><strong className="font-semibold text-gray-100">Interviews Scheduled (This Week):</strong> {statsLoading ? '…' : stats?.interviewsScheduledThisWeek ?? '-'}</p>
           </CardContent>
         </Card>
       </div>

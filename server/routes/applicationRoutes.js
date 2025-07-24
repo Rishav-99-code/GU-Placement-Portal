@@ -50,6 +50,10 @@ router.post('/jobs/:jobId/apply', protect, authorizeRoles('student'), async (req
     if (!job) {
       return res.status(404).json({ message: 'Job not found.' });
     }
+    // Check if user is blacklisted
+    if (req.user.isBlacklisted) {
+      return res.status(403).json({ message: 'You are blacklisted and cannot apply for jobs.' });
+    }
     // Check if already applied
     const existing = await Application.findOne({ student: req.user._id, job: jobId });
     if (existing) {

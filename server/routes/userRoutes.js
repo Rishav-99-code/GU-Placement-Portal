@@ -6,6 +6,10 @@ const {
   updateRecruiterLogo,
   forgotPassword, // New import
   resetPassword,  // New import
+  listStudents,
+  approveStudent,
+  updateStudentResume,
+  toggleBlacklistStudent,
 } = require('../controllers/userController');
 const { protect, authorizeRoles } = require('../middleware/authMiddleware'); // Assuming you have this middleware
 const multer = require('multer');
@@ -32,5 +36,9 @@ router
   .put(protect, authorizeRoles('recruiter'), upload.single('logo'), updateRecruiterLogo);
 router.post('/forgotpassword', forgotPassword); // New route
 router.put('/resetpassword/:resettoken', resetPassword); // New route
+router.get('/students', protect, authorizeRoles('coordinator'), listStudents);
+router.patch('/students/:studentId/approve', protect, authorizeRoles('coordinator'), approveStudent);
+router.put('/students/:studentId/resume', protect, authorizeRoles('coordinator'), upload.single('resume'), updateStudentResume);
+router.patch('/students/:studentId/blacklist', protect, authorizeRoles('coordinator'), toggleBlacklistStudent);
 
 module.exports = router;

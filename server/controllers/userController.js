@@ -5,6 +5,7 @@ const generateToken = require('../utils/generateToken');
 // For password reset token generation
 const crypto = require('crypto');
 const sendEmail = require('../utils/sendEmail'); // New utility for sending emails
+const upload = require('../utils/upload');
 
 // @desc    Get current user's profile
 // @route   GET /api/users/profile
@@ -221,6 +222,68 @@ const resetPassword = asyncHandler(async (req, res) => {
   });
 });
 
+// @desc    List student users (for coordinator)
+// @route   GET /api/users/students
+// @access  Private (coordinator)
+const listStudents = asyncHandler(async (req, res) => {
+  const { approved } = req.query; // optional filter approved=true/false
+  const filter = { role: 'student' };
+  if (approved === 'true') filter.isApproved = true;
+  if (approved === 'false') filter.isApproved = false;
+  const students = await User.find(filter).select('-password');
+  res.json(students);
+});
+
+// @desc    Approve a student profile (set isApproved=true)
+// @route   PATCH /api/users/students/:studentId/approve
+// @access  Private (coordinator)
+const approveStudent = asyncHandler(async (req, res) => {
+  const { studentId } = req.params;
+  const student = await User.findById(studentId);
+  if (!student || student.role !== 'student') {
+    res.status(404);
+    throw new Error('Student not found');
+  }
+  student.isApproved = true;
+  await student.save();
+  res.json({ message: 'Student approved', student });
+});
+
+// @desc Coordinator uploads resume for student
+// @route PUT /api/users/students/:studentId/resume
+// @access Private (coordinator)
+const updateStudentResume = asyncHandler(async (req, res) => {
+  const { studentId } = req.params;
+  if (!req.file) {
+    res.status(400);
+    throw new Error('Please upload a resume file');
+  }
+  const student = await User.findById(studentId);
+  if (!student || student.role !== 'student') {
+    res.status(404);
+    throw new Error('Student not found');
+  }
+  if (!student.studentProfile) student.studentProfile = {};
+  student.studentProfile.resumeUrl = `/uploads/${req.file.filename}`;
+  await student.save();
+  res.json({ message: 'Resume uploaded', student });
+});
+
+// @desc Toggle blacklist status for a student
+// @route PATCH /api/users/students/:studentId/blacklist
+// @access Private (coordinator)
+const toggleBlacklistStudent = asyncHandler(async (req, res) => {
+  const { studentId } = req.params;
+  const { blacklisted } = req.body; // boolean
+  const student = await User.findById(studentId);
+  if (!student || student.role !== 'student') {
+    res.status(404);
+    throw new Error('Student not found');
+  }
+  student.isBlacklisted = !!blacklisted;
+  await student.save();
+  res.json({ message: `Student ${blacklisted ? 'blacklisted' : 'unblacklisted'}`, student });
+});
 
 module.exports = {
   getUserProfile,
@@ -228,4 +291,8 @@ module.exports = {
   updateRecruiterLogo,
   forgotPassword, // New export
   resetPassword,  // New export
+  listStudents,
+  approveStudent,
+  updateStudentResume,
+  toggleBlacklistStudent,
 };

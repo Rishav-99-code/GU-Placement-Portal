@@ -10,6 +10,7 @@ const userSchema = mongoose.Schema(
     role: { type: String, required: true, enum: ['student', 'recruiter', 'coordinator'] },
     isProfileComplete: { type: Boolean, default: false },
     isApproved: { type: Boolean, default: false },
+    isBlacklisted: { type: Boolean, default: false },
 
     studentProfile: {
       usn: { type: String, unique: true, sparse: true }, // Roll No

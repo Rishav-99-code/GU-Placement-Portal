@@ -110,6 +110,7 @@ const ManageJobsPage = () => {
                       <td className="px-4 py-2 space-x-2">
                         <Button size="sm" onClick={() => navigate(`/recruiter/edit-job/${job._id}`)}>Edit</Button>
                         <Button size="sm" variant="destructive" onClick={() => handleDelete(job._id)}>Delete</Button>
+                        <Button size="sm" onClick={() => navigate(`/recruiter/job/${job._id}/applicants`)}>View Applicants</Button>
                         <Button size="sm" onClick={() => openScheduleModal(job)}>Schedule Interview</Button>
                       </td>
                     </tr>
