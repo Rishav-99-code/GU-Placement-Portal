@@ -19,7 +19,7 @@ const scheduleInterview = async (req, res) => {
     if (!job) {
       return res.status(404).json({ message: 'Job not found.' });
     }
-    if (job.postedBy.toString() !== req.user._id.toString()) {
+    if (req.user.role === 'recruiter' && job.postedBy.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: 'Not authorized to schedule interview for this job.' });
     }
 
