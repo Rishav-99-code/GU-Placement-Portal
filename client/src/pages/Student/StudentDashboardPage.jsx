@@ -194,8 +194,8 @@ const StudentDashboardPage = () => {
             <div className="w-full lg:w-1/2 bg-gray-900 text-gray-200 p-4 sm:p-8 lg:p-12 flex flex-col justify-between">
                 {/* Top Navbar Section (Mock - Actual Navbar is separate) */}
                 <div className="flex justify-end items-center space-x-4 mb-8">
-                    <Button variant="ghost" className="text-purple-400 hover:text-purple-300 active:scale-[0.98]">
-                        <Link to="#">Change Password</Link>
+                    <Button variant="ghost" className="text-purple-400 hover:text-purple-300 active:scale-[0.98]" asChild>
+                        <Link to="/change-password">Change Password</Link>
                     </Button>
                     <Button
                         variant="ghost"

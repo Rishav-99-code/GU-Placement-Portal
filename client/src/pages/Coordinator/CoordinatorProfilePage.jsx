@@ -33,11 +33,6 @@ const CoordinatorProfilePage = () => {
       return;
     }
 
-    if (authState.user?.isProfileComplete) {
-      navigate('/coordinator/dashboard', { replace: true });
-      return;
-    }
-
     const fetchCoordinatorProfile = async () => {
       try {
         const data = await profileService.getProfile();

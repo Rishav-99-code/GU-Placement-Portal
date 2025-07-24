@@ -35,9 +35,11 @@ import ManageRecruitersPage from './pages/Coordinator/ManageRecruitersPage';
 import ManageJobPostingsPage from './pages/Coordinator/ManageJobPostingsPage';
 import ManageEventsPage from './pages/Coordinator/ManageEventsPage';
 
+
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
 import PrivateRoute from './components/common/PrivateRoute';
+import ChangePasswordPage from './pages/common/ChangePasswordPage';
 
 
 function App() {
@@ -121,6 +123,7 @@ function App() {
             <Route path="/why-recruit" element={<HomePage />} />
             <Route path="/past-recruiters" element={<HomePage />} />
             <Route path="/contact-us" element={<HomePage />} />
+            <Route path="/change-password" element={<PrivateRoute allowedRoles={['student','recruiter','coordinator']}><ChangePasswordPage /></PrivateRoute>} />
 
             {/* Fallback for unmatched routes */}
             <Route path="*" element={<p className="text-center mt-20 text-gray-700 dark:text-gray-300">404 - Page Not Found</p>} />

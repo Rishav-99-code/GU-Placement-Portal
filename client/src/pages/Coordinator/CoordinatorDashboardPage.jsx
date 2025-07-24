@@ -183,24 +183,6 @@ const CoordinatorDashboardPage = () => {
                 <span className="font-medium text-center">Manage Job Postings</span>
               </Link>
             </Button>
-            <Button
-              className="group h-28 text-md bg-gray-700 text-gray-200 shadow-md hover:bg-gray-600 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 ease-in-out flex flex-col justify-center items-center rounded-lg active:scale-[0.98] active:shadow-inner"
-              asChild
-            >
-              <Link to="/coordinator/approve-profiles">
-                <CalendarCheckIcon className="text-4xl mb-2 transition-transform duration-300 group-hover:-translate-y-1" />
-                <span className="font-medium text-center">Approve Profiles</span>
-              </Link>
-            </Button>
-             <Button
-              className="group h-28 text-md bg-gray-700 text-gray-200 shadow-md hover:bg-gray-600 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 ease-in-out flex flex-col justify-center items-center rounded-lg active:scale-[0.98] active:shadow-inner"
-              asChild
-            >
-              <Link to="/coordinator/manage-batches">
-                <GraduationCapIcon className="text-4xl mb-2 transition-transform duration-300 group-hover:-translate-y-1" />
-                <span className="font-medium text-center">Manage Batches</span>
-              </Link>
-            </Button>
              <Button
               className="group h-28 text-md bg-gray-700 text-gray-200 shadow-md hover:bg-gray-600 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 ease-in-out flex flex-col justify-center items-center rounded-lg active:scale-[0.98] active:shadow-inner"
               asChild
@@ -219,8 +201,8 @@ const CoordinatorDashboardPage = () => {
         
         {/* Top Right Controls (Logout, Change Password, Theme Toggle) */}
         <div className="flex justify-end items-center space-x-4 mb-8">
-            <Button variant="ghost" className="text-purple-400 hover:text-purple-300 active:scale-[0.98]">
-              <Link to="#">Change Password</Link>
+            <Button variant="ghost" className="text-purple-400 hover:text-purple-300 active:scale-[0.98]" asChild>
+              <Link to="/change-password">Change Password</Link>
             </Button>
             <Button variant="ghost" className="text-red-400 hover:text-red-300 active:scale-[0.98]" onClick={logout}>
               <LogOutIcon className="inline-block h-4 w-4 mr-1" /> Logout
@@ -311,31 +293,7 @@ const CoordinatorDashboardPage = () => {
             </div>
           )}
         </div>
-        <div className="mb-8">
-          <h3 className="text-2xl font-bold text-gray-50 mb-4">Important Alerts</h3>
-          <div className="space-y-4">
-            <Card className="p-4 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
-              <p className="font-semibold text-red-400">Action Required: Pending Approvals ⚠️</p>
-              <p className="text-sm mb-1">You have <strong>7 pending student profile approvals</strong> and <strong>2 recruiter approvals</strong>.</p>
-              <p className="text-xs text-gray-400">15 minutes ago</p>
-            </Card>
-            <Card className="p-4 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
-              <p className="font-semibold text-purple-400">Upcoming Placement Drive 📢</p>
-              <p className="text-sm mb-1">Mega placement drive for 2025 batch scheduled for **August 15-20**. Please prepare logistics.</p>
-              <p className="text-xs text-gray-400">2 hours ago</p>
-            </Card>
-            <Card className="p-4 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
-              <p className="font-semibold text-emerald-400">New Job Posting ✨</p>
-              <p className="text-sm mb-1">A new **Data Scientist** role from **Innovate Corp.** has been posted and is awaiting review.</p>
-              <p className="text-xs text-gray-400">Yesterday</p>
-            </Card>
-            <Card className="p-4 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
-              <p className="font-semibold text-sky-400">Interview Schedule Update 📅</p>
-              <p className="text-sm mb-1">Interviews for **XYZ Solutions** have been confirmed for **July 20th** in Seminar Hall 1.</p>
-              <p className="text-xs text-gray-400">3 days ago</p>
-            </Card>
-          </div>
-        </div>
+        {/* Removed dummy Important Alerts section */}
 
         {/* Coordinator Quick Stats */}
         <Card className="p-6 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 mt-auto">

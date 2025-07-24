@@ -67,7 +67,7 @@ const RecruiterDashboardPage = () => {
             <p><strong className="font-medium text-gray-100">Contact:</strong> {user?.recruiterProfile?.contactNumber || '00000000'}</p>
           </div>
 
-          <Button className="mt-6 w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold py-2 rounded-md transition-all duration-200 active:scale-[0.98] active:shadow-inner">
+          <Button asChild className="mt-6 w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold py-2 rounded-md transition-all duration-200 active:scale-[0.98] active:shadow-inner">
             <Link to="/recruiter/profile">Edit Profile</Link>
           </Button>
         </div>
@@ -109,8 +109,8 @@ const RecruiterDashboardPage = () => {
         
         {/* Top Navbar Actions */}
         <div className="flex justify-end items-center space-x-4 mb-8">
-          <Button variant="ghost" className="text-blue-400 hover:text-blue-300 active:scale-[0.98]">
-            <Link to="#">Change Password</Link>
+          <Button variant="ghost" className="text-blue-400 hover:text-blue-300 active:scale-[0.98]" asChild>
+            <Link to="/change-password">Change Password</Link>
           </Button>
           <Button variant="ghost" className="text-red-400 hover:text-red-300 active:scale-[0.98]" onClick={logout}>
             Logout
