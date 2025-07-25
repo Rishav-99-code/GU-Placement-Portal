@@ -117,7 +117,10 @@ const LoginPage = () => {
           </Link>
         </div>
 
-        <Button type="submit" className="w-full py-2.5 text-lg font-semibold glow-on-hover">
+        <Button
+          type="submit"
+          className="w-full py-2.5 text-lg font-semibold bg-gradient-to-r from-purple-700 via-blue-600 to-purple-900 text-white rounded-lg shadow-md transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+        >
           Log In
         </Button>
       </form>
