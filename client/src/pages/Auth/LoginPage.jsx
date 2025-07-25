@@ -34,7 +34,7 @@ const LoginPage = () => {
     }
 
     try {
-      const userData = await authService.login({ email, password });
+      const userData = await authService.login({ email, password, role });
       console.log('Login response:', userData); // Debug log
       login(userData.token, userData);
       toast.success(`Logged in successfully as ${userData.role}!`);

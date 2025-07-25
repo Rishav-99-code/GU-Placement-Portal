@@ -45,7 +45,7 @@ const registerUser = asyncHandler(async (req, res) => {
 // @route   POST /api/auth/login
 // @access  Public
 const loginUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, role: requestedRole } = req.body;
 
   console.log('Login attempt received for email:', email);
 
@@ -59,6 +59,11 @@ const loginUser = asyncHandler(async (req, res) => {
   console.log('User found in DB:', user ? user.email : 'No user found');
 
   if (user) {
+    // Ensure the user is logging in via the correct portal (role check)
+    if (requestedRole && user.role !== requestedRole) {
+      res.status(401);
+      throw new Error(`No ${requestedRole} account found for these credentials.`);
+    }
     // email verification check removed
     const isMatch = await user.matchPassword(password);
     console.log('Password comparison result (isMatch):', isMatch);
