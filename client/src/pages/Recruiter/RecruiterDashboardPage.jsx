@@ -1,5 +1,5 @@
 // frontend/src/pages/Recruiter/RecruiterDashboardPage.js
-import React, { useContext } from 'react';
+import React, { useContext, useRef } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
@@ -20,27 +20,83 @@ const RecruiterDashboardPage = () => {
   // State for dashboard stats
   const [stats, setStats] = React.useState({ jobsPosted: 0, activeListings: 0, totalApplicants: 0, interviewsScheduled: 0 });
   const [latestUpdates, setLatestUpdates] = React.useState([]);
-  React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const jobs = await jobService.getMyJobs();
-        setStats(s => ({ ...s, jobsPosted: jobs.length, activeListings: jobs.filter(j => j.status === 'active').length }));
-        
-        setLatestUpdates([
-          { type: 'Reminder', color: 'blue', message: `Don’t forget to review pending applications for the ${jobs[1]?.title || 'Backend Developer'} role.`, time: '10 minutes ago' },
-          { type: 'New Applicants', color: 'green', message: `3 new candidates applied for ${jobs[0]?.title || 'Frontend Engineer'}.`, time: 'Today' },
-          { type: 'Event', color: 'purple', message: 'Join the Virtual Career Fair this Friday at 2 PM.', time: '2 days ago' },
-        ]);
 
+  // Keep track of previously fetched applicants to detect new ones
+  const applicantsMapRef = useRef({}); // { [jobId]: Application[] }
+
+  React.useEffect(() => {
+    let intervalId;
+
+    const collectUpdates = async () => {
+      try {
+        // Fetch recruiter jobs
+        const jobs = await jobService.getMyJobs();
+
+        // Fetch applicants for each job concurrently
         const applicantsArr = await Promise.all(jobs.map(job => applicationService.getApplicantsForJob(job._id)));
+
+        // Update stats (jobs, listings, applicants, interviews)
         const totalApplicants = applicantsArr.reduce((sum, arr) => sum + arr.length, 0);
-        const interviewsScheduled = applicantsArr.flat().filter(a => a.status === 'interview').length;
-        setStats(s => ({ ...s, totalApplicants, interviewsScheduled }));
+        const interviewsScheduled = applicantsArr.flat().filter(app => app.status === 'interview').length;
+        setStats({
+          jobsPosted: jobs.length,
+          activeListings: jobs.filter(j => j.status === 'active').length,
+          totalApplicants,
+          interviewsScheduled,
+        });
+
+        const updates = [];
+        const newApplicantsMap = { ...applicantsMapRef.current };
+
+        applicantsArr.forEach((applicants, idx) => {
+          const job = jobs[idx];
+
+          // 1. Reminder to review pending applications
+          const pendingCount = applicants.filter(app => app.status === 'pending').length;
+          if (pendingCount > 0) {
+            updates.push({
+              type: 'Reminder',
+              color: 'blue',
+              message: `You have ${pendingCount} pending application${pendingCount > 1 ? 's' : ''} for ${job.title}.`,
+              time: new Date().toLocaleTimeString(),
+            });
+          }
+
+          // 2. Detect new applicants compared to previous fetch
+          const prevCount = newApplicantsMap[job._id]?.length || 0;
+          if (applicants.length > prevCount) {
+            const diff = applicants.length - prevCount;
+            updates.push({
+              type: 'New Applicants',
+              color: 'green',
+              message: `${diff} new candidate${diff > 1 ? 's have' : ' has'} applied for ${job.title}.`,
+              time: new Date().toLocaleTimeString(),
+            });
+          }
+
+          // Update map for future comparisons
+          newApplicantsMap[job._id] = applicants;
+        });
+
+        // Store latest applicant snapshot
+        applicantsMapRef.current = newApplicantsMap;
+
+        // Prepend new updates (if any) to the list, keep most recent 20
+        if (updates.length > 0) {
+          setLatestUpdates(prev => [...updates, ...prev].slice(0, 20));
+        }
       } catch (error) {
-        console.error("Failed to fetch dashboard data:", error);
+        console.error('Failed to fetch dashboard data:', error);
       }
     };
-    fetchData();
+
+    // Initial fetch
+    collectUpdates();
+
+    // Poll every 30 seconds for real-time-ish updates
+    intervalId = setInterval(collectUpdates, 30000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   return (

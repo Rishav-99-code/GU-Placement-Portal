@@ -12,16 +12,7 @@ import toast from 'react-hot-toast';
 import dashboardService from '../../services/dashboardService';
 
 // Import Lucide React Icons for better UI
-import {
-  UsersIcon,
-  BriefcaseBusinessIcon,
-  CalendarCheckIcon,
-  ClipboardListIcon,
-  GraduationCapIcon,
-  SettingsIcon,
-  LogOutIcon,
-  BellIcon
-} from 'lucide-react';
+import { LogOutIcon } from 'lucide-react';
 
 const CoordinatorDashboardPage = () => {
   const { authState, logout } = useContext(AuthContext);
@@ -161,7 +152,7 @@ const CoordinatorDashboardPage = () => {
               asChild
             >
               <Link to="/coordinator/manage-students">
-                <UsersIcon className="text-4xl mb-2 transition-transform duration-300 group-hover:-translate-y-1" />
+                <span className="text-4xl mb-2 transition-transform duration-300 group-hover:-translate-y-1">🎓</span>
                 <span className="font-medium text-center">Manage Students</span>
               </Link>
             </Button>
@@ -170,7 +161,7 @@ const CoordinatorDashboardPage = () => {
               asChild
             >
               <Link to="/coordinator/manage-recruiters">
-                <BriefcaseBusinessIcon className="text-4xl mb-2 transition-transform duration-300 group-hover:-translate-y-1" />
+                <span className="text-4xl mb-2 transition-transform duration-300 group-hover:-translate-y-1">🏢</span>
                 <span className="font-medium text-center">Manage Recruiters</span>
               </Link>
             </Button>
@@ -179,7 +170,7 @@ const CoordinatorDashboardPage = () => {
               asChild
             >
               <Link to="/coordinator/manage-jobs">
-                <ClipboardListIcon className="text-4xl mb-2 transition-transform duration-300 group-hover:-translate-y-1" />
+                <span className="text-4xl mb-2 transition-transform duration-300 group-hover:-translate-y-1">📋</span>
                 <span className="font-medium text-center">Manage Job Postings</span>
               </Link>
             </Button>
@@ -188,7 +179,7 @@ const CoordinatorDashboardPage = () => {
               asChild
             >
               <Link to="/coordinator/manage-events">
-                <BellIcon className="text-4xl mb-2 transition-transform duration-300 group-hover:-translate-y-1" />
+                <span className="text-4xl mb-2 transition-transform duration-300 group-hover:-translate-y-1">🎊</span>
                 <span className="font-medium text-center">Manage Events</span>
               </Link>
             </Button>
