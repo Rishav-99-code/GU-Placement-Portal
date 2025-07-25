@@ -22,6 +22,7 @@ import CoordinatorProfilePage from './pages/Coordinator/CoordinatorProfilePage';
 import AvailableJobsPage from './pages/Student/AvailableJobsPage';
 import StudentApplicationsPage from './pages/Student/StudentApplicationsPage'; // NEW: Import StudentApplicationsPage
 import StudentInterviewSchedulePage from './pages/Student/StudentInterviewSchedulePage'; // added
+import StudentFAQPage from './pages/Student/StudentFAQPage';
 import JobDetailsPage from './pages/Student/JobDetailsPage';
 
 import CreateJobPage from './pages/Recruiter/CreateJobPage';
@@ -100,6 +101,7 @@ function App() {
             <Route path="/student/jobs" element={<PrivateRoute allowedRoles={['student']}><AvailableJobsPage /></PrivateRoute>} />
             <Route path="/student/applications" element={<PrivateRoute allowedRoles={['student']}><StudentApplicationsPage /></PrivateRoute>} /> {/* NEW: StudentApplicationsPage Route */}
             <Route path="/student/interviews" element={<PrivateRoute allowedRoles={['student']}><StudentInterviewSchedulePage /></PrivateRoute>} />
+            <Route path="/student/faq" element={<PrivateRoute allowedRoles={['student']}><StudentFAQPage /></PrivateRoute>} />
             <Route path="/student/jobs/:jobId" element={<PrivateRoute allowedRoles={['student']}><JobDetailsPage /></PrivateRoute>} />
 
             <Route path="/recruiter/dashboard" element={<PrivateRoute allowedRoles={['recruiter']}><RecruiterDashboardPage /></PrivateRoute>} />
