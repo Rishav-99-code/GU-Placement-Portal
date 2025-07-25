@@ -12,10 +12,7 @@ const userSchema = mongoose.Schema(
     isProfileComplete: { type: Boolean, default: false },
     isApproved: { type: Boolean, default: false },
     isBlacklisted: { type: Boolean, default: false },
-    // Email verification fields
-    isEmailVerified: { type: Boolean, default: false },
-    emailVerifyToken: String,
-    emailVerifyExpire: Date,
+    // removed email verification fields
     isSuspended: { type: Boolean, default: false },
 
     studentProfile: {
@@ -87,22 +84,6 @@ userSchema.pre('save', async function (next) {
 
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
-};
-
-// Method to generate and hash email verification token
-userSchema.methods.getEmailVerificationToken = function() {
-  const verifyToken = crypto.randomBytes(20).toString('hex');
-
-  // Hash token and set to emailVerifyToken field
-  this.emailVerifyToken = crypto
-    .createHash('sha256')
-    .update(verifyToken)
-    .digest('hex');
-
-  // Set expire (24 hours)
-  this.emailVerifyExpire = Date.now() + 24 * 60 * 60 * 1000;
-
-  return verifyToken;
 };
 
 // Method to generate and hash password reset token

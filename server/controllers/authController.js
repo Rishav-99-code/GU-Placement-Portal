@@ -2,8 +2,7 @@
 const asyncHandler = require('express-async-handler');
 const User = require('../models/User');
 const generateToken = require('../utils/generateToken'); // Still needed for login
-const crypto = require('crypto');
-const sendEmail = require('../utils/sendEmail');
+// email verification imports removed
 
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, role } = req.body;
@@ -32,30 +31,13 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('Invalid user data');
   }
 
-  // Generate verification token
-  const verifyToken = user.getEmailVerificationToken();
-  await user.save({ validateBeforeSave: false });
-
-  // Build verification URL
-  const verifyUrl = `${req.protocol}://${req.get('host')}/api/auth/verifyemail/${verifyToken}`;
-
-  const message = `<p>Hi ${user.name},</p>
-    <p>Welcome! Please verify your email by clicking the link below:</p>
-    <p><a href="${verifyUrl}" target="_blank">Verify Email</a></p>
-    <p>This link will expire in 24 hours.</p>`;
-
-  try {
-    await sendEmail({
-      email: user.email,
-      subject: 'Verify your email',
-      message,
-    });
-  } catch (err) {
-    console.error('Verification email could not be sent:', err);
-  }
-
   res.status(201).json({
-    message: 'Registration successful! Please check your email to verify your account.',
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    isProfileComplete: user.isProfileComplete,
+    isApproved: user.isApproved,
   });
 });
 
@@ -77,11 +59,7 @@ const loginUser = asyncHandler(async (req, res) => {
   console.log('User found in DB:', user ? user.email : 'No user found');
 
   if (user) {
-    if (!user.isEmailVerified) {
-      res.status(401);
-      throw new Error('Please verify your email before logging in.');
-    }
-
+    // email verification check removed
     const isMatch = await user.matchPassword(password);
     console.log('Password comparison result (isMatch):', isMatch);
 
@@ -112,33 +90,4 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc Verify user email
-// @route GET /api/auth/verifyemail/:verifytoken
-// @access Public
-const verifyEmail = asyncHandler(async (req, res) => {
-  const hashedToken = crypto
-    .createHash('sha256')
-    .update(req.params.verifytoken)
-    .digest('hex');
-
-  const user = await User.findOne({
-    emailVerifyToken: hashedToken,
-    emailVerifyExpire: { $gt: Date.now() },
-  });
-
-  if (!user) {
-    res.status(400);
-    throw new Error('Invalid or expired email verification token');
-  }
-
-  user.isEmailVerified = true;
-  user.emailVerifyToken = undefined;
-  user.emailVerifyExpire = undefined;
-
-  await user.save();
-
-  // Optionally, redirect to frontend success page
-  res.json({ message: 'Email verified successfully. You can now log in.' });
-});
-
-module.exports = { registerUser, loginUser, verifyEmail };
+module.exports = { registerUser, loginUser };
