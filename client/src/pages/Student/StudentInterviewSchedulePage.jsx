@@ -1,4 +1,3 @@
-// frontend/src/pages/Student/StudentInterviewSchedulePage.js
 import React, { useEffect, useState } from 'react';
 import interviewService from '../../services/interviewService';
 import { Card, CardTitle, CardContent } from '../../components/ui/card';

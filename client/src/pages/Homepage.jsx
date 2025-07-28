@@ -1,23 +1,41 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { useInView } from 'react-intersection-observer';
-import { Users, Building, Briefcase, Mail, Phone, GraduationCap, BriefcaseBusiness, UserCog } from 'lucide-react'; 
+import { Users, Building, Briefcase, Mail, Phone, GraduationCap, BriefcaseBusiness, UserCog } from 'lucide-react';
 import guistImage from '../assets/images/guist.jpg';
+
+// Import the new image for the overview section
+import itDeptImage from '../assets/images/IT-Dept.jpg';
+
+import wiproLogo from '../assets/images/wipro.jpg';
+import adpLogo from '../assets/images/adp.png';
+import amazonLogo from '../assets/images/amazon logo.png';
+import capgeminiLogo from '../assets/images/Capgemini-Logo.png';
+import codeyoungLogo from '../assets/images/codeyoung logo.png';
+import cognizantLogo from '../assets/images/cognizant logo.jpeg';
+import federalBankLogo from '../assets/images/Federal Bank Logo.png';
+import hikeEduLogo from '../assets/images/hike-edu-logo.png';
+import infosysLogo from '../assets/images/infosyslogo.png';
+import itcInfotechLogo from '../assets/images/itc-infotech-vector-logo-small.png';
+import ltiMindtreeLogo from '../assets/images/LTIMindtree.png';
+import mindlanceLogo from '../assets/images/Mindlance Logo.png';
+import swiggyLogo from '../assets/images/swiggy logo.jpg';
+import tcsLogo from '../assets/images/TCS.NS_BIG.png';
+import zaloniLogo from '../assets/images/zaloni-logo.png';
 
 
 const PlaceholderCompanyLogo = ({ src, alt }) => (
   <img
-    src={src || `https://placehold.co/150x80?text=${alt}`} 
+    src={src || `https://placehold.co/150x80?text=${alt}`}
     alt={alt}
     className="h-20 w-auto object-contain transition-transform duration-300 hover:scale-105"
   />
 );
 
 const HomePage = () => {
-  
+
   const [heroRef, heroInView] = useInView({ triggerOnce: true, threshold: 0.2 });
   const [overviewRef, overviewInView] = useInView({ triggerOnce: true, threshold: 0.2 });
   const [whyRecruitRef, whyRecruitInView] = useInView({ triggerOnce: true, threshold: 0.2 });
@@ -26,47 +44,45 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen">
-      
-        <section ref={heroRef} className={`transition-opacity duration-1000 ease-out ${heroInView ? 'opacity-100' : 'opacity-0'}`}>
-  
-  <div className="w-full">
-    <img
-      src={guistImage} 
-      alt="GUIST College"
-      className="w-full h-auto object-cover"
-    />
-  </div>
 
-  
-  <div className="container mx-auto px-4 py-10 text-center">
-    <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-      <Link to="/register?role=student">
-        <Button size="lg" className="bg-blue-700 text-white hover:bg-blue-800 font-bold px-6 py-4 rounded-full shadow-lg w-full sm:w-auto flex items-center justify-center">
-          <GraduationCap className="mr-2 h-5 w-5" /> Student
-        </Button>
-      </Link>
-      <Link to="/register?role=recruiter">
-        <Button size="lg" className="bg-blue-700 text-white hover:bg-blue-800 font-bold px-6 py-4 rounded-full shadow-lg w-full sm:w-auto flex items-center justify-center">
-          <BriefcaseBusiness className="mr-2 h-5 w-5" /> Recruiter
-        </Button>
-      </Link>
-      <Link to="/register?role=coordinator">
-        <Button size="lg" className="bg-blue-700 text-white hover:bg-blue-800 font-bold px-6 py-4 rounded-full shadow-lg w-full sm:w-auto flex items-center justify-center">
-          <UserCog className="mr-2 h-5 w-5" /> Coordinator
-        </Button>
-      </Link>
-      <Link to="/jobs">
-        <Button size="lg" variant="outline" className="border-2 border-blue-700 text-blue-700 hover:bg-blue-700 hover:text-white font-bold px-6 py-4 rounded-full shadow-lg w-full sm:w-auto">
-          Explore Jobs
-        </Button>
-      </Link>
-    </div>
-  </div>
-</section>
+      <section ref={heroRef} className={`transition-opacity duration-1000 ease-out ${heroInView ? 'opacity-100' : 'opacity-0'}`}>
+
+        <div className="w-full">
+          <img
+            src={guistImage}
+            alt="GUIST College"
+            className="w-full h-auto object-cover"
+          />
+        </div>
 
 
+        <div className="container mx-auto px-4 py-10 text-center">
+          <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+            <Link to="/register?role=student">
+              <Button size="lg" className="bg-blue-700 text-white hover:bg-blue-800 font-bold px-6 py-4 rounded-full shadow-lg w-full sm:w-auto flex items-center justify-center">
+                <GraduationCap className="mr-2 h-5 w-5" /> Student
+              </Button>
+            </Link>
+            <Link to="/register?role=recruiter">
+              <Button size="lg" className="bg-blue-700 text-white hover:bg-blue-800 font-bold px-6 py-4 rounded-full shadow-lg w-full sm:w-auto flex items-center justify-center">
+                <BriefcaseBusiness className="mr-2 h-5 w-5" /> Recruiter
+              </Button>
+            </Link>
+            <Link to="/register?role=coordinator">
+              <Button size="lg" className="bg-blue-700 text-white hover:bg-blue-800 font-bold px-6 py-4 rounded-full shadow-lg w-full sm:w-auto flex items-center justify-center">
+                <UserCog className="mr-2 h-5 w-5" /> Coordinator
+              </Button>
+            </Link>
+            <Link to="/jobs">
+              <Button size="lg" variant="outline" className="border-2 border-blue-700 text-blue-700 hover:bg-blue-700 hover:text-white font-bold px-6 py-4 rounded-full shadow-lg w-full sm:w-auto">
+                Explore Jobs
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
 
-      
+
       <section
         id="overview"
         ref={overviewRef}
@@ -84,14 +100,21 @@ const HomePage = () => {
               <p className="mb-4">
                 We are committed to nurturing a symbiotic relationship where companies find their ideal candidates, and students discover fulfilling roles that align with their skills and aspirations. Our dedicated team ensures a seamless and efficient placement cycle.
               </p>
-              <p>
+              <p className="mb-4">
                 From coordinating interviews to managing offers, we handle every aspect with professionalism and precision, making the hiring experience smooth and rewarding for all stakeholders.
+              </p>
+              {/* Added new paragraphs for better alignment */}
+              <p className="mb-4">
+                Our advanced search and filtering tools allow recruiters to quickly identify candidates based on skills, academic performance, and preferences. For students, the portal offers resume building tools, interview preparation resources, and a personalized dashboard to track their application status.
+              </p>
+              <p>
+                We also regularly host virtual job fairs and information sessions, providing direct interaction opportunities between students and potential employers. Our goal is to empower every student to achieve their career dreams and every company to build a strong, skilled workforce.
               </p>
             </div>
             <div className="flex justify-center items-center">
               <img
-                src="https://placehold.co/600x400?text=Overview+Image" 
-                alt="Overview"
+                src={itDeptImage}
+                alt="IT Department"
                 className="rounded-lg shadow-xl max-w-full h-auto transform transition-transform duration-500 hover:scale-105"
               />
             </div>
@@ -99,7 +122,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      
+
       <section
         id="why-recruit"
         ref={whyRecruitRef}
@@ -152,7 +175,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      
+
       <section
         id="past-recruiters"
         ref={pastRecruitersRef}
@@ -166,23 +189,29 @@ const HomePage = () => {
             We are proud to have partnered with a wide range of industry leaders who trust us to find their next generation of talent.
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 items-center justify-center">
-            
-            <PlaceholderCompanyLogo src="" alt="Google" />
-            <PlaceholderCompanyLogo src="" alt="Microsoft" />
-            <PlaceholderCompanyLogo src="" alt="Amazon" />
-            <PlaceholderCompanyLogo src="" alt="Meta" />
-            <PlaceholderCompanyLogo src="" alt="Apple" />
-            <PlaceholderCompanyLogo src="" alt="Reliance" />
-            <PlaceholderCompanyLogo src="" alt="TCS" />
-            <PlaceholderCompanyLogo src="" alt="Infosys" />
-            <PlaceholderCompanyLogo src="" alt="Wipro" />
-            <PlaceholderCompanyLogo src="" alt="HCL" />
-            
+
+            {/* Updated PlaceholderCompanyLogo components with actual imported images */}
+            <PlaceholderCompanyLogo src={wiproLogo} alt="Wipro" />
+            <PlaceholderCompanyLogo src={adpLogo} alt="ADP" />
+            <PlaceholderCompanyLogo src={amazonLogo} alt="Amazon" />
+            <PlaceholderCompanyLogo src={capgeminiLogo} alt="Capgemini" />
+            <PlaceholderCompanyLogo src={codeyoungLogo} alt="Codeyoung" />
+            <PlaceholderCompanyLogo src={cognizantLogo} alt="Cognizant" />
+            <PlaceholderCompanyLogo src={federalBankLogo} alt="Federal Bank" />
+            <PlaceholderCompanyLogo src={hikeEduLogo} alt="Hike Education" />
+            <PlaceholderCompanyLogo src={infosysLogo} alt="Infosys" />
+            <PlaceholderCompanyLogo src={itcInfotechLogo} alt="ITC Infotech" />
+            <PlaceholderCompanyLogo src={ltiMindtreeLogo} alt="LTI Mindtree" />
+            <PlaceholderCompanyLogo src={mindlanceLogo} alt="Mindlance" />
+            <PlaceholderCompanyLogo src={swiggyLogo} alt="Swiggy" />
+            <PlaceholderCompanyLogo src={tcsLogo} alt="TCS" />
+            <PlaceholderCompanyLogo src={zaloniLogo} alt="Zaloni" />
+
           </div>
         </div>
       </section>
 
-      
+
       <section
         id="contact-us"
         ref={contactUsRef}

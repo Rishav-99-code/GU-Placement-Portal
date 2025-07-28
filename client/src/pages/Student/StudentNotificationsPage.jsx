@@ -1,4 +1,3 @@
-// frontend/src/pages/Student/StudentNotificationsPage.js
 import React from 'react';
 
 const StudentNotificationsPage = () => {

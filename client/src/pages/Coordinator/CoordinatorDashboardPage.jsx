@@ -1,4 +1,4 @@
-// frontend/src/pages/Coordinator/CoordinatorDashboardPage.jsx
+
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
@@ -11,7 +11,7 @@ import interviewService from '../../services/interviewService';
 import toast from 'react-hot-toast';
 import dashboardService from '../../services/dashboardService';
 
-// Import Lucide React Icons for better UI
+
 import { LogOutIcon } from 'lucide-react';
 
 const CoordinatorDashboardPage = () => {
@@ -23,7 +23,7 @@ const CoordinatorDashboardPage = () => {
   const [pendingJobs, setPendingJobs] = useState([]);
   const [approving, setApproving] = useState(false);
 
-  // Interviews state
+  
   const [pendingInterviews, setPendingInterviews] = useState([]);
   const [approvingInterview, setApprovingInterview] = useState(false);
   // Stats state

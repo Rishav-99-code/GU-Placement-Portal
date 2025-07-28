@@ -1,4 +1,4 @@
-// frontend/src/pages/Auth/ResetPasswordPage.js
+
 import React, { useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Button } from '../../components/ui/button';

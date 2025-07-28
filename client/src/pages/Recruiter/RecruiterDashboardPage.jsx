@@ -1,4 +1,4 @@
-// frontend/src/pages/Recruiter/RecruiterDashboardPage.js
+
 import React, { useContext, useRef } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';

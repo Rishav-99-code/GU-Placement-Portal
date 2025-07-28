@@ -1,4 +1,4 @@
-// backend/controllers/userController.js
+
 const asyncHandler = require('express-async-handler');
 const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
@@ -22,8 +22,8 @@ const getUserProfile = asyncHandler(async (req, res) => {
       isProfileComplete: user.isProfileComplete,
       isApproved: user.isApproved,
       studentDetails: user.studentProfile || {},
-      recruiterProfile: user.recruiterProfile || {}, // renamed for frontend consistency
-      recruiterDetails: user.recruiterProfile || {}, // kept for backward compatibility
+      recruiterProfile: user.recruiterProfile || {}, 
+      recruiterDetails: user.recruiterProfile || {}, 
       coordinatorDetails: user.coordinatorProfile || {},
     });
   } else {
@@ -135,8 +135,8 @@ const updateRecruiterLogo = asyncHandler(async (req, res) => {
       isProfileComplete: updatedUser.isProfileComplete,
       isApproved: updatedUser.isApproved,
       token: generateToken(updatedUser._id, updatedUser.role),
-      recruiterProfile: updatedUser.recruiterProfile || {}, // renamed for frontend consistency
-      recruiterDetails: updatedUser.recruiterProfile || {}, // kept for backward compatibility
+      recruiterProfile: updatedUser.recruiterProfile || {}, 
+      recruiterDetails: updatedUser.recruiterProfile || {}, 
     });
   } else {
     res.status(404);
@@ -332,8 +332,8 @@ module.exports = {
   getUserProfile,
   updateProfile,
   updateRecruiterLogo,
-  forgotPassword, // New export
-  resetPassword,  // New export
+  forgotPassword, 
+  resetPassword,  
   listStudents,
   approveStudent,
   updateStudentResume,

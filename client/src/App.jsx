@@ -1,9 +1,7 @@
-// frontend/src/App.js
 import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { AuthContext } from './context/AuthContext'; // Import AuthContext
-
+import { AuthContext } from './context/AuthContext'; 
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/Auth/LoginPage';
 import RegisterPage from './pages/Auth/RegisterPage';
@@ -20,8 +18,8 @@ import RecruiterProfilePage from './pages/Recruiter/RecruiterProfilePage';
 import CoordinatorProfilePage from './pages/Coordinator/CoordinatorProfilePage';
 
 import AvailableJobsPage from './pages/Student/AvailableJobsPage';
-import StudentApplicationsPage from './pages/Student/StudentApplicationsPage'; // NEW: Import StudentApplicationsPage
-import StudentInterviewSchedulePage from './pages/Student/StudentInterviewSchedulePage'; // added
+import StudentApplicationsPage from './pages/Student/StudentApplicationsPage'; 
+import StudentInterviewSchedulePage from './pages/Student/StudentInterviewSchedulePage'; 
 import StudentFAQPage from './pages/Student/StudentFAQPage';
 import JobDetailsPage from './pages/Student/JobDetailsPage';
 
@@ -81,7 +79,7 @@ function App() {
 
             {/* Dynamic redirect after login/register (or if trying to access /dashboard directly) */}
             <Route
-              path="/dashboard" // This is a general route users might try to access
+              path="/dashboard" 
               element={
                 authState.isAuthenticated ? (
                   authState.user?.isProfileComplete ? (
