@@ -12,6 +12,7 @@ const interviewSchema = new mongoose.Schema(
       default: 'pending',
     },
     coordinator: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    meetingLink: { type: String },
   },
   { timestamps: true }
 );

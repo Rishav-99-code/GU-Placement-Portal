@@ -36,6 +36,7 @@ const userSchema = mongoose.Schema(
       coordinatorType: { type: String }, // Added
       branch: { type: String }, // Added
     },
+    emailPassword: { type: String }, // For sending emails from admin's account
     resetPasswordToken: String,
     resetPasswordExpire: Date,
   },

@@ -12,6 +12,8 @@ const profileRoutes = require('./routes/profile');
 const interviewRoutes = require('./routes/interviewRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const eventRoutes = require('./routes/eventRoutes');
+const emailRoutes = require('./routes/emailRoutes');
+const { startEmailScheduler } = require('./services/emailScheduler');
 
 // Load environment variables
 dotenv.config();
@@ -47,6 +49,7 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/interviews', interviewRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/events', eventRoutes);
+app.use('/api/email', emailRoutes);
 
 
 // Error Handling Middleware (should be last)
@@ -56,4 +59,5 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  startEmailScheduler();
 });

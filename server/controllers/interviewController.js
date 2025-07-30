@@ -3,6 +3,8 @@ const Job = require('../models/Job');
 const Application = require('../models/Application');
 const User = require('../models/User');
 const sendEmail = require('../utils/sendEmail');
+const { createGoogleMeetEvent } = require('../utils/googleMeet');
+const { interviewScheduledTemplate } = require('../utils/emailTemplates');
 
 // Recruiter schedules an interview (status: pending)
 const scheduleInterview = async (req, res) => {
@@ -77,35 +79,81 @@ const approveInterview = async (req, res) => {
       return res.status(400).json({ message: 'Interview is not pending.' });
     }
 
+    // Generate Google Meet link
+    const meetEvent = await createGoogleMeetEvent({
+      title: `Interview - ${interview.job.title}`,
+      dateTime: interview.dateTime,
+      applicants: interview.applicants
+    });
+
     interview.status = 'approved';
     interview.coordinator = req.user._id;
+    interview.meetingLink = meetEvent.meetingLink;
     await interview.save();
 
-    // Send notification emails
+    // Get coordinator details for email sending
+    const coordinator = await User.findById(req.user._id);
+    
+    console.log('📧 Email Debug:');
+    console.log('Coordinator:', coordinator.email);
+    console.log('Has email password:', !!coordinator.emailPassword);
+    console.log('Students to notify:', interview.applicants.length);
+    
+    if (!coordinator.emailPassword) {
+      console.error('❌ No email password stored for coordinator');
+      return res.status(400).json({ message: 'Coordinator email credentials not configured' });
+    }
+    
+    // Send notification emails with enhanced templates
     const dateTimeStr = new Date(interview.dateTime).toLocaleString();
     const emailPromises = interview.applicants.map((student) => {
-      const message = `Dear ${student.name},\n\nYour interview for ${interview.job.title} at ${interview.job.company} has been scheduled on ${dateTimeStr}.\n\nBest of luck!`;
+      console.log(`Sending email to: ${student.email}`);
+      const message = interviewScheduledTemplate(
+        student.name,
+        interview.job.title,
+        interview.job.company,
+        dateTimeStr
+      );
       return sendEmail({
         email: student.email,
-        subject: 'Interview Scheduled',
+        subject: `Interview Scheduled - ${interview.job.title}`,
         message,
+        senderEmail: coordinator.email,
+        senderPassword: coordinator.emailPassword,
+        senderName: coordinator.name
       });
     });
 
     // Also notify recruiter
     const recruiter = await User.findById(interview.recruiter);
     if (recruiter) {
-      const messageRecruiter = `Your interview request for ${interview.job.title} on ${dateTimeStr} has been approved and students have been notified.`;
+      const messageRecruiter = `
+        <div style="font-family: Arial, sans-serif;">
+          <h3>Interview Approved</h3>
+          <p>Your interview request for <strong>${interview.job.title}</strong> on ${dateTimeStr} has been approved.</p>
+          <p>Students have been notified and will receive the meeting link 30 minutes before the interview.</p>
+          <p><strong>Meeting Link:</strong> <a href="${interview.meetingLink}">${interview.meetingLink}</a></p>
+        </div>
+      `;
       emailPromises.push(
-        sendEmail({ email: recruiter.email, subject: 'Interview Approved', message: messageRecruiter })
+        sendEmail({ 
+          email: recruiter.email, 
+          subject: 'Interview Approved', 
+          message: messageRecruiter,
+          senderEmail: coordinator.email,
+          senderPassword: coordinator.emailPassword,
+          senderName: coordinator.name
+        })
       );
     }
 
     try {
       await Promise.all(emailPromises);
+      console.log('✅ All emails sent successfully');
     } catch (emailErr) {
-      console.error('Error sending interview notification emails:', emailErr);
-      // We continue; approval should not fail if emails fail.
+      console.error('❌ Error sending interview notification emails:', emailErr.message);
+      console.error('Full error:', emailErr);
+      return res.status(500).json({ message: 'Failed to send notification emails: ' + emailErr.message });
     }
 
     res.json({ message: 'Interview approved.' });

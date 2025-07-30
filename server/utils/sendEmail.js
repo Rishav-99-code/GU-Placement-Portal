@@ -8,16 +8,28 @@ const nodemailer = require('nodemailer');
  */
 const sendEmail = async (options) => {
   let transporter;
+  
+  // Use sender credentials if provided, otherwise use default
+  const senderEmail = options.senderEmail || process.env.EMAIL_USERNAME;
+  const senderPassword = options.senderPassword || process.env.EMAIL_PASSWORD;
+  const senderName = options.senderName || 'GU Placement Portal';
 
-  if (process.env.EMAIL_HOST && process.env.EMAIL_USERNAME && process.env.EMAIL_PASSWORD) {
+  console.log('SendEmail Debug:');
+  console.log('EMAIL_HOST:', process.env.EMAIL_HOST);
+  console.log('senderEmail:', senderEmail);
+  console.log('senderPassword exists:', !!senderPassword);
+  console.log('recipient:', options.email);
+
+  if (process.env.EMAIL_HOST && senderEmail && senderPassword) {
+    console.log('Using real Gmail credentials');
     // Production / configured transporter
     transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
       port: Number(process.env.EMAIL_PORT) || 587,
       secure: Number(process.env.EMAIL_PORT) === 465, // true for 465, false for other ports
       auth: {
-        user: process.env.EMAIL_USERNAME,
-        pass: process.env.EMAIL_PASSWORD,
+        user: senderEmail,
+        pass: senderPassword,
       },
       tls: {
         rejectUnauthorized: false,
@@ -39,7 +51,7 @@ const sendEmail = async (options) => {
   }
 
   const mailOptions = {
-    from: process.env.EMAIL_FROM || 'no-reply@gup-placement-portal.com',
+    from: `${senderName} <${senderEmail}>`,
     to: options.email,
     subject: options.subject,
     html: options.message,
