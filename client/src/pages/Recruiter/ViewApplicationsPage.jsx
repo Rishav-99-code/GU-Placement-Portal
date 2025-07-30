@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/ca
 import applicationService from '../../services/applicationService';
 import jobService from '../../services/jobService';
 import { Button } from '../../components/ui/button';
+import BackButton from '../../components/common/BackButton';
 import toast from 'react-hot-toast';
 
 const ViewApplicationsPage = () => {
@@ -71,6 +72,9 @@ const ViewApplicationsPage = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-gray-200">
+      <div className="w-full max-w-3xl">
+        <BackButton to="/recruiter/dashboard" className="text-gray-400 hover:text-gray-200 mb-4" />
+      </div>
       <Card className="w-full max-w-3xl p-8 bg-gray-800 rounded-lg shadow-md">
         <CardHeader className="mb-6">
           <CardTitle className="text-2xl font-bold text-gray-50">View Applications</CardTitle>

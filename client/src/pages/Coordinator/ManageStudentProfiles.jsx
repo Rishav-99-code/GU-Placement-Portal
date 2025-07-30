@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import studentService from '../../services/studentService';
 import { Button } from '../../components/ui/button';
+import BackButton from '../../components/common/BackButton';
 import toast from 'react-hot-toast';
 import applicationService from '../../services/applicationService';
 
@@ -62,6 +63,9 @@ const ManageStudentProfiles = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-gray-200">
+      <div className="w-full max-w-4xl">
+        <BackButton to="/coordinator/dashboard" className="text-gray-400 hover:text-gray-200 mb-4" />
+      </div>
       <Card className="w-full max-w-4xl p-8 bg-gray-800 rounded-lg shadow-md">
         <CardHeader className="mb-6">
           <CardTitle className="text-2xl font-bold text-gray-50">Manage Student Profiles</CardTitle>

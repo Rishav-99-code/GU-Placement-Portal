@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
+import BackButton from '../../components/common/BackButton';
 import recruiterService from '../../services/recruiterService';
 import toast from 'react-hot-toast';
 
@@ -55,6 +56,9 @@ const ManageRecruitersPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-200 p-6">
+      <div className="max-w-6xl mx-auto">
+        <BackButton to="/coordinator/dashboard" className="text-gray-400 hover:text-gray-200 mb-4" />
+      </div>
       <Card className="max-w-6xl mx-auto bg-gray-800">
         <CardHeader>
           <CardTitle className="text-gray-50 text-2xl">Manage Recruiters</CardTitle>

@@ -28,6 +28,7 @@ import ViewApplicationsPage from './pages/Recruiter/ViewApplicationsPage';
 import ManageJobsPage from './pages/Recruiter/ManageJobsPage';
 import EditJobPage from './pages/Recruiter/EditJobPage';
 import JobApplicantsPage from './pages/Recruiter/JobApplicantsPage';
+import RecruiterAnalytics from './pages/RecruiterAnalytics';
 
 import ManageStudentProfiles from './pages/Coordinator/ManageStudentProfiles';
 import ManageRecruitersPage from './pages/Coordinator/ManageRecruitersPage';
@@ -109,6 +110,7 @@ function App() {
             <Route path="/recruiter/view-applications" element={<PrivateRoute allowedRoles={['recruiter']}><ViewApplicationsPage /></PrivateRoute>} />
             <Route path="/recruiter/manage-jobs" element={<PrivateRoute allowedRoles={['recruiter']}><ManageJobsPage /></PrivateRoute>} />
             <Route path="/recruiter/job/:jobId/applicants" element={<PrivateRoute allowedRoles={['recruiter']}><JobApplicantsPage /></PrivateRoute>} />
+            <Route path="/recruiter/analytics" element={<PrivateRoute allowedRoles={['recruiter']}><RecruiterAnalytics /></PrivateRoute>} />
 
             <Route path="/coordinator/dashboard" element={<PrivateRoute allowedRoles={['coordinator']}><CoordinatorDashboardPage /></PrivateRoute>} />
             <Route path="/coordinator/profile" element={<PrivateRoute allowedRoles={['coordinator']}><CoordinatorProfilePage /></PrivateRoute>} />

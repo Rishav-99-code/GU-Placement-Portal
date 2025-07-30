@@ -284,8 +284,6 @@ const CoordinatorDashboardPage = () => {
             </div>
           )}
         </div>
-        {/* Removed dummy Important Alerts section */}
-
         {/* Coordinator Quick Stats */}
         <Card className="p-6 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 mt-auto">
           <CardHeader className="p-0 mb-4">

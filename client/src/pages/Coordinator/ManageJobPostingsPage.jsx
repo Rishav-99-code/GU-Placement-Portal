@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/ca
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Select } from '../../components/ui/select';
+import BackButton from '../../components/common/BackButton';
 import jobService from '../../services/jobService';
 import toast from 'react-hot-toast';
 import applicationService from '../../services/applicationService';
@@ -71,6 +72,9 @@ const ManageJobPostingsPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-200 p-6">
+      <div className="max-w-7xl mx-auto">
+        <BackButton to="/coordinator/dashboard" className="text-gray-400 hover:text-gray-200 mb-4" />
+      </div>
       <Card className="bg-gray-800 max-w-7xl mx-auto">
         <CardHeader className="flex justify-between items-center">
           <CardTitle className="text-gray-50 text-2xl">Manage Job Postings</CardTitle>

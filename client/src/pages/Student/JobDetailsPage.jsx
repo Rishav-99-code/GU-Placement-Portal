@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../..
 import { Button } from '../../components/ui/button';
 import { Separator } from '../../components/ui/separator';
 import { Badge } from '../../components/ui/badge';
+import BackButton from '../../components/common/BackButton';
 import jobService from '../../services/jobService';
 import applicationService from '../../services/applicationService'; // Import application service
 import toast from 'react-hot-toast';
@@ -101,13 +102,7 @@ const JobDetailsPage = () => {
 
   return (
     <div className="container mx-auto p-4 sm:p-6 lg:p-8 bg-gray-900 text-gray-200 min-h-[calc(100vh-64px)]">
-      <Button
-        variant="ghost"
-        onClick={() => navigate('/student/jobs')}
-        className="mb-6 text-purple-400 hover:text-purple-300 active:scale-[0.98]"
-      >
-        &larr; Back to Available Jobs
-      </Button>
+      <BackButton to="/student/jobs" className="text-purple-400 hover:text-purple-300 mb-6" />
 
       <Card className="bg-gray-800 text-gray-200 shadow-xl rounded-lg p-6 lg:p-8">
         <CardHeader className="border-b border-gray-700 pb-4 mb-4">

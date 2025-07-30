@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Badge } from '../../components/ui/badge'; // Assuming you have a Badge component
 import { Separator } from '../../components/ui/separator';
+import BackButton from '../../components/common/BackButton';
 import jobService from '../../services/jobService';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom'; // For linking to job details
@@ -71,6 +72,7 @@ const AvailableJobsPage = () => {
 
   return (
     <div className="container mx-auto p-4 sm:p-6 lg:p-8 bg-gray-900 text-gray-200 min-h-[calc(100vh-64px)]">
+      <BackButton to="/student/dashboard" className="text-gray-400 hover:text-gray-200 mb-4" />
       <h1 className="text-3xl sm:text-4xl font-bold mb-6 text-gray-50">Available Job Opportunities</h1>
 
       {/* Filter and Search Section */}

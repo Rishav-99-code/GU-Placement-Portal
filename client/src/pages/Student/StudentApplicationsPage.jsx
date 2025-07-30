@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 import { Separator } from '../../components/ui/separator';
+import BackButton from '../../components/common/BackButton';
 import applicationService from '../../services/applicationService';
 import interviewService from '../../services/interviewService';
 import toast from 'react-hot-toast';
@@ -79,6 +80,7 @@ const StudentApplicationsPage = () => {
 
   return (
     <div className="container mx-auto p-4 sm:p-6 lg:p-8 bg-gray-900 text-gray-200 min-h-[calc(100vh-64px)]">
+      <BackButton to="/student/dashboard" className="text-gray-400 hover:text-gray-200 mb-4" />
       <h1 className="text-3xl sm:text-4xl font-bold mb-6 text-gray-50">My Job Applications</h1>
 
       {applications.length === 0 ? (

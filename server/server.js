@@ -13,6 +13,7 @@ const interviewRoutes = require('./routes/interviewRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const eventRoutes = require('./routes/eventRoutes');
 const emailRoutes = require('./routes/emailRoutes');
+const analyticsRoutes = require('./routes/analyticsRoutes');
 const { startEmailScheduler } = require('./services/emailScheduler');
 
 // Load environment variables
@@ -50,6 +51,7 @@ app.use('/api/interviews', interviewRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/email', emailRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 
 // Error Handling Middleware (should be last)

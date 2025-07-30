@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import interviewService from '../../services/interviewService';
 import { Card, CardTitle, CardContent } from '../../components/ui/card';
+import BackButton from '../../components/common/BackButton';
 import toast from 'react-hot-toast';
 
 const StudentInterviewSchedulePage = () => {
@@ -42,6 +43,7 @@ const StudentInterviewSchedulePage = () => {
 
   return (
     <div className="container mx-auto p-4 sm:p-6 lg:p-8 bg-gray-900 text-gray-200 min-h-[calc(100vh-64px)]">
+      <BackButton to="/student/dashboard" className="text-gray-400 hover:text-gray-200 mb-4" />
       <h1 className="text-3xl sm:text-4xl font-bold mb-6 text-gray-50 text-center">Upcoming Interviews</h1>
 
       {interviews.length === 0 ? (
