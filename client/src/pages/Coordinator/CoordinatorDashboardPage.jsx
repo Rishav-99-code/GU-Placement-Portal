@@ -187,7 +187,7 @@ const CoordinatorDashboardPage = () => {
         </div>
       </div>
 
-      {/* Right Panel: Alerts, Pending Jobs, and Quick Facts */}
+      {/* Right Panel: Pending Jobs and Stats */}
       <div className="w-full lg:w-1/2 bg-gray-900 text-gray-200 p-4 sm:p-8 lg:p-12 flex flex-col justify-between">
         
         {/* Top Right Controls (Logout, Change Password, Theme Toggle) */}

@@ -176,15 +176,7 @@ const StudentDashboardPage = () => {
                                 <span className="font-medium">FAQ & Support</span>
                             </Link>
                         </Button>
-                        <Button
-                            className="group h-28 text-md bg-gray-700 text-gray-200 shadow-md hover:bg-gray-600 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 ease-in-out flex flex-col justify-center items-center rounded-lg active:scale-[0.98] active:shadow-inner"
-                            asChild
-                        >
-                            <Link to="#">
-                                <span className="text-4xl mb-2 transition-transform duration-300 group-hover:-translate-y-1">🔔</span>
-                                <span className="font-medium">Notifications</span>
-                            </Link>
-                        </Button>
+
                     </div>
                 </div>
             </div>
