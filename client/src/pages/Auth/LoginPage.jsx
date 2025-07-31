@@ -43,7 +43,7 @@ const LoginPage = () => {
       
       setIsLoading(true);
       
-      // Delay navigation to show loading animation
+      // Delay navigation to match animation duration (2.5 seconds)
       setTimeout(() => {
         // Robust redirect logic
         if (userData.role === 'student') {
@@ -69,7 +69,7 @@ const LoginPage = () => {
           toast.error('Unknown user role. Please contact support.');
           navigate('/login', { replace: true });
         }
-      }, 3000);
+      }, 2500);
     } catch (error) {
       const message =
         (error.response && error.response.data && error.response.data.message) ||

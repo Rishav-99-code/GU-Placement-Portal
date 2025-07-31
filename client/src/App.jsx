@@ -133,7 +133,7 @@ function App() {
             <Route path="*" element={<p className="text-center mt-20 text-gray-700 dark:text-gray-300">404 - Page Not Found</p>} />
           </Routes>
         </main>
-        <Footer />
+        {!window.location.pathname.includes('/login') && !window.location.pathname.includes('/register') && <Footer />}
         <Toaster />
       </div>
     </Router>
