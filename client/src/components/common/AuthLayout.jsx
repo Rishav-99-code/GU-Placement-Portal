@@ -2,7 +2,7 @@ import React from 'react';
 import { Tabs, TabsList, TabsTrigger } from '../ui/tabs';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '../../lib/utils'; 
-import '../../assets/styles/submarine-animation.css'; 
+import { DotLottieReact } from '@lottiefiles/dotlottie-react'; 
 
 const AuthLayout = ({ children, initialTab, type }) => {
   const navigate = useNavigate();
@@ -25,29 +25,15 @@ const AuthLayout = ({ children, initialTab, type }) => {
       <div className="relative w-full max-w-7xl mx-auto flex flex-col md:flex-row shadow-2xl rounded-xl overflow-hidden min-h-[600px] my-8">
 
         
-        <div className="md:w-2/5 bg-[#306D85] flex flex-col justify-center items-center relative overflow-hidden">
+        <div className="md:w-2/5 bg-white flex flex-col justify-center items-center relative overflow-hidden">
           
-          <div className="submarine-animation-container relative z-0 flex justify-center items-center h-full w-full">
-            
-            <div className="sea">
-                <div className="circle-wrapper">
-                    <div className="bubble"></div>
-                    <div className="submarine-wrapper">
-                        <div className="submarine-body">
-                            <div className="window"></div>
-                            <div className="light"></div>
-                        </div>
-                        <div className="helix"></div>
-                        <div className="hat">
-                            <div className="leds-wrapper">
-                                <div className="periscope"></div>
-                                <div className="leds"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
+          <div className="relative z-0 flex justify-center items-center h-full w-full">
+            <DotLottieReact
+              src="https://lottie.host/d4028c3f-4cd8-47c2-b985-e525a798b516/ptWQKlCNO4.lottie"
+              loop
+              autoplay
+              className="w-80 h-80"
+            />
           </div>
 
           

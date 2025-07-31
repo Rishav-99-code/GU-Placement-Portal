@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import AuthLayout from '../../components/common/AuthLayout';
+import LoadingScreen from '../../components/common/LoadingScreen';
 import { AuthContext } from '../../context/AuthContext';
 import authService from '../../services/authService';
 import toast from 'react-hot-toast';
@@ -13,6 +14,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('student');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useContext(AuthContext);
@@ -38,31 +40,37 @@ const LoginPage = () => {
       console.log('Login response:', userData); // Debug log
       login(userData.token, userData);
       toast.success(`Logged in successfully as ${userData.role}!`);
-
-      // Robust redirect logic
-      if (userData.role === 'student') {
-        if (userData.isProfileComplete) {
-          navigate('/student/dashboard');
+      
+      setIsLoading(true);
+      
+      // Delay navigation to show loading animation
+      setTimeout(() => {
+        // Robust redirect logic
+        if (userData.role === 'student') {
+          if (userData.isProfileComplete) {
+            navigate('/student/dashboard');
+          } else {
+            navigate('/student/profile');
+          }
+        } else if (userData.role === 'recruiter') {
+          if (userData.isProfileComplete) {
+            navigate('/recruiter/dashboard');
+          } else {
+            navigate('/recruiter/profile');
+          }
+        } else if (userData.role === 'coordinator') {
+          if (userData.isProfileComplete) {
+            navigate('/coordinator/dashboard');
+          } else {
+            navigate('/coordinator/profile');
+          }
         } else {
-          navigate('/student/profile');
+          // Fallback: go to login if role is missing or unknown
+          toast.error('Unknown user role. Please contact support.');
+          navigate('/login');
         }
-      } else if (userData.role === 'recruiter') {
-        if (userData.isProfileComplete) {
-          navigate('/recruiter/dashboard');
-        } else {
-          navigate('/recruiter/profile');
-        }
-      } else if (userData.role === 'coordinator') {
-        if (userData.isProfileComplete) {
-          navigate('/coordinator/dashboard');
-        } else {
-          navigate('/coordinator/profile');
-        }
-      } else {
-        // Fallback: go to login if role is missing or unknown
-        toast.error('Unknown user role. Please contact support.');
-        navigate('/login');
-      }
+        setIsLoading(false);
+      }, 4000);
     } catch (error) {
       const message =
         (error.response && error.response.data && error.response.data.message) ||
@@ -71,6 +79,10 @@ const LoginPage = () => {
       toast.error(message);
     }
   };
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <AuthLayout initialTab={role} type="login">
