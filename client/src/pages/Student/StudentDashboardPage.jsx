@@ -83,12 +83,8 @@ const StudentDashboardPage = () => {
       }
     };
 
-    if (loading || !userDetails) { // Check for userDetails instead of fullUserDetails
-        return (
-            <div className="flex items-center justify-center min-h-screen bg-gray-900 text-gray-300">
-                <p className="text-xl">Loading student dashboard...</p>
-            </div>
-        );
+    if (loading || !userDetails) {
+        return null; // No loading screen, just return null
     }
 
     // Access properties from userDetails for top-level info

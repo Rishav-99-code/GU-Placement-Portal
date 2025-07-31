@@ -48,29 +48,28 @@ const LoginPage = () => {
         // Robust redirect logic
         if (userData.role === 'student') {
           if (userData.isProfileComplete) {
-            navigate('/student/dashboard');
+            navigate('/student/dashboard', { replace: true });
           } else {
-            navigate('/student/profile');
+            navigate('/student/profile', { replace: true });
           }
         } else if (userData.role === 'recruiter') {
           if (userData.isProfileComplete) {
-            navigate('/recruiter/dashboard');
+            navigate('/recruiter/dashboard', { replace: true });
           } else {
-            navigate('/recruiter/profile');
+            navigate('/recruiter/profile', { replace: true });
           }
         } else if (userData.role === 'coordinator') {
           if (userData.isProfileComplete) {
-            navigate('/coordinator/dashboard');
+            navigate('/coordinator/dashboard', { replace: true });
           } else {
-            navigate('/coordinator/profile');
+            navigate('/coordinator/profile', { replace: true });
           }
         } else {
           // Fallback: go to login if role is missing or unknown
           toast.error('Unknown user role. Please contact support.');
-          navigate('/login');
+          navigate('/login', { replace: true });
         }
-        setIsLoading(false);
-      }, 4000);
+      }, 3000);
     } catch (error) {
       const message =
         (error.response && error.response.data && error.response.data.message) ||
