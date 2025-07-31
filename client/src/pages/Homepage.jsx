@@ -73,11 +73,6 @@ const HomePage = () => {
                 <UserCog className="mr-2 h-5 w-5" /> Coordinator
               </Button>
             </Link>
-            <Link to="/jobs">
-              <Button size="lg" variant="outline" className="border-2 border-blue-700 text-blue-700 hover:bg-blue-700 hover:text-white font-bold px-6 py-4 rounded-full shadow-lg w-full sm:w-auto">
-                Explore Jobs
-              </Button>
-            </Link>
           </div>
         </div>
       </section>
