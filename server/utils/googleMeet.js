@@ -1,17 +1,19 @@
-// Create a real Google Meet meeting
+// Generate meeting room details
 const createGoogleMeetEvent = async (interviewDetails) => {
   try {
-    // Create instant Google Meet link that works when clicked
-    const instantMeetLink = 'https://meet.google.com/new';
+    const meetingId = `GU-Interview-${Date.now().toString().slice(-6)}`;
     
     return {
-      meetingLink: instantMeetLink,
+      meetingLink: 'TO_BE_CREATED_BY_COORDINATOR',
+      meetingId: meetingId,
       eventId: `interview_${Date.now()}`
     };
   } catch (error) {
-    console.error('Error creating Google Meet event:', error);
+    console.error('Error creating meeting details:', error);
+    const fallbackId = `GU-Interview-${Date.now().toString().slice(-6)}`;
     return {
-      meetingLink: 'https://meet.google.com/new',
+      meetingLink: 'TO_BE_CREATED_BY_COORDINATOR',
+      meetingId: fallbackId,
       eventId: null
     };
   }

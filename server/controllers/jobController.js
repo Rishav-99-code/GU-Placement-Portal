@@ -2,15 +2,39 @@ const Job = require('../models/Job');
 const User = require('../models/User');
 const Application = require('../models/Application');
 const sendEmail = require('../utils/sendEmail');
+const { applicationSelectedTemplate, applicationRejectedTemplate } = require('../utils/emailTemplates');
 
-// Get all approved jobs with recruiter logo
+// Get all approved jobs with recruiter logo and filtering
 const getApprovedJobsWithLogo = async (req, res) => {
   try {
-    // Find all approved jobs
-    const jobs = await Job.find({ status: 'active' }).populate({
+    const { search, location, type } = req.query;
+    
+    // Build filter object
+    let filter = { status: 'active' };
+    
+    // Search by title or company
+    if (search) {
+      filter.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { company: { $regex: search, $options: 'i' } }
+      ];
+    }
+    
+    // Filter by location
+    if (location) {
+      filter.location = { $regex: location, $options: 'i' };
+    }
+    
+    // Filter by type
+    if (type) {
+      filter.type = type;
+    }
+    
+    const jobs = await Job.find(filter).populate({
       path: 'postedBy',
       select: 'recruiterProfile',
     });
+    
     // Map jobs to include logoUrl from recruiterProfile
     const jobsWithLogo = jobs.map(job => {
       let logoUrl = '';
@@ -22,6 +46,7 @@ const getApprovedJobsWithLogo = async (req, res) => {
         recruiterLogoUrl: logoUrl,
       };
     });
+    
     res.json(jobsWithLogo);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch jobs' });
@@ -190,5 +215,76 @@ const getJobsByRecruiterId = async (req, res) => {
   }
 };
 
-module.exports = { getApprovedJobsWithLogo, createJob, getAllJobs, approveJob, rejectJob, getJobById, getJobsByRecruiter, getJobApplicants };
+// Update application status (select/reject candidate)
+const updateApplicationStatus = async (req, res) => {
+  try {
+    const { applicationId } = req.params;
+    const { status } = req.body;
+
+    // Validate status
+    if (!['selected', 'rejected'].includes(status)) {
+      return res.status(400).json({ message: 'Invalid status. Must be "selected" or "rejected".' });
+    }
+
+    // Find the application with populated data
+    const application = await Application.findById(applicationId)
+      .populate('student', 'name email')
+      .populate('job', 'title company postedBy');
+
+    if (!application) {
+      return res.status(404).json({ message: 'Application not found.' });
+    }
+
+    // Verify that the recruiter is authorized to update this application
+    if (req.user.role === 'recruiter' && application.job.postedBy.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized to update this application.' });
+    }
+
+    // Update the application status
+    application.status = status;
+    await application.save();
+
+    // Send email notification to student
+    try {
+      const emailTemplate = status === 'selected' 
+        ? applicationSelectedTemplate(application.student.name, application.job.title, application.job.company)
+        : applicationRejectedTemplate(application.student.name, application.job.title, application.job.company);
+      
+      const subject = status === 'selected' 
+        ? `Congratulations! You've been selected for ${application.job.title}`
+        : `Application Update - ${application.job.title}`;
+
+      console.log(`📧 Sending ${status} email to:`, application.student.email);
+      await sendEmail({
+        email: application.student.email,
+        subject: subject,
+        message: emailTemplate
+      });
+      console.log(`✅ Email sent successfully for ${status} status`);
+    } catch (emailError) {
+      console.error('❌ Failed to send email notification:', emailError.message);
+      // Don't fail the request if email fails
+    }
+
+    res.json({ 
+      message: `Application ${status} successfully and student notified.`,
+      application 
+    });
+  } catch (err) {
+    console.error('Error updating application status:', err);
+    res.status(500).json({ error: 'Failed to update application status', message: err.message });
+  }
+};
+
+// Get unique locations from all jobs
+const getJobLocations = async (req, res) => {
+  try {
+    const locations = await Job.distinct('location', { status: 'active' });
+    res.json(locations.filter(loc => loc && loc.trim() !== ''));
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch locations' });
+  }
+};
+
+module.exports = { getApprovedJobsWithLogo, createJob, getAllJobs, approveJob, rejectJob, getJobById, getJobsByRecruiter, getJobApplicants, updateApplicationStatus, getJobLocations };
 module.exports.getJobsByRecruiterId = getJobsByRecruiterId;

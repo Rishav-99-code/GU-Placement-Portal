@@ -13,6 +13,7 @@ const interviewSchema = new mongoose.Schema(
     },
     coordinator: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     meetingLink: { type: String },
+    meetingRoomName: { type: String },
   },
   { timestamps: true }
 );

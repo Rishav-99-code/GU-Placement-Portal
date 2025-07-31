@@ -145,9 +145,9 @@ const RecruiterDashboardPage = () => {
               </Link>
             </Button>
             <Button asChild className="group h-28 bg-gray-700 text-gray-200 hover:bg-gray-600 hover:scale-[1.02] shadow-md hover:shadow-lg transition-all duration-300 ease-in-out flex flex-col justify-center items-center rounded-lg active:scale-[0.98] active:shadow-inner">
-              <Link to="/recruiter/view-applications">
+              <Link to="/recruiter/manage-students">
                 <span className="text-4xl mb-2 group-hover:-translate-y-1">👥</span>
-                <span className="font-medium">View Applicants</span>
+                <span className="font-medium">Manage Students</span>
               </Link>
             </Button>
             <Button asChild className="group h-28 bg-gray-700 text-gray-200 hover:bg-gray-600 hover:scale-[1.02] shadow-md hover:shadow-lg transition-all duration-300 ease-in-out flex flex-col justify-center items-center rounded-lg active:scale-[0.98] active:shadow-inner">

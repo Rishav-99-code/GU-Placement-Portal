@@ -51,7 +51,7 @@ const sendEmail = async (options) => {
   }
 
   const mailOptions = {
-    from: `${senderName} <${senderEmail}>`,
+    from: senderEmail ? `${senderName} <${senderEmail}>` : `${senderName} <noreply@guplacementportal.com>`,
     to: options.email,
     subject: options.subject,
     html: options.message,

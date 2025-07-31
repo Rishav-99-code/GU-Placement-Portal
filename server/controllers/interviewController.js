@@ -80,15 +80,16 @@ const approveInterview = async (req, res) => {
     }
 
     // Generate Google Meet link
-    const meetEvent = await createGoogleMeetEvent({
-      title: `Interview - ${interview.job.title}`,
+    const meetingDetails = await createGoogleMeetEvent({
+      interviewId: interview._id,
       dateTime: interview.dateTime,
-      applicants: interview.applicants
+      jobTitle: interview.job.title
     });
-
+    
     interview.status = 'approved';
     interview.coordinator = req.user._id;
-    interview.meetingLink = meetEvent.meetingLink;
+    interview.meetingRoomName = meetingDetails.meetingId;
+    interview.meetingLink = 'TO_BE_CREATED_BY_COORDINATOR';
     await interview.save();
 
     // Get coordinator details for email sending
@@ -112,7 +113,9 @@ const approveInterview = async (req, res) => {
         student.name,
         interview.job.title,
         interview.job.company,
-        dateTimeStr
+        dateTimeStr,
+        null, // No meeting link yet
+        interview.meetingRoomName
       );
       return sendEmail({
         email: student.email,
@@ -128,11 +131,17 @@ const approveInterview = async (req, res) => {
     const recruiter = await User.findById(interview.recruiter);
     if (recruiter) {
       const messageRecruiter = `
-        <div style="font-family: Arial, sans-serif;">
-          <h3>Interview Approved</h3>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #16a34a;">Interview Approved</h2>
           <p>Your interview request for <strong>${interview.job.title}</strong> on ${dateTimeStr} has been approved.</p>
-          <p>Students have been notified and will receive the meeting link 30 minutes before the interview.</p>
-          <p><strong>Meeting Link:</strong> <a href="${interview.meetingLink}">${interview.meetingLink}</a></p>
+          <div style="background-color: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #16a34a;">
+            <p><strong>Next Steps:</strong></p>
+            <p>1. Create a Google Meet: <a href="https://meet.google.com/new" style="color: #2563eb;">https://meet.google.com/new</a></p>
+            <p>2. Share the meeting link with students before the interview</p>
+            <p><strong>Reference ID:</strong> ${interview.meetingRoomName}</p>
+          </div>
+          <p>Students have been notified. Please create and share the Google Meet link.</p>
+          <p style="color: #6b7280; font-size: 14px;">GU Placement Portal</p>
         </div>
       `;
       emailPromises.push(

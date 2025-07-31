@@ -71,6 +71,16 @@ const jobService = {
     return res.data;
   },
 
+  getJobLocations: async () => {
+    try {
+      const response = await api.get('/api/jobs/locations');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching job locations:', error);
+      throw error;
+    }
+  },
+
   // You might add more functions later, e.g., applyForJob:
   // applyForJob: async (jobId, applicationData) => { ... }
 };

@@ -55,6 +55,17 @@ const applicationService = {
     return res.data;
   },
 
+  // Update application status (select/reject candidate)
+  updateApplicationStatus: async (applicationId, status) => {
+    try {
+      const response = await api.patch(`/api/jobs/applications/${applicationId}/status`, { status });
+      return response.data;
+    } catch (error) {
+      console.error(`Error updating application ${applicationId} status:`, error);
+      throw error;
+    }
+  },
+
   // You might add functions to withdraw an application, etc.
   // withdrawApplication: async (applicationId) => { ... }
 };

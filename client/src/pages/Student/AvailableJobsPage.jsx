@@ -12,11 +12,33 @@ import { Link } from 'react-router-dom'; // For linking to job details
 
 const AvailableJobsPage = () => {
   const [jobs, setJobs] = useState([]);
+  const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [filterLocation, setFilterLocation] = useState('');
-  const [filterType, setFilterType] = useState(''); // e.g., Full-time, Internship
+  const [filterType, setFilterType] = useState('');
+
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        const fetchedLocations = await jobService.getJobLocations();
+        setLocations(fetchedLocations);
+      } catch (err) {
+        console.error('Error fetching locations:', err);
+      }
+    };
+    fetchLocations();
+  }, []);
+
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -25,7 +47,7 @@ const AvailableJobsPage = () => {
         setError(null);
         // Pass filters to the service
         const fetchedJobs = await jobService.getAvailableJobs({
-          search: searchTerm,
+          search: debouncedSearchTerm,
           location: filterLocation,
           type: filterType,
         });
@@ -40,7 +62,7 @@ const AvailableJobsPage = () => {
     };
 
     fetchJobs();
-  }, [searchTerm, filterLocation, filterType]); // Refetch when filters change
+  }, [debouncedSearchTerm, filterLocation, filterType]);
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -83,12 +105,18 @@ const AvailableJobsPage = () => {
           onChange={handleSearchChange}
           className="bg-gray-800 border-gray-700 text-gray-200 placeholder-gray-400 focus:ring-purple-500 focus:border-purple-500"
         />
-        <Input
-          placeholder="Filter by location (e.g., Bengaluru)"
+        <select
           value={filterLocation}
           onChange={handleLocationChange}
-          className="bg-gray-800 border-gray-700 text-gray-200 placeholder-gray-400 focus:ring-purple-500 focus:border-purple-500"
-        />
+          className="block w-full p-2.5 rounded-md bg-gray-800 border border-gray-700 text-gray-200 focus:ring-purple-500 focus:border-purple-500"
+        >
+          <option value="">All Locations</option>
+          {locations.map((location) => (
+            <option key={location} value={location}>
+              {location}
+            </option>
+          ))}
+        </select>
         <select
           value={filterType}
           onChange={handleTypeChange}
@@ -98,7 +126,7 @@ const AvailableJobsPage = () => {
           <option value="Full-time">Full-time</option>
           <option value="Internship">Internship</option>
           <option value="Part-time">Part-time</option>
-          {/* Add more types as per your backend */}
+          <option value="Contract">Contract</option>
         </select>
       </div>
 

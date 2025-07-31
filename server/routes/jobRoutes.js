@@ -31,6 +31,9 @@ const upload = multer({
 // GET approved jobs for students
 router.get('/', jobController.getApprovedJobsWithLogo);
 
+// GET unique job locations
+router.get('/locations', jobController.getJobLocations);
+
 // POST route for creating a job with logo file upload
 router.post('/', protect, upload.single('logoFile'), jobController.createJob);
 
@@ -42,6 +45,9 @@ router.get('/my-jobs', protect, authorizeRoles('recruiter'), jobController.getJo
 
 // GET all applicants for a specific job (recruiter view)
 router.get('/:jobId/applicants', protect, authorizeRoles('recruiter','coordinator'), jobController.getJobApplicants);
+
+// PATCH update application status (select/reject candidate)
+router.patch('/applications/:applicationId/status', protect, authorizeRoles('recruiter','coordinator'), jobController.updateApplicationStatus);
 
 // GET a single job by ID (should be last to avoid conflicts)
 router.get('/:id', jobController.getJobById);

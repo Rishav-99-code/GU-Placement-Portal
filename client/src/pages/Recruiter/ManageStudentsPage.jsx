@@ -1,4 +1,3 @@
-// frontend/src/pages/Recruiter/ViewApplicationsPage.jsx
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import applicationService from '../../services/applicationService';
@@ -7,7 +6,7 @@ import { Button } from '../../components/ui/button';
 import BackButton from '../../components/common/BackButton';
 import toast from 'react-hot-toast';
 
-const ViewApplicationsPage = () => {
+const ManageStudentsPage = () => {
   const [jobs, setJobs] = useState([]);
   const [selectedJobId, setSelectedJobId] = useState('');
   const [applicants, setApplicants] = useState([]);
@@ -15,7 +14,6 @@ const ViewApplicationsPage = () => {
   const [error, setError] = useState(null);
 
   React.useEffect(() => {
-    // Fetch jobs posted by this recruiter
     const fetchJobs = async () => {
       try {
         setLoading(true);
@@ -49,7 +47,6 @@ const ViewApplicationsPage = () => {
     try {
       const data = await applicationService.getApplicantsForJob(selectedJobId);
       setApplicants(data);
-      // If we got data successfully but there are no applicants, show a toast
       if (data.length === 0) {
         toast.info('No applications found for this job yet.');
       }
@@ -58,13 +55,6 @@ const ViewApplicationsPage = () => {
       const errorMessage = err.response?.data?.message || 'Failed to load applicants.';
       setError(errorMessage);
       toast.error(errorMessage);
-      
-      // Handle specific error cases
-      if (err.response?.status === 403) {
-        setError('You are not authorized to view these applications.');
-      } else if (err.response?.status === 404) {
-        setError('Job not found or has been deleted.');
-      }
     } finally {
       setLoading(false);
     }
@@ -75,7 +65,6 @@ const ViewApplicationsPage = () => {
       setLoading(true);
       await applicationService.updateApplicationStatus(applicationId, status);
       
-      // Update the local state to reflect the change
       setApplicants(prev => prev.map(app => 
         app._id === applicationId ? { ...app, status } : app
       ));
@@ -93,21 +82,22 @@ const ViewApplicationsPage = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-gray-200">
-      <div className="w-full max-w-3xl">
+      <div className="w-full max-w-6xl">
         <BackButton to="/recruiter/dashboard" className="text-gray-400 hover:text-gray-200 mb-4" />
       </div>
-      <Card className="w-full max-w-3xl p-8 bg-gray-800 rounded-lg shadow-md">
+      <Card className="w-full max-w-6xl p-8 bg-gray-800 rounded-lg shadow-md">
         <CardHeader className="mb-6">
-          <CardTitle className="text-2xl font-bold text-gray-50">View Applications</CardTitle>
+          <CardTitle className="text-2xl font-bold text-gray-50">Manage Students</CardTitle>
+          <p className="text-gray-400">Select and manage candidates for your job postings</p>
         </CardHeader>
         <CardContent>
-          <div className="mb-4">
+          <div className="mb-6">
             <label htmlFor="jobSelect" className="block mb-2 text-gray-300 font-medium">Select Job:</label>
             <select
               id="jobSelect"
               value={selectedJobId}
               onChange={handleJobChange}
-              className="w-full p-2 rounded bg-gray-700 text-gray-100 border border-gray-600"
+              className="w-full p-3 rounded bg-gray-700 text-gray-100 border border-gray-600"
             >
               <option value="">-- Select a Job --</option>
               {jobs.map((job) => (
@@ -121,31 +111,33 @@ const ViewApplicationsPage = () => {
               onClick={handleFetchApplicants}
               disabled={!selectedJobId || loading}
             >
-              {loading ? 'Loading...' : 'View Applicants'}
+              {loading ? 'Loading...' : 'View Candidates'}
             </Button>
           </div>
+          
           {error && <p className="text-red-400 mb-4">{error}</p>}
+          
           {applicants.length > 0 && (
             <div className="overflow-x-auto mt-6">
               <table className="min-w-full bg-gray-900 text-gray-200 rounded-lg">
                 <thead>
-                  <tr>
-                    <th className="px-4 py-2 text-left">Profile Picture</th>
-                    <th className="px-4 py-2 text-left">Name</th>
-                    <th className="px-4 py-2 text-left">Email</th>
-                    <th className="px-4 py-2 text-left">USN</th>
-                    <th className="px-4 py-2 text-left">Program</th>
-                    <th className="px-4 py-2 text-left">Branch</th>
-                    <th className="px-4 py-2 text-left">Phone</th>
-                    <th className="px-4 py-2 text-left">Resume</th>
-                    <th className="px-4 py-2 text-left">Status</th>
-                    <th className="px-4 py-2 text-left">Actions</th>
+                  <tr className="bg-gray-700">
+                    <th className="px-4 py-3 text-left">Profile</th>
+                    <th className="px-4 py-3 text-left">Name</th>
+                    <th className="px-4 py-3 text-left">Email</th>
+                    <th className="px-4 py-3 text-left">USN</th>
+                    <th className="px-4 py-3 text-left">Program</th>
+                    <th className="px-4 py-3 text-left">Branch</th>
+                    <th className="px-4 py-3 text-left">Phone</th>
+                    <th className="px-4 py-3 text-left">Resume</th>
+                    <th className="px-4 py-3 text-left">Status</th>
+                    <th className="px-4 py-3 text-left">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {applicants.map((app) => (
-                    <tr key={app._id} className="border-b border-gray-700">
-                      <td className="px-4 py-2">
+                    <tr key={app._id} className="border-b border-gray-700 hover:bg-gray-800">
+                      <td className="px-4 py-3">
                         {app.student?.studentProfile?.profilePicUrl ? (
                           <img
                             src={`http://localhost:5000${app.student.studentProfile.profilePicUrl}`}
@@ -153,16 +145,20 @@ const ViewApplicationsPage = () => {
                             className="w-12 h-12 rounded-full object-cover"
                           />
                         ) : (
-                          '-'
+                          <div className="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center">
+                            <span className="text-gray-300 font-semibold">
+                              {app.student?.name?.charAt(0) || '?'}
+                            </span>
+                          </div>
                         )}
                       </td>
-                      <td className="px-4 py-2">{app.student?.name || '-'}</td>
-                      <td className="px-4 py-2">{app.student?.email || '-'}</td>
-                      <td className="px-4 py-2">{app.student?.studentProfile?.usn || '-'}</td>
-                      <td className="px-4 py-2">{app.student?.studentProfile?.program || '-'}</td>
-                      <td className="px-4 py-2">{app.student?.studentProfile?.branch || '-'}</td>
-                      <td className="px-4 py-2">{app.student?.studentProfile?.phoneNumber || '-'}</td>
-                      <td className="px-4 py-2">
+                      <td className="px-4 py-3 font-medium">{app.student?.name || '-'}</td>
+                      <td className="px-4 py-3">{app.student?.email || '-'}</td>
+                      <td className="px-4 py-3">{app.student?.studentProfile?.usn || '-'}</td>
+                      <td className="px-4 py-3">{app.student?.studentProfile?.program || '-'}</td>
+                      <td className="px-4 py-3">{app.student?.studentProfile?.branch || '-'}</td>
+                      <td className="px-4 py-3">{app.student?.studentProfile?.phoneNumber || '-'}</td>
+                      <td className="px-4 py-3">
                         {app.student?.studentProfile?.resumeUrl ? (
                           <a
                             href={`http://localhost:5000${app.student.studentProfile.resumeUrl}`}
@@ -176,8 +172,8 @@ const ViewApplicationsPage = () => {
                           '-'
                         )}
                       </td>
-                      <td className="px-4 py-2">
-                        <span className={`px-2 py-1 rounded text-xs ${
+                      <td className="px-4 py-3">
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                           app.status === 'selected' ? 'bg-green-600 text-white' :
                           app.status === 'rejected' ? 'bg-red-600 text-white' :
                           app.status === 'interview' ? 'bg-blue-600 text-white' :
@@ -186,7 +182,7 @@ const ViewApplicationsPage = () => {
                           {app.status || 'applied'}
                         </span>
                       </td>
-                      <td className="px-4 py-2">
+                      <td className="px-4 py-3">
                         {app.status !== 'selected' && app.status !== 'rejected' && (
                           <div className="flex space-x-2">
                             <Button
@@ -195,7 +191,7 @@ const ViewApplicationsPage = () => {
                               onClick={() => handleStatusUpdate(app._id, 'selected')}
                               disabled={loading}
                             >
-                              Select
+                              ✓ Select
                             </Button>
                             <Button
                               size="sm"
@@ -203,12 +199,14 @@ const ViewApplicationsPage = () => {
                               onClick={() => handleStatusUpdate(app._id, 'rejected')}
                               disabled={loading}
                             >
-                              Reject
+                              ✗ Reject
                             </Button>
                           </div>
                         )}
                         {(app.status === 'selected' || app.status === 'rejected') && (
-                          <span className="text-gray-400 text-sm">Action completed</span>
+                          <span className="text-gray-400 text-sm">
+                            {app.status === 'selected' ? '✓ Selected' : '✗ Rejected'}
+                          </span>
                         )}
                       </td>
                     </tr>
@@ -217,8 +215,11 @@ const ViewApplicationsPage = () => {
               </table>
             </div>
           )}
+          
           {applicants.length === 0 && selectedJobId && !loading && !error && (
-            <p className="text-gray-400 mt-6">No applicants for this job yet.</p>
+            <div className="text-center py-8">
+              <p className="text-gray-400">No candidates found for this job yet.</p>
+            </div>
           )}
         </CardContent>
       </Card>
@@ -226,4 +227,4 @@ const ViewApplicationsPage = () => {
   );
 };
 
-export default ViewApplicationsPage;
+export default ManageStudentsPage;
