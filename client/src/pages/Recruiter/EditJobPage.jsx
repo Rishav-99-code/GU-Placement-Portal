@@ -5,6 +5,7 @@ import { Label } from '../../components/ui/label';
 import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
 import { Button } from '../../components/ui/button';
+import BackButton from '../../components/common/BackButton';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import jobService from '../../services/jobService';
@@ -115,6 +116,7 @@ const EditJobPage = () => {
 
   return (
     <div className="container mx-auto p-4 sm:p-6 lg:p-8 bg-gray-900 text-gray-200 min-h-[calc(100vh-64px)]">
+      <BackButton className="mb-4" />
       <Card className="max-w-3xl mx-auto bg-gray-800 text-gray-200 shadow-lg rounded-lg">
         <CardHeader className="border-b border-gray-700 pb-4">
           <CardTitle className="text-2xl font-bold text-gray-50">Edit Job Listing</CardTitle>

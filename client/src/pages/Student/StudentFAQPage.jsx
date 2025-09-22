@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Separator } from '../../components/ui/separator';
+import BackButton from '../../components/common/BackButton';
 
 const faqs = [
   {
@@ -24,6 +25,9 @@ const faqs = [
 const StudentFAQPage = () => {
   return (
     <div className="min-h-[calc(100vh-64px)] bg-gray-900 text-gray-200 p-4 sm:p-8 lg:p-12 flex flex-col items-center">
+      <div className="w-full max-w-3xl">
+        <BackButton className="text-gray-400 hover:text-gray-200 mb-4" />
+      </div>
       <Card className="w-full max-w-3xl bg-gray-800">
         <CardHeader>
           <CardTitle className="text-3xl text-gray-50">Frequently Asked Questions</CardTitle>

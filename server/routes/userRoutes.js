@@ -13,6 +13,8 @@ const {
   listRecruiters,
   approveRecruiter,
   toggleSuspendRecruiter,
+  listCoordinators,
+  approveCoordinator,
 } = require('../controllers/userController');
 const { protect, authorizeRoles } = require('../middleware/authMiddleware'); // Assuming you have this middleware
 const multer = require('multer');
@@ -46,5 +48,9 @@ router.patch('/students/:studentId/blacklist', protect, authorizeRoles('coordina
 router.get('/recruiters', protect, authorizeRoles('coordinator'), listRecruiters);
 router.patch('/recruiters/:recruiterId/approve', protect, authorizeRoles('coordinator'), approveRecruiter);
 router.patch('/recruiters/:recruiterId/suspend', protect, authorizeRoles('coordinator'), toggleSuspendRecruiter);
+
+// Coordinator management routes
+router.get('/coordinators', protect, authorizeRoles('coordinator'), listCoordinators);
+router.patch('/coordinators/:coordinatorId/approve', protect, authorizeRoles('coordinator'), approveCoordinator);
 
 module.exports = router;

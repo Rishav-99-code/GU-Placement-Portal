@@ -7,6 +7,7 @@ import LoginPage from './pages/Auth/LoginPage';
 import RegisterPage from './pages/Auth/RegisterPage';
 import ForgotPasswordPage from './pages/Auth/ForgotPassword';
 import ResetPasswordPage from './pages/Auth/ResetPasswordPage';
+import PendingApprovalPage from './pages/Auth/PendingApprovalPage';
 
 import StudentDashboardPage from './pages/Student/StudentDashboardPage';
 
@@ -15,7 +16,7 @@ import CoordinatorDashboardPage from './pages/Coordinator/CoordinatorDashboardPa
 
 import StudentProfilePage from './pages/Student/StudentProfilePage';
 import RecruiterProfilePage from './pages/Recruiter/RecruiterProfilePage';
-import CoordinatorProfilePage from './pages/Coordinator/CoordinatorProfilePage';
+import CoordinatorProfilePage from './pages/Coordinator/CoordinatorProfilePage/index';
 
 import AvailableJobsPage from './pages/Student/AvailableJobsPage';
 import StudentApplicationsPage from './pages/Student/StudentApplicationsPage'; 
@@ -35,6 +36,7 @@ import ManageStudentProfiles from './pages/Coordinator/ManageStudentProfiles';
 import ManageRecruitersPage from './pages/Coordinator/ManageRecruitersPage';
 import ManageJobPostingsPage from './pages/Coordinator/ManageJobPostingsPage';
 import ManageEventsPage from './pages/Coordinator/ManageEventsPage';
+import ManageCoordinatorsPage from './pages/Coordinator/ManageCoordinatorsPage';
 
 
 import Navbar from './components/common/Navbar';
@@ -78,6 +80,7 @@ function App() {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password/:resettoken" element={<ResetPasswordPage />} />
+            <Route path="/pending-approval" element={<PendingApprovalPage />} />
 
             {/* Dynamic redirect after login/register (or if trying to access /dashboard directly) */}
             <Route
@@ -120,6 +123,7 @@ function App() {
             <Route path="/coordinator/manage-recruiters" element={<PrivateRoute allowedRoles={['coordinator']}><ManageRecruitersPage /></PrivateRoute>} />
             <Route path="/coordinator/manage-jobs" element={<PrivateRoute allowedRoles={['coordinator']}><ManageJobPostingsPage /></PrivateRoute>} />
             <Route path="/coordinator/manage-events" element={<PrivateRoute allowedRoles={['coordinator']}><ManageEventsPage /></PrivateRoute>} />
+            <Route path="/coordinator/manage-coordinators" element={<PrivateRoute allowedRoles={['coordinator']}><ManageCoordinatorsPage /></PrivateRoute>} />
             <Route path="/coordinator/create-job" element={<PrivateRoute allowedRoles={['coordinator']}><CreateJobPage /></PrivateRoute>} />
 
             {/* General marketing/info pages */}

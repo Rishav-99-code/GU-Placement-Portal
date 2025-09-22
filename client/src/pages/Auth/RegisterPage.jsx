@@ -41,10 +41,22 @@ const RegisterPage = () => {
     }
 
     try {
-      await authService.register({ name, email, password, role });
-      // Important: Do NOT call login() here. User goes to login page first.
-      toast.success('Registration successful! Please log in.');
-      navigate(`/login?role=${role}`); // Redirect to role-specific login page
+      const response = await authService.register({ name, email, password, role });
+      
+      if (role === 'coordinator') {
+        // Store minimal info in localStorage for the pending approval page
+        localStorage.setItem('pendingUser', JSON.stringify({
+          email,
+          role,
+          name
+        }));
+        toast.success('Registration successful! Your account is pending approval.');
+        navigate('/pending-approval'); // Redirect to pending approval page
+      } else {
+        // For other roles, proceed as normal
+        toast.success('Registration successful! Please log in.');
+        navigate(`/login?role=${role}`);
+      }
     } catch (error) {
       const message =
         (error.response?.data?.message) ||

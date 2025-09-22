@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
+import BackButton from '../../components/common/BackButton';
 import { Button } from '../../components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
 import { Separator } from '../../components/ui/separator';
@@ -101,6 +102,7 @@ const StudentDashboardPage = () => {
         <div className="flex flex-col lg:flex-row min-h-[calc(100vh-64px)] overflow-hidden bg-gray-900 text-gray-200">
             {/* Left Half (Darker Background for Cards) */}
             <div className="w-full lg:w-1/2 bg-gray-800 p-4 sm:p-8 lg:p-12 flex flex-col justify-between">
+                <BackButton className="absolute top-4 left-4" />
                 {/* Profile and Welcome Section */}
                 <div className="mb-8">
                     <div className="flex items-center mb-6">

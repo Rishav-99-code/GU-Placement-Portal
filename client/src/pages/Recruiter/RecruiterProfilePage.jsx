@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import {Input} from '../../components/ui/input';
 import {Label} from '../../components/ui/label';
 import {Button} from '../../components/ui/button';
+import BackButton from '../../components/common/BackButton';
 
 const RecruiterProfilePage = () => {
   const { authState, updateUser } = useContext(AuthContext);
@@ -74,6 +75,7 @@ const RecruiterProfilePage = () => {
 
   return (
     <div className="container mx-auto p-8 max-w-4xl">
+      <BackButton className="mb-4" />
       <h1 className="text-4xl font-bold mb-2">Welcome, {user?.name}!</h1>
       <p className="text-lg text-gray-600 mb-8">
         Please provide your company details to start posting jobs.

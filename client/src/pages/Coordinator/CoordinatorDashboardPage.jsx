@@ -6,6 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/ca
 import { Button } from '../../components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
 import { Separator } from '../../components/ui/separator';
+import BackButton from '../../components/common/BackButton';
 import profileService from '../../services/profileService';
 import interviewService from '../../services/interviewService';
 import toast from 'react-hot-toast';
@@ -115,6 +116,7 @@ const CoordinatorDashboardPage = () => {
     <div className="flex flex-col lg:flex-row min-h-[calc(100vh-64px)] overflow-hidden bg-gray-900 text-gray-200">
       {/* Left Panel: Profile, Welcome, and Quick Actions */}
       <div className="w-full lg:w-1/2 bg-gray-800 p-4 sm:p-8 lg:p-12 flex flex-col justify-between">
+        <BackButton className="absolute top-4 left-4" />
         
         {/* Coordinator Profile Section */}
         <div className="mb-8">
@@ -183,6 +185,18 @@ const CoordinatorDashboardPage = () => {
                 <span className="font-medium text-center">Manage Events</span>
               </Link>
             </Button>
+            {/* Only show Manage Coordinators button if the current coordinator is approved */}
+            {fullUserDetails.isApproved && (
+              <Button
+                className="group h-28 text-md bg-gray-700 text-gray-200 shadow-md hover:bg-gray-600 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 ease-in-out flex flex-col justify-center items-center rounded-lg active:scale-[0.98] active:shadow-inner"
+                asChild
+              >
+                <Link to="/coordinator/manage-coordinators">
+                  <span className="text-4xl mb-2 transition-transform duration-300 group-hover:-translate-y-1">👥</span>
+                  <span className="font-medium text-center">Manage Coordinators</span>
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@ import React, { useContext, useRef } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
+import BackButton from '../../components/common/BackButton';
 import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Separator } from '../../components/ui/separator';
@@ -104,6 +105,7 @@ const RecruiterDashboardPage = () => {
       
       {/* Left Panel */}
       <div className="w-full lg:w-1/2 bg-gray-800 p-4 sm:p-8 lg:p-12 flex flex-col justify-between">
+        <BackButton className="absolute top-4 left-4" />
         
         {/* Profile & Welcome */}
         <div className="mb-8">

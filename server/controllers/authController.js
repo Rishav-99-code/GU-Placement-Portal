@@ -19,11 +19,19 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('User already exists');
   }
 
+  // Check if this is the first coordinator
+  let isFirstCoordinator = false;
+  if (role === 'coordinator') {
+    const coordinatorCount = await User.countDocuments({ role: 'coordinator' });
+    isFirstCoordinator = coordinatorCount === 0;
+  }
+
   const user = await User.create({
     name,
     email,
-    password, // Pass the plain-text password to the model
+    password,
     role,
+    isApproved: isFirstCoordinator // Automatically approve the first coordinator
   });
 
   if (!user) {
@@ -31,14 +39,28 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('Invalid user data');
   }
 
-  res.status(201).json({
-    _id: user._id,
-    name: user.name,
-    email: user.email,
-    role: user.role,
-    isProfileComplete: user.isProfileComplete,
-    isApproved: user.isApproved,
-  });
+  // For coordinator registrations, include a special message
+  if (role === 'coordinator') {
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      isProfileComplete: user.isProfileComplete,
+      isApproved: user.isApproved,
+      message: 'Your coordinator account has been created and is pending approval. You will be notified once an existing coordinator reviews your account.'
+    });
+  } else {
+    // For other roles, return normal response
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      isProfileComplete: user.isProfileComplete,
+      isApproved: user.isApproved,
+    });
+  }
 });
 
 // @desc    Authenticate user & get token
@@ -69,6 +91,19 @@ const loginUser = asyncHandler(async (req, res) => {
     console.log('Password comparison result (isMatch):', isMatch);
 
     if (isMatch) {
+      // For coordinators, we'll return a success response even if not approved,
+      // but include the approval status so the frontend can handle it
+      if (user.role === 'coordinator' && !user.isApproved) {
+        return res.json({
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          isApproved: false,
+          message: 'Your coordinator account is pending approval.'
+        });
+      }
+
       res.json({
         _id: user._id,
         name: user.name,

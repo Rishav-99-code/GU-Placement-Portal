@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
 import { Label } from '../../components/ui/label';
+import BackButton from '../../components/common/BackButton';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/ui/select';
 import { AuthContext } from '../../context/AuthContext';
 import profileService from '../../services/profileService';
@@ -149,6 +150,7 @@ const StudentProfilePage = () => {
 
   return (
     <div className="container mx-auto p-8 max-w-4xl bg-gray-900 text-gray-200 min-h-screen"> {/* Adjusted for dark mode consistency */}
+      <BackButton className="mb-4" />
       <h1 className="text-4xl font-bold mb-2 text-gray-50">Welcome, {authState.user?.name}!</h1>
       <p className="text-lg text-gray-400 mb-8">
         Please complete your profile to access all features.

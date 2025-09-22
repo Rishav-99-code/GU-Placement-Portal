@@ -33,10 +33,14 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // CORS Middleware: This line is CRUCIAL and should be before your routes
 // Using a specific origin is recommended for production for security.
 // For development, app.use(cors()); is fine if your frontend is on a different port.
+// Enable CORS for development
 app.use(cors({
-  origin: 'http://localhost:5173', // Assuming your Vite frontend runs on port 5173
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Add PATCH for updates if used
-  credentials: true // Important if you use cookies or send Authorization headers with credentials
+  origin: true, // Allow all origins in development
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 }));
 
 

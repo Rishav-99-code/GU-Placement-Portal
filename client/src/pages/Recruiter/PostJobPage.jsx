@@ -7,6 +7,7 @@ import { Textarea } from '../../components/ui/textarea';
 import { Button } from '../../components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
+import BackButton from '../../components/common/BackButton';
 import jobService from '../../services/jobService';
 import toast from 'react-hot-toast';
 
@@ -61,6 +62,9 @@ const PostJobPage = () => {
 
   return (
     <div className="container mx-auto p-4 sm:p-6 lg:p-8 bg-gray-900 text-gray-200 min-h-[calc(100vh-64px)]">
+      <div className="max-w-3xl mx-auto">
+        <BackButton className="text-gray-400 hover:text-gray-200 mb-4" />
+      </div>
       <Card className="max-w-3xl mx-auto bg-gray-800 text-gray-200 shadow-lg rounded-lg">
         <CardHeader className="border-b border-gray-700 pb-4">
           <CardTitle className="text-2xl font-bold text-gray-50">Post New Job</CardTitle>

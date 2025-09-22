@@ -328,6 +328,42 @@ const toggleSuspendRecruiter = asyncHandler(async (req, res) => {
   res.json({ message: `Recruiter ${suspended ? 'suspended' : 'activated'}`, recruiter });
 });
 
+// @desc    List coordinator users (for admin)
+// @route   GET /api/users/coordinators
+// @access  Private (coordinator)
+const listCoordinators = asyncHandler(async (req, res) => {
+  const { approved } = req.query;
+  const filter = { role: 'coordinator' };
+  if (approved === 'true') filter.isApproved = true;
+  if (approved === 'false') filter.isApproved = false;
+  const coordinators = await User.find(filter).select('-password');
+  res.json(coordinators);
+});
+
+// @desc    Approve a coordinator profile
+// @route   PATCH /api/users/coordinators/:coordinatorId/approve
+// @access  Private (coordinator)
+const approveCoordinator = asyncHandler(async (req, res) => {
+  const { coordinatorId } = req.params;
+  
+  // Only approved coordinators can approve other coordinators
+  if (!req.user.isApproved) {
+    res.status(403);
+    throw new Error('Only approved coordinators can approve other coordinators');
+  }
+
+  const coordinator = await User.findById(coordinatorId);
+  if (!coordinator || coordinator.role !== 'coordinator') {
+    res.status(404);
+    throw new Error('Coordinator not found');
+  }
+
+  coordinator.isApproved = true;
+  await coordinator.save();
+
+  res.json({ message: 'Coordinator approved', coordinator });
+});
+
 module.exports = {
   getUserProfile,
   updateProfile,
@@ -338,7 +374,9 @@ module.exports = {
   approveStudent,
   updateStudentResume,
   toggleBlacklistStudent,
+  listRecruiters,
+  approveRecruiter,
+  toggleSuspendRecruiter,
+  listCoordinators,
+  approveCoordinator
 };
-module.exports.listRecruiters = listRecruiters;
-module.exports.approveRecruiter = approveRecruiter;
-module.exports.toggleSuspendRecruiter = toggleSuspendRecruiter;

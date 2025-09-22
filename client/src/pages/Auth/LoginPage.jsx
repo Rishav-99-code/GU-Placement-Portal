@@ -37,7 +37,21 @@ const LoginPage = () => {
 
     try {
       const userData = await authService.login({ email, password, role });
-      console.log('Login response:', userData); // Debug log
+      console.log('Login response:', userData);
+      
+      // Check for coordinator pending approval
+      if (userData.role === 'coordinator' && !userData.isApproved) {
+        // Store minimal info in localStorage for the pending approval page
+        localStorage.setItem('pendingUser', JSON.stringify({
+          email: userData.email,
+          role: userData.role,
+          name: userData.name
+        }));
+        toast.success('Account under review');
+        navigate('/pending-approval', { replace: true });
+        return;
+      }
+
       login(userData.token, userData);
       toast.success(`Logged in successfully as ${userData.role}!`);
       

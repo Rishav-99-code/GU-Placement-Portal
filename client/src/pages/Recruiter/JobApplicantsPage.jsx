@@ -4,6 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import applicationService from '../../services/applicationService';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
+import BackButton from '../../components/common/BackButton';
 import toast from 'react-hot-toast';
 
 const JobApplicantsPage = () => {
@@ -30,6 +31,9 @@ const JobApplicantsPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-200 p-6">
+      <div className="max-w-6xl mx-auto">
+        <BackButton className="text-gray-400 hover:text-gray-200 mb-4" />
+      </div>
       <Card className="max-w-6xl mx-auto bg-gray-800">
         <CardHeader>
           <CardTitle className="text-gray-50 text-2xl">Applicants – {jobTitle || 'Job'}</CardTitle>
@@ -63,11 +67,7 @@ const JobApplicantsPage = () => {
               </tbody>
             </table>
           )}
-          <div className="mt-6">
-            <Button asChild>
-              <Link to="/recruiter/manage-jobs">Back to Jobs</Link>
-            </Button>
-          </div>
+
         </CardContent>
       </Card>
     </div>
