@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
-import { AuthContext } from './context/AuthContext'; 
+import { AuthContext } from './context/AuthContext';
+import { ToastWrapper } from './context/ToastContext';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/Auth/LoginPage';
 import RegisterPage from './pages/Auth/RegisterPage';
@@ -70,9 +70,10 @@ function App() {
 
   return (
     <Router>
-      <div className="flex flex-col min-h-screen">
-        <Navbar />
-        <main className="flex-grow">
+      <ToastWrapper>
+        <div className="flex flex-col min-h-screen">
+          <Navbar />
+          <main className="flex-grow">
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<HomePage />} />
@@ -137,9 +138,9 @@ function App() {
             <Route path="*" element={<p className="text-center mt-20 text-gray-700 dark:text-gray-300">404 - Page Not Found</p>} />
           </Routes>
         </main>
-        {!window.location.pathname.includes('/login') && !window.location.pathname.includes('/register') && <Footer />}
-        <Toaster />
-      </div>
+          {!window.location.pathname.includes('/login') && !window.location.pathname.includes('/register') && <Footer />}
+        </div>
+      </ToastWrapper>
     </Router>
   );
 }

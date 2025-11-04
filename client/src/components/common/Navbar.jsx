@@ -85,28 +85,47 @@ const Navbar = () => {
           {authState.isAuthenticated ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                <Button 
+                  variant="ghost" 
+                  className="relative h-10 w-10 rounded-full overflow-hidden border-2 border-gray-200 hover:border-blue-500 transition-colors duration-200"
+                >
                   {authState.user?.profilePicture ? (
                     <img 
                       src={authState.user.profilePicture} 
                       alt="profile" 
-                      className="h-10 w-10 rounded-full object-cover"
+                      className="h-full w-full object-cover"
                     />
                   ) : (
-                    <User className="h-6 w-6" />
+                    <div className="h-full w-full bg-blue-500 flex items-center justify-center">
+                      <span className="text-white text-lg font-medium">
+                        {authState.user?.firstName?.charAt(0) || 'U'}
+                      </span>
+                    </div>
                   )}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem onClick={() => navigate(getDashboardLink())}>
+              <DropdownMenuContent 
+                align="end" 
+                className="w-56 bg-white rounded-md border border-gray-200 shadow-lg mt-2"
+              >
+                <DropdownMenuItem 
+                  onClick={() => navigate(getDashboardLink())}
+                  className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 cursor-pointer"
+                >
                   <User className="mr-2 h-4 w-4" />
                   <span>Dashboard</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/change-password')}>
+                <DropdownMenuItem 
+                  onClick={() => navigate('/change-password')}
+                  className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 cursor-pointer"
+                >
                   <KeyRound className="mr-2 h-4 w-4" />
                   <span>Change Password</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={logout}>
+                <DropdownMenuItem 
+                  onClick={logout}
+                  className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer"
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Log out</span>
                 </DropdownMenuItem>

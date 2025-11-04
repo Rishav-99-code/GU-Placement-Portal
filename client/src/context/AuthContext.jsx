@@ -88,6 +88,14 @@ const AuthProvider = ({ children }) => {
       user: null,
       isAuthenticated: false,
     });
+    // We'll use our toast context to show the message
+    window.dispatchEvent(new CustomEvent('showToast', {
+      detail: {
+        title: 'Logged Out',
+        description: 'You have been logged out successfully',
+        variant: 'info'
+      }
+    }));
   };
 
   // NEW: Add the updateUser function
