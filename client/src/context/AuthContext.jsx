@@ -4,29 +4,68 @@ import React, { createContext, useState, useEffect } from 'react';
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-  const [authState, setAuthState] = useState({
-    token: null,
-    user: null, // user object from backend will be stored here
-    isAuthenticated: false,
-  });
-
-  useEffect(() => {
+  const [authState, setAuthState] = useState(() => {
+    // Initialize state from localStorage during initial render
     const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user'); // This will be a JSON string
-    if (token && user) {
+    const userStr = localStorage.getItem('user');
+    
+    if (token && userStr) {
       try {
-        setAuthState({
+        const user = JSON.parse(userStr);
+        return {
           token,
-          user: JSON.parse(user), // Parse the user object from string
+          user,
           isAuthenticated: true,
-        });
+          isLoading: false
+        };
       } catch (e) {
         console.error("Failed to parse user from localStorage", e);
-        // Clear invalid data if parsing fails
         localStorage.removeItem('token');
         localStorage.removeItem('user');
       }
     }
+    
+    return {
+      token: null,
+      user: null,
+      isAuthenticated: false,
+      isLoading: false
+    };
+  });
+
+  // Verify token validity on mount and after any navigation
+  useEffect(() => {
+    const verifyAuth = async () => {
+      const token = localStorage.getItem('token');
+      if (token && !authState.isAuthenticated) {
+        try {
+          const response = await fetch('http://localhost:5000/api/auth/verify', {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          
+          if (response.ok) {
+            const userStr = localStorage.getItem('user');
+            if (userStr) {
+              setAuthState({
+                token,
+                user: JSON.parse(userStr),
+                isAuthenticated: true,
+                isLoading: false
+              });
+            }
+          } else {
+            // Token is invalid
+            logout();
+          }
+        } catch (error) {
+          console.error('Auth verification failed:', error);
+        }
+      }
+    };
+
+    verifyAuth();
   }, []);
 
   const login = (token, user) => {
