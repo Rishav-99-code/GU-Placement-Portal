@@ -11,9 +11,7 @@ const interviewSchema = new mongoose.Schema(
       enum: ['pending', 'approved', 'rejected'],
       default: 'pending',
     },
-    coordinator: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    meetingLink: { type: String },
-    meetingRoomName: { type: String },
+    coordinator: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
   },
   { timestamps: true }
 );

@@ -2,6 +2,7 @@
 const asyncHandler = require('express-async-handler');
 const User = require('../models/User');
 const generateToken = require('../utils/generateToken'); // Still needed for login
+const bcrypt = require('bcryptjs');
 // email verification imports removed
 
 const registerUser = asyncHandler(async (req, res) => {
@@ -130,4 +131,33 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { registerUser, loginUser };
+// Update coordinator email credentials
+const updateCoordinatorEmailCredentials = async (req, res) => {
+  try {
+    const { emailPassword } = req.body;
+    
+    // Ensure user is a coordinator
+    if (req.user.role !== 'coordinator') {
+      return res.status(403).json({ message: 'Only coordinators can set email credentials' });
+    }
+
+    // Update the coordinator's email credentials
+    const coordinator = await User.findById(req.user._id);
+    if (!coordinator) {
+      return res.status(404).json({ message: 'Coordinator not found' });
+    }
+
+    coordinator.emailPassword = emailPassword;
+    await coordinator.save();
+
+    res.json({ message: 'Email credentials updated successfully' });
+  } catch (error) {
+    console.error('Error updating coordinator email credentials:', error);
+    res.status(500).json({ message: 'Server error updating credentials' });
+  }
+};
+
+module.exports = {
+  registerUser,
+  loginUser
+};

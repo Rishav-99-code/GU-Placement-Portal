@@ -3,10 +3,9 @@ const Job = require('../models/Job');
 const Application = require('../models/Application');
 const User = require('../models/User');
 const sendEmail = require('../utils/sendEmail');
-const { createGoogleMeetEvent } = require('../utils/googleMeet');
 const { interviewScheduledTemplate } = require('../utils/emailTemplates');
 
-// Recruiter schedules an interview (status: pending)
+// Schedule an interview
 const scheduleInterview = async (req, res) => {
   try {
     const { jobId } = req.params;
@@ -16,13 +15,10 @@ const scheduleInterview = async (req, res) => {
       return res.status(400).json({ message: 'dateTime and applicantIds are required.' });
     }
 
-    // Check job exists and belongs to recruiter
+    // Check job exists
     const job = await Job.findById(jobId);
     if (!job) {
       return res.status(404).json({ message: 'Job not found.' });
-    }
-    if (req.user.role === 'recruiter' && job.postedBy.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: 'Not authorized to schedule interview for this job.' });
     }
 
     // Verify that applicantIds correspond to students who applied for this job
@@ -32,25 +28,66 @@ const scheduleInterview = async (req, res) => {
       return res.status(400).json({ message: 'No valid applicants found for this job.' });
     }
 
+    // If coordinator is scheduling, automatically approve. If recruiter, set as pending.
+    const interviewStatus = req.user.role === 'coordinator' ? 'approved' : 'pending';
     const interview = await Interview.create({
       job: jobId,
       recruiter: req.user._id,
       applicants: validApplicantIds,
       dateTime,
-      status: 'pending',
+      status: interviewStatus,
+      coordinator: req.user.role === 'coordinator' ? req.user._id : undefined
     });
 
-    res.status(201).json({ message: 'Interview scheduled and sent for coordinator approval.', interview });
+    // If coordinator scheduled, send immediate notifications
+    if (req.user.role === 'coordinator') {
+      const coordinator = await User.findById(req.user._id);
+      const students = await User.find({ _id: { $in: validApplicantIds } });
+      const dateTimeStr = new Date(dateTime).toLocaleString();
+
+      // Send notifications to all selected students
+      const emailPromises = students.map(student => {
+        const message = interviewScheduledTemplate(
+          student.name,
+          job.title,
+          job.company,
+          dateTimeStr
+        );
+        return sendEmail({
+          email: student.email,
+          subject: `Interview Scheduled - ${job.title}`,
+          message,
+          senderEmail: coordinator.email,
+          senderPassword: coordinator.emailPassword,
+          senderName: coordinator.name
+        });
+      });
+
+      try {
+        await Promise.all(emailPromises);
+        console.log('✅ All interview notification emails sent');
+      } catch (emailErr) {
+        console.error('❌ Error sending interview emails:', emailErr.message);
+        // Continue with the response even if emails fail
+      }
+
+      res.status(201).json({ message: 'Interview scheduled and notifications sent.', interview });
+    } else {
+      res.status(201).json({ message: 'Interview scheduled and sent for coordinator approval.', interview });
+    }
   } catch (err) {
     console.error('Error scheduling interview:', err);
     res.status(500).json({ message: 'Server error scheduling interview.' });
   }
 };
 
-// Coordinator: get all pending interviews
+// Coordinator: get all pending interviews (only those scheduled by recruiters)
 const getPendingInterviews = async (req, res) => {
   try {
-    const interviews = await Interview.find({ status: 'pending' })
+    const interviews = await Interview.find({ 
+      status: 'pending',
+      coordinator: { $exists: false } // Only get interviews that don't have a coordinator assigned
+    })
       .populate('job', 'title company')
       .populate('recruiter', 'name email')
       .populate('applicants', 'name email');
@@ -79,17 +116,9 @@ const approveInterview = async (req, res) => {
       return res.status(400).json({ message: 'Interview is not pending.' });
     }
 
-    // Generate Google Meet link
-    const meetingDetails = await createGoogleMeetEvent({
-      interviewId: interview._id,
-      dateTime: interview.dateTime,
-      jobTitle: interview.job.title
-    });
-    
+    // Update interview status
     interview.status = 'approved';
     interview.coordinator = req.user._id;
-    interview.meetingRoomName = meetingDetails.meetingId;
-    interview.meetingLink = 'TO_BE_CREATED_BY_COORDINATOR';
     await interview.save();
 
     // Get coordinator details for email sending
@@ -113,9 +142,7 @@ const approveInterview = async (req, res) => {
         student.name,
         interview.job.title,
         interview.job.company,
-        dateTimeStr,
-        null, // No meeting link yet
-        interview.meetingRoomName
+        dateTimeStr
       );
       return sendEmail({
         email: student.email,
@@ -135,12 +162,8 @@ const approveInterview = async (req, res) => {
           <h2 style="color: #16a34a;">Interview Approved</h2>
           <p>Your interview request for <strong>${interview.job.title}</strong> on ${dateTimeStr} has been approved.</p>
           <div style="background-color: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #16a34a;">
-            <p><strong>Next Steps:</strong></p>
-            <p>1. Create a Google Meet: <a href="https://meet.google.com/new" style="color: #2563eb;">https://meet.google.com/new</a></p>
-            <p>2. Share the meeting link with students before the interview</p>
-            <p><strong>Reference ID:</strong> ${interview.meetingRoomName}</p>
+            <p>Students have been notified about the interview schedule.</p>
           </div>
-          <p>Students have been notified. Please create and share the Google Meet link.</p>
           <p style="color: #6b7280; font-size: 14px;">GU Placement Portal</p>
         </div>
       `;

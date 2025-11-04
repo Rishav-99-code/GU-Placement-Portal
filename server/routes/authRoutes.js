@@ -3,7 +3,7 @@ const express = require('express');
 const { registerUser, loginUser } = require('../controllers/authController');
 const router = express.Router();
 
-router.post('/register', registerUser); // Line 6:8 is likely this one
+router.post('/register', registerUser);
 router.post('/login', loginUser);
 // verification route removed
 
