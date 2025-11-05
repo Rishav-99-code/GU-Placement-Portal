@@ -9,6 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/ca
 import { Separator } from '../../components/ui/separator';
 import jobService from '../../services/jobService';
 import applicationService from '../../services/applicationService';
+import notificationService from '../../services/notificationService';
+import NotificationBell from '../../components/common/NotificationBell';
 
 const RecruiterDashboardPage = () => {
   const { authState, logout } = useContext(AuthContext);
@@ -21,6 +23,7 @@ const RecruiterDashboardPage = () => {
   // State for dashboard stats
   const [stats, setStats] = React.useState({ jobsPosted: 0, activeListings: 0, totalApplicants: 0, interviewsScheduled: 0 });
   const [latestUpdates, setLatestUpdates] = React.useState([]);
+  const [notifications, setNotifications] = React.useState([]);
 
   // Keep track of previously fetched applicants to detect new ones
   const applicantsMapRef = useRef({}); // { [jobId]: Application[] }
@@ -30,8 +33,13 @@ const RecruiterDashboardPage = () => {
 
     const collectUpdates = async () => {
       try {
-        // Fetch recruiter jobs
-        const jobs = await jobService.getMyJobs();
+        // Fetch recruiter jobs and notifications
+        const [jobs, notifs] = await Promise.all([
+          jobService.getMyJobs(),
+          notificationService.getNotifications()
+        ]);
+        
+        setNotifications(notifs.slice(0, 5)); // Show latest 5 notifications
 
         // Fetch applicants for each job concurrently
         const applicantsArr = await Promise.all(jobs.map(job => applicationService.getApplicantsForJob(job._id)));
@@ -167,17 +175,54 @@ const RecruiterDashboardPage = () => {
         
 
 
-        {/* Latest Updates */}
+        {/* Latest Updates & Notifications */}
         <div className="mb-8">
-          <h3 className="text-2xl font-bold text-gray-50 mb-4">Latest Updates</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-2xl font-bold text-gray-50">Latest Updates</h3>
+            <NotificationBell />
+          </div>
+          
           <div className="space-y-4">
+            {/* Show notifications first */}
+            {notifications.map((notification) => (
+              <Card key={`notif-${notification._id}`} className={`p-4 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 ${!notification.isRead ? 'border-l-4 border-blue-500' : ''}`}>
+                <div className="flex items-start space-x-3">
+                  <span className="text-lg">
+                    {notification.type === 'job_approved' ? '✅' : 
+                     notification.type === 'job_rejected' ? '❌' : 
+                     notification.type === 'interview_scheduled' ? '📅' : '📢'}
+                  </span>
+                  <div className="flex-1">
+                    <p className={`font-semibold ${notification.type === 'job_approved' ? 'text-green-400' : 
+                                                   notification.type === 'job_rejected' ? 'text-red-400' : 
+                                                   'text-blue-400'}`}>
+                      {notification.title}
+                    </p>
+                    <p className="text-sm mb-1 text-gray-300">{notification.message}</p>
+                    <p className="text-xs text-gray-400">{new Date(notification.createdAt).toLocaleString()}</p>
+                  </div>
+                  {!notification.isRead && (
+                    <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-2"></div>
+                  )}
+                </div>
+              </Card>
+            ))}
+            
+            {/* Then show regular updates */}
             {latestUpdates.map((u, i) => (
-              <Card key={i} className="p-4 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+              <Card key={`update-${i}`} className="p-4 bg-gray-800 text-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
                 <p className={`font-semibold text-${u.color}-400`}>{u.type}</p>
                 <p className="text-sm mb-1">{u.message}</p>
                 <p className="text-xs text-gray-400">{u.time}</p>
               </Card>
             ))}
+            
+            {/* Show message if no updates */}
+            {notifications.length === 0 && latestUpdates.length === 0 && (
+              <Card className="p-4 bg-gray-800 text-gray-400 rounded-lg shadow-md text-center">
+                <p>No recent updates or notifications</p>
+              </Card>
+            )}
           </div>
         </div>
 

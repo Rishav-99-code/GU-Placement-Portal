@@ -56,6 +56,8 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/email', emailRoutes);
 app.use('/api/analytics', analyticsRoutes);
+const notificationRoutes = require('./routes/notificationRoutes');
+app.use('/api/notifications', notificationRoutes);
 
 
 // Error Handling Middleware (should be last)

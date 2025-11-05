@@ -3,6 +3,7 @@ const User = require('../models/User');
 const Application = require('../models/Application');
 const sendEmail = require('../utils/sendEmail');
 const { applicationSelectedTemplate, applicationRejectedTemplate } = require('../utils/emailTemplates');
+const { createNotification } = require('../services/notificationService');
 
 // Get all approved jobs with recruiter logo and filtering
 const getApprovedJobsWithLogo = async (req, res) => {
@@ -144,14 +145,31 @@ const getAllJobs = async (req, res) => {
 const approveJob = async (req, res) => {
   try {
     const jobId = req.params.id;
-    const job = await Job.findById(jobId);
+    const job = await Job.findById(jobId).populate('postedBy', 'name email');
     if (!job) {
       return res.status(404).json({ error: 'Job not found' });
     }
+    
     job.status = 'active';
     await job.save();
-    res.json({ message: 'Job approved', job });
+    
+    // Create notification for the recruiter
+    const notificationTitle = '✅ Job Post Approved';
+    const notificationMessage = `Your job posting "${job.title}" at ${job.company} has been approved successfully! Please send the detailed Job Description (JD) and additional job details to tpc.guist@gauhati.ac.in for further processing.`;
+    
+    await createNotification(
+      job.postedBy._id,
+      'job_approved',
+      notificationTitle,
+      notificationMessage,
+      job._id
+    );
+    
+    console.log(`📢 Job approved notification sent to ${job.postedBy.name} (${job.postedBy.email}) for job: ${job.title}`);
+    
+    res.json({ message: 'Job approved and notification sent', job });
   } catch (err) {
+    console.error('Error approving job:', err);
     res.status(500).json({ error: 'Failed to approve job' });
   }
 };
@@ -173,11 +191,28 @@ const rejectJob = async (req, res) => {
 
     // Notify recruiter if exists
     if (job.postedBy && job.postedBy.email) {
-      const message = `Your job posting "${job.title}" has been rejected by the coordinator. Reason: ${reason}`;
+      const emailMessage = `Your job posting "${job.title}" has been rejected by the coordinator. Reason: ${reason}`;
       try {
-        await sendEmail({ email: job.postedBy.email, subject: 'Job Posting Rejected', message });
+        await sendEmail({ email: job.postedBy.email, subject: 'Job Posting Rejected', message: emailMessage });
       } catch (e) {
         console.error('Failed to send rejection email', e);
+      }
+      
+      // Create notification for the recruiter
+      const notificationTitle = '❌ Job Post Rejected';
+      const notificationMessage = `Your job posting "${job.title}" at ${job.company} has been rejected. Reason: ${reason}. Please review and resubmit with necessary changes.`;
+      
+      try {
+        await createNotification(
+          job.postedBy._id,
+          'job_rejected',
+          notificationTitle,
+          notificationMessage,
+          job._id
+        );
+        console.log(`📢 Job rejection notification sent to ${job.postedBy.name} (${job.postedBy.email}) for job: ${job.title}`);
+      } catch (e) {
+        console.error('Failed to create rejection notification', e);
       }
     }
 
