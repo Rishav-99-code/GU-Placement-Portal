@@ -143,6 +143,8 @@ const CoordinatorDashboardPage = () => {
           >
             <Link to="/coordinator/profile">Edit Coordinator Profile</Link>
           </Button>
+
+
         </div>
 
         {/* Quick Actions / Coordinator Tools */}

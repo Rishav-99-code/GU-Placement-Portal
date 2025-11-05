@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from '../../components/ui/select'; // Import Select components
 
-const CoordinatorProfilePage = () => {
+function CoordinatorProfilePage() {
   const { authState, updateUser, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -24,6 +24,9 @@ const CoordinatorProfilePage = () => {
     department: '',
     coordinatorType: '', // New field
     branch: '',          // New field
+  });
+  const [emailCredentials, setEmailCredentials] = useState({
+    emailPassword: '',
   });
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,6 +45,10 @@ const CoordinatorProfilePage = () => {
           ...prevData, // Keep default empty strings if fields are missing
           ...data.coordinatorProfile, // Override with fetched data
         }));
+        // Set email credentials (don't show the actual password for security)
+        setEmailCredentials({
+          emailPassword: data.emailPassword ? '••••••••' : '',
+        });
         setLoading(false);
       } catch (error) {
         console.error('Failed to fetch coordinator profile:', error);
@@ -76,8 +83,15 @@ const CoordinatorProfilePage = () => {
     setIsSubmitting(true);
 
     try {
+      const updateData = { coordinatorProfile: formData };
+      
+      // Only include email password if it's been changed (not the masked version)
+      if (emailCredentials.emailPassword && emailCredentials.emailPassword !== '••••••••') {
+        updateData.emailPassword = emailCredentials.emailPassword;
+      }
+
       // Send update to server and receive the updated user object
-      const updatedUser = await profileService.updateProfile({ coordinatorProfile: formData });
+      const updatedUser = await profileService.updateProfile(updateData);
 
       // Persist in AuthContext/localStorage
       updateUser(updatedUser);
@@ -97,28 +111,28 @@ const CoordinatorProfilePage = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50 text-gray-700">
+      <div className="flex items-center justify-center min-h-screen bg-gray-900 text-gray-300">
         <p className="text-xl">Loading coordinator profile...</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-gray-50 text-gray-700 min-h-screen p-4 sm:p-8">
+    <div className="bg-gray-900 text-gray-200 min-h-screen p-4 sm:p-8">
       <BackButton className="mb-4" />
-      <div className="max-w-xl mx-auto bg-white p-6 sm:p-8 rounded-lg shadow">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Complete Your Coordinator Profile</h1>
+      <div className="max-w-xl mx-auto bg-gray-800 p-6 sm:p-8 rounded-lg shadow-lg">
+        <h1 className="text-3xl font-bold text-gray-50 mb-6 text-center">Complete Your Coordinator Profile</h1>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Department */}
           <div>
-            <Label htmlFor="department" className="text-gray-700 mb-2 block">Department</Label>
+            <Label htmlFor="department" className="text-gray-300 mb-2 block">Department</Label>
             <Input
               id="department"
               name="department"
               type="text"
               value={formData.department}
               onChange={handleChange}
-              className="bg-gray-100 border-gray-300 text-gray-700 focus:ring-purple-500 focus:border-purple-500"
+              className="bg-gray-700 border-gray-600 text-gray-200 focus:ring-purple-500 focus:border-purple-500"
               placeholder="e.g., Training & Placement Cell"
               required
             />
@@ -126,17 +140,17 @@ const CoordinatorProfilePage = () => {
 
           {/* Coordinator Type (Dropdown) */}
           <div>
-            <Label htmlFor="coordinatorType" className="text-gray-700 mb-2 block">Your Role</Label>
+            <Label htmlFor="coordinatorType" className="text-gray-300 mb-2 block">Your Role</Label>
             <Select
               name="coordinatorType"
               value={formData.coordinatorType}
               onValueChange={(value) => handleSelectChange('coordinatorType', value)}
               required
             >
-              <SelectTrigger className="w-full bg-gray-100 border-gray-300 text-gray-700 focus:ring-purple-500 focus:border-purple-500">
+              <SelectTrigger className="w-full bg-gray-700 border-gray-600 text-gray-200 focus:ring-purple-500 focus:border-purple-500">
                 <SelectValue placeholder="Select your specific role" />
               </SelectTrigger>
-              <SelectContent className="bg-white text-gray-700 border-gray-200">
+              <SelectContent className="bg-gray-700 text-gray-200 border-gray-600">
                 <SelectItem value="Placement Coordinator">Placement Coordinator</SelectItem>
                 <SelectItem value="Branch Coordinator">Branch Coordinator</SelectItem>
                 <SelectItem value="Student Representative">Student Representative</SelectItem>
@@ -146,26 +160,52 @@ const CoordinatorProfilePage = () => {
 
           {/* Branch (Input field, potentially a dropdown later if fixed options) */}
           <div>
-            <Label htmlFor="branch" className="text-gray-700 mb-2 block">Associated Branch (e.g., CSE, ECE, IT)</Label>
+            <Label htmlFor="branch" className="text-gray-300 mb-2 block">Associated Branch (e.g., CSE, ECE, IT)</Label>
             <Input
               id="branch"
               name="branch"
               type="text"
               value={formData.branch}
               onChange={handleChange}
-              className="bg-gray-100 border-gray-300 text-gray-700 focus:ring-purple-500 focus:border-purple-500"
+              className="bg-gray-700 border-gray-600 text-gray-200 focus:ring-purple-500 focus:border-purple-500"
               placeholder="e.g., Computer Science, Electrical Engineering"
               required
             />
           </div>
 
-          <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 rounded-md transition-all duration-200 active:scale-[0.98] active:shadow-inner" disabled={isSubmitting}>
+          {/* Email Configuration Section */}
+          <div className="border-t border-gray-600 pt-6 mt-6">
+            <h3 className="text-lg font-semibold text-gray-200 mb-4">📧 Email Configuration for Notifications</h3>
+            <p className="text-sm text-gray-400 mb-4">
+              Configure your email credentials to send interview notifications to students. This should be your Gmail account password or app-specific password.
+            </p>
+            
+            <div>
+              <Label htmlFor="emailPassword" className="text-gray-300 mb-2 block">
+                Email Password (for {authState.user?.email})
+              </Label>
+              <Input
+                id="emailPassword"
+                name="emailPassword"
+                type="password"
+                value={emailCredentials.emailPassword || ''}
+                onChange={(e) => setEmailCredentials({ emailPassword: e.target.value })}
+                className="bg-gray-700 border-gray-600 text-gray-200 focus:ring-purple-500 focus:border-purple-500"
+                placeholder="Enter your email password or app password"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                💡 For Gmail, use an App Password instead of your regular password for better security.
+              </p>
+            </div>
+          </div>
+
+          <Button type="submit" className="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-2 rounded-md transition-all duration-200 active:scale-[0.98] active:shadow-inner" disabled={isSubmitting}>
             {isSubmitting ? 'Saving...' : 'Save Profile'}
           </Button>
         </form>
       </div>
     </div>
   );
-};
+}
 
 export default CoordinatorProfilePage;

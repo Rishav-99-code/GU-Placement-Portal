@@ -43,10 +43,25 @@ const scheduleInterview = async (req, res) => {
     if (req.user.role === 'coordinator') {
       const coordinator = await User.findById(req.user._id);
       const students = await User.find({ _id: { $in: validApplicantIds } });
-      const dateTimeStr = new Date(dateTime).toLocaleString();
+      const dateTimeStr = new Date(dateTime).toLocaleString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZoneName: 'short'
+      });
 
-      // Send notifications to all selected students
-      const emailPromises = students.map(student => {
+      console.log('📧 Coordinator scheduling interview - sending immediate notifications');
+      console.log(`📧 Coordinator: ${coordinator.name} (${coordinator.email})`);
+      console.log(`📧 Students to notify: ${students.length}`);
+      console.log(`📧 Job: ${job.title} at ${job.company}`);
+      console.log(`📧 Date/Time: ${dateTimeStr}`);
+
+      // Send notifications to all selected students using system email
+      const emailPromises = students.map((student, index) => {
+        console.log(`📧 Preparing email ${index + 1}/${students.length} for ${student.name} (${student.email})`);
         const message = interviewScheduledTemplate(
           student.name,
           job.title,
@@ -55,23 +70,29 @@ const scheduleInterview = async (req, res) => {
         );
         return sendEmail({
           email: student.email,
-          subject: `Interview Scheduled - ${job.title}`,
+          subject: `🎯 Interview Scheduled - ${job.title} at ${job.company}`,
           message,
-          senderEmail: coordinator.email,
-          senderPassword: coordinator.emailPassword,
-          senderName: coordinator.name
+          senderName: `${coordinator.name} - GU Placement Portal`
         });
       });
 
       try {
         await Promise.all(emailPromises);
-        console.log('✅ All interview notification emails sent');
+        console.log('✅ All interview notification emails sent successfully');
+        res.status(201).json({ 
+          message: `Interview scheduled successfully! Email notifications sent to ${students.length} student(s).`, 
+          interview,
+          emailsSent: students.length
+        });
       } catch (emailErr) {
         console.error('❌ Error sending interview emails:', emailErr.message);
-        // Continue with the response even if emails fail
+        console.error('Full error:', emailErr);
+        res.status(201).json({ 
+          message: 'Interview scheduled but failed to send email notifications. Please notify students manually.',
+          interview,
+          emailError: emailErr.message
+        });
       }
-
-      res.status(201).json({ message: 'Interview scheduled and notifications sent.', interview });
     } else {
       res.status(201).json({ message: 'Interview scheduled and sent for coordinator approval.', interview });
     }
@@ -124,20 +145,26 @@ const approveInterview = async (req, res) => {
     // Get coordinator details for email sending
     const coordinator = await User.findById(req.user._id);
     
-    console.log('📧 Email Debug:');
-    console.log('Coordinator:', coordinator.email);
-    console.log('Has email password:', !!coordinator.emailPassword);
-    console.log('Students to notify:', interview.applicants.length);
-    
-    if (!coordinator.emailPassword) {
-      console.error('❌ No email password stored for coordinator');
-      return res.status(400).json({ message: 'Coordinator email credentials not configured' });
-    }
+    console.log('📧 Coordinator approving interview - sending notifications');
+    console.log(`📧 Coordinator: ${coordinator.name} (${coordinator.email})`);
+    console.log(`📧 Students to notify: ${interview.applicants.length}`);
     
     // Send notification emails with enhanced templates
-    const dateTimeStr = new Date(interview.dateTime).toLocaleString();
-    const emailPromises = interview.applicants.map((student) => {
-      console.log(`Sending email to: ${student.email}`);
+    const dateTimeStr = new Date(interview.dateTime).toLocaleString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZoneName: 'short'
+    });
+
+    console.log(`📧 Job: ${interview.job.title} at ${interview.job.company}`);
+    console.log(`📧 Date/Time: ${dateTimeStr}`);
+
+    const emailPromises = interview.applicants.map((student, index) => {
+      console.log(`📧 Sending approval email ${index + 1}/${interview.applicants.length} to: ${student.name} (${student.email})`);
       const message = interviewScheduledTemplate(
         student.name,
         interview.job.title,
@@ -146,11 +173,9 @@ const approveInterview = async (req, res) => {
       );
       return sendEmail({
         email: student.email,
-        subject: `Interview Scheduled - ${interview.job.title}`,
+        subject: `🎯 Interview Scheduled - ${interview.job.title} at ${interview.job.company}`,
         message,
-        senderEmail: coordinator.email,
-        senderPassword: coordinator.emailPassword,
-        senderName: coordinator.name
+        senderName: `${coordinator.name} - GU Placement Portal`
       });
     });
 
@@ -172,9 +197,7 @@ const approveInterview = async (req, res) => {
           email: recruiter.email, 
           subject: 'Interview Approved', 
           message: messageRecruiter,
-          senderEmail: coordinator.email,
-          senderPassword: coordinator.emailPassword,
-          senderName: coordinator.name
+          senderName: `${coordinator.name} - GU Placement Portal`
         })
       );
     }

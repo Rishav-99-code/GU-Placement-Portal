@@ -72,7 +72,12 @@ router.put('/', protect, async (req, res) => {
         ...req.body.coordinatorProfile,
       };
     }
-    // You can add more fields to update if needed
+
+    // Update email password if provided (for coordinators to send emails)
+    if (req.body.emailPassword) {
+      req.user.emailPassword = req.body.emailPassword;
+      console.log('✅ Email password updated for coordinator:', req.user.email);
+    }
 
     await req.user.save();
 
