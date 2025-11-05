@@ -84,43 +84,48 @@ const HomePage = () => {
   return (
     <div className="min-h-screen">
 
-      <section ref={heroRef} className={`transition-opacity duration-1000 ease-out ${heroInView ? 'opacity-100' : 'opacity-0'}`}>
-
-        <div className="w-full">
+      <section ref={heroRef} className={`relative transition-opacity duration-1000 ease-out ${heroInView ? 'opacity-100' : 'opacity-0'}`}>
+        {/* Hero Image with Overlay */}
+        <div className="relative w-full">
           <img
             src={guistImage}
             alt="GUIST College"
             className="w-full h-auto object-cover"
           />
-        </div>
-
-
-        <div className="container mx-auto px-4 py-10 text-center">
-          <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <Button 
-              size="lg" 
-              className="bg-blue-700 text-white hover:bg-blue-800 font-bold px-6 py-4 rounded-full shadow-lg w-full sm:w-auto flex items-center justify-center"
-              onClick={() => handleRoleButtonClick('student')}
-            >
-              <GraduationCap className="mr-2 h-5 w-5" /> 
-              {authState.isAuthenticated && authState.user.role === 'student' ? 'Dashboard' : 'Student'}
-            </Button>
-            <Button 
-              size="lg" 
-              className="bg-blue-700 text-white hover:bg-blue-800 font-bold px-6 py-4 rounded-full shadow-lg w-full sm:w-auto flex items-center justify-center"
-              onClick={() => handleRoleButtonClick('recruiter')}
-            >
-              <BriefcaseBusiness className="mr-2 h-5 w-5" /> 
-              {authState.isAuthenticated && authState.user.role === 'recruiter' ? 'Dashboard' : 'Recruiter'}
-            </Button>
-            <Button 
-              size="lg" 
-              className="bg-blue-700 text-white hover:bg-blue-800 font-bold px-6 py-4 rounded-full shadow-lg w-full sm:w-auto flex items-center justify-center"
-              onClick={() => handleRoleButtonClick('coordinator')}
-            >
-              <UserCog className="mr-2 h-5 w-5" /> 
-              {authState.isAuthenticated && authState.user.role === 'coordinator' ? 'Dashboard' : 'Coordinator'}
-            </Button>
+          
+          {/* Overlay with gradient for better button visibility */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+          
+          {/* Buttons overlaid on image */}
+          <div className="absolute bottom-8 left-0 right-0">
+            <div className="container mx-auto px-4 text-center">
+              <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <Button 
+                  size="lg" 
+                  className="bg-blue-700/90 backdrop-blur-sm text-white hover:bg-blue-800/90 font-bold px-6 py-4 rounded-full shadow-xl border border-white/20 w-full sm:w-auto flex items-center justify-center transition-all duration-300 hover:scale-105"
+                  onClick={() => handleRoleButtonClick('student')}
+                >
+                  <GraduationCap className="mr-2 h-5 w-5" /> 
+                  {authState.isAuthenticated && authState.user.role === 'student' ? 'Dashboard' : 'Student'}
+                </Button>
+                <Button 
+                  size="lg" 
+                  className="bg-blue-700/90 backdrop-blur-sm text-white hover:bg-blue-800/90 font-bold px-6 py-4 rounded-full shadow-xl border border-white/20 w-full sm:w-auto flex items-center justify-center transition-all duration-300 hover:scale-105"
+                  onClick={() => handleRoleButtonClick('recruiter')}
+                >
+                  <BriefcaseBusiness className="mr-2 h-5 w-5" /> 
+                  {authState.isAuthenticated && authState.user.role === 'recruiter' ? 'Dashboard' : 'Recruiter'}
+                </Button>
+                <Button 
+                  size="lg" 
+                  className="bg-blue-700/90 backdrop-blur-sm text-white hover:bg-blue-800/90 font-bold px-6 py-4 rounded-full shadow-xl border border-white/20 w-full sm:w-auto flex items-center justify-center transition-all duration-300 hover:scale-105"
+                  onClick={() => handleRoleButtonClick('coordinator')}
+                >
+                  <UserCog className="mr-2 h-5 w-5" /> 
+                  {authState.isAuthenticated && authState.user.role === 'coordinator' ? 'Dashboard' : 'Coordinator'}
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </section>

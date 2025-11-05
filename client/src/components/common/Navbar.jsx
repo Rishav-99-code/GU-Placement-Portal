@@ -9,6 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu.jsx';
+import guLogo from '../../assets/images/gu_logo.png';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -42,20 +43,39 @@ const Navbar = () => {
 
   return (
     <nav className="bg-white shadow-md p-4 sticky top-0 z-50">
-      <div className="container mx-auto flex justify-between items-center">
-        {/* Logo/Site Title */}
-        <Link 
-          to="/" 
-          className="text-2xl font-bold text-blue-700"
-          onClick={(e) => {
-            if (location.pathname === '/') {
-              e.preventDefault();
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-          }}
-        >
-          Placement Cell,GU
-        </Link>
+      <div className="container mx-auto flex justify-between items-center px-2 md:px-6">
+        <div className="flex items-center flex-1 -ml-2 md:-ml-4">
+          {/* Logo/Site Title */}
+          <Link 
+            to="/" 
+            className="flex items-center space-x-3 text-2xl font-bold text-blue-700 hover:text-blue-800 transition-colors duration-200 mr-8"
+            onClick={(e) => {
+              if (location.pathname === '/') {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
+          >
+            {/* University Logo */}
+            <div className="flex-shrink-0">
+              <img 
+                src={guLogo} 
+                alt="University of Gauhati Logo" 
+                className="h-10 w-10 md:h-12 md:w-12 object-contain transition-transform duration-200 hover:scale-105"
+                onError={(e) => {
+                  // Fallback to text if logo doesn't load
+                  e.target.outerHTML = '<div class="h-10 w-10 md:h-12 md:w-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm">GU</div>';
+                }}
+              />
+            </div>
+            
+            {/* Site Title */}
+            <div className="flex flex-col">
+              <span className="text-base md:text-lg leading-tight">Placement Cell</span>
+              <span className="text-xs md:text-sm text-blue-600 leading-tight hidden sm:block">Gauhati University</span>
+            </div>
+          </Link>
+        </div>
 
         {/* Desktop Navigation Links */}
         <div className="hidden md:flex space-x-6 items-center">
@@ -165,7 +185,7 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Menu Button */}
-        <div className="md:hidden">
+        <div className="md:hidden flex items-center">
           <Button variant="ghost" size="icon" onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </Button>
