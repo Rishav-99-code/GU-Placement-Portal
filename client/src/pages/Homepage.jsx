@@ -25,6 +25,7 @@ import mindlanceLogo from '../assets/images/Mindlance Logo.png';
 import swiggyLogo from '../assets/images/swiggy logo.jpg';
 import tcsLogo from '../assets/images/TCS.NS_BIG.png';
 import zaloniLogo from '../assets/images/zaloni-logo.png';
+import Footer from '../components/common/Footer';
 
 
 const PlaceholderCompanyLogo = ({ src, alt }) => (
@@ -82,7 +83,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gray-900">
 
       <section ref={heroRef} className={`relative transition-opacity duration-1000 ease-out ${heroInView ? 'opacity-100' : 'opacity-0'}`}>
         {/* Hero Image with Overlay */}
@@ -134,14 +135,14 @@ const HomePage = () => {
       <section
         id="overview"
         ref={overviewRef}
-        className={`py-16 bg-white transition-opacity duration-1000 ease-out ${overviewInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+        className={`py-16 bg-gray-800 transition-opacity duration-1000 ease-out ${overviewInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
       >
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-10 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-100 mb-10 text-center">
             Overview
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div className="text-lg text-gray-700 leading-relaxed">
+            <div className="text-lg text-gray-300 leading-relaxed">
               <p className="mb-4">
                 Welcome to the official Placement Portal. We facilitate the recruitment process for companies seeking top-tier talent and provide students with unparalleled opportunities to kickstart their careers. Our platform serves as a dynamic bridge between academia and industry.
               </p>
@@ -174,48 +175,48 @@ const HomePage = () => {
       <section
         id="why-recruit"
         ref={whyRecruitRef}
-        className={`py-16 bg-blue-50 transition-opacity duration-1000 ease-out ${whyRecruitInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+        className={`py-16 bg-gray-900 transition-opacity duration-1000 ease-out ${whyRecruitInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
       >
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-blue-800 mb-10">
+          <h2 className="text-3xl md:text-4xl font-bold text-blue-400 mb-10">
             Why Recruit Through Our Portal?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 p-6">
+            <Card className="bg-gray-800 border-gray-700 shadow-lg hover:shadow-xl transition-shadow duration-300 p-6">
               <CardHeader className="flex flex-col items-center pb-4">
-                <Users className="h-16 w-16 text-blue-600 mb-4" />
-                <CardTitle className="text-xl text-blue-700">Access to Diverse Talent</CardTitle>
-                <CardDescription className="mt-2">
+                <Users className="h-16 w-16 text-blue-400 mb-4" />
+                <CardTitle className="text-xl text-blue-300">Access to Diverse Talent</CardTitle>
+                <CardDescription className="mt-2 text-gray-400">
                   Connect with a pool of highly skilled students from various disciplines.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="text-gray-600">
+              <CardContent className="text-gray-300">
                 Our students are equipped with cutting-edge knowledge, practical skills, and a strong work ethic, ready to excel in diverse roles.
               </CardContent>
             </Card>
 
-            <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 p-6">
+            <Card className="bg-gray-800 border-gray-700 shadow-lg hover:shadow-xl transition-shadow duration-300 p-6">
               <CardHeader className="flex flex-col items-center pb-4">
-                <Building className="h-16 w-16 text-blue-600 mb-4" />
-                <CardTitle className="text-xl text-blue-700">Streamlined Process</CardTitle>
-                <CardDescription className="mt-2">
+                <Building className="h-16 w-16 text-blue-400 mb-4" />
+                <CardTitle className="text-xl text-blue-300">Streamlined Process</CardTitle>
+                <CardDescription className="mt-2 text-gray-400">
                   Benefit from an efficient and organized recruitment experience.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="text-gray-600">
+              <CardContent className="text-gray-300">
                 Our portal provides tools for easy job posting, application tracking, and interview coordination, all managed by a dedicated admin team.
               </CardContent>
             </Card>
 
-            <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 p-6">
+            <Card className="bg-gray-800 border-gray-700 shadow-lg hover:shadow-xl transition-shadow duration-300 p-6">
               <CardHeader className="flex flex-col items-center pb-4">
-                <Briefcase className="h-16 w-16 text-blue-600 mb-4" />
-                <CardTitle className="text-xl text-blue-700">Long-Term Partnerships</CardTitle>
-                <CardDescription className="mt-2">
+                <Briefcase className="h-16 w-16 text-blue-400 mb-4" />
+                <CardTitle className="text-xl text-blue-300">Long-Term Partnerships</CardTitle>
+                <CardDescription className="mt-2 text-gray-400">
                   Forge lasting relationships for future recruitment needs.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="text-gray-600">
+              <CardContent className="text-gray-300">
                 We value our corporate partners and strive to build enduring connections that support your talent acquisition goals year after year.
               </CardContent>
             </Card>
@@ -227,13 +228,13 @@ const HomePage = () => {
       <section
         id="past-recruiters"
         ref={pastRecruitersRef}
-        className={`py-16 bg-white transition-opacity duration-1000 ease-out ${pastRecruitersInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+        className={`py-16 bg-gray-800 transition-opacity duration-1000 ease-out ${pastRecruitersInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
       >
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-10">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-100 mb-10">
             Our Valued Past Recruiters
           </h2>
-          <p className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto">
+          <p className="text-lg text-gray-300 mb-12 max-w-3xl mx-auto">
             We are proud to have partnered with a wide range of industry leaders who trust us to find their next generation of talent.
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 items-center justify-center">
@@ -263,35 +264,37 @@ const HomePage = () => {
       <section
         id="contact-us"
         ref={contactUsRef}
-        className={`py-16 bg-gray-100 transition-opacity duration-1000 ease-out ${contactUsInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+        className={`py-16 bg-gray-900 transition-opacity duration-1000 ease-out ${contactUsInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
       >
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-10">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-100 mb-10">
             Get in Touch
           </h2>
-          <p className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto">
+          <p className="text-lg text-gray-300 mb-12 max-w-3xl mx-auto">
             Have questions or need assistance? Feel free to reach out to our dedicated placement team.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div className="bg-white p-8 rounded-lg shadow-lg flex flex-col items-center text-center">
-              <Mail className="h-16 w-16 text-blue-600 mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Email Us</h3>
-              <p className="text-gray-700 mb-4">For general inquiries or support.</p>
-              <a href="mailto:placements@example.com" className="text-blue-600 hover:underline font-medium">
+            <div className="bg-gray-800 border border-gray-700 p-8 rounded-lg shadow-lg flex flex-col items-center text-center">
+              <Mail className="h-16 w-16 text-blue-400 mb-4" />
+              <h3 className="text-xl font-semibold mb-2 text-gray-100">Email Us</h3>
+              <p className="text-gray-300 mb-4">For general inquiries or support.</p>
+              <a href="mailto:placements@example.com" className="text-blue-400 hover:text-blue-300 hover:underline font-medium">
                 t&pcellgu@gmail.com
               </a>
             </div>
-            <div className="bg-white p-8 rounded-lg shadow-lg flex flex-col items-center text-center">
-              <Phone className="h-16 w-16 text-blue-600 mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Call Us</h3>
-              <p className="text-gray-700 mb-4">Reach out to our office during business hours.</p>
-              <a href="tel:+91XXXXXXXXXX" className="text-blue-600 hover:underline font-medium">
+            <div className="bg-gray-800 border border-gray-700 p-8 rounded-lg shadow-lg flex flex-col items-center text-center">
+              <Phone className="h-16 w-16 text-blue-400 mb-4" />
+              <h3 className="text-xl font-semibold mb-2 text-gray-100">Call Us</h3>
+              <p className="text-gray-300 mb-4">Reach out to our office during business hours.</p>
+              <a href="tel:+91XXXXXXXXXX" className="text-blue-400 hover:text-blue-300 hover:underline font-medium">
                 +91-XXX-XXXXXXX
               </a>
             </div>
           </div>
         </div>
       </section>
+      
+      <Footer />
     </div>
   );
 };

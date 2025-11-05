@@ -21,11 +21,11 @@ const AuthLayout = ({ children, initialTab, type }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="relative w-full max-w-7xl mx-auto flex flex-col md:flex-row shadow-2xl rounded-xl overflow-hidden min-h-[600px] my-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-900">
+      <div className="relative w-full max-w-7xl mx-auto flex flex-col md:flex-row shadow-2xl rounded-xl overflow-hidden min-h-[600px] my-8 border border-gray-700">
 
         
-        <div className="md:w-2/5 bg-white flex flex-col justify-center items-center relative overflow-hidden">
+        <div className="md:w-2/5 bg-gray-800 flex flex-col justify-center items-center relative overflow-hidden">
           
           <div className="relative z-0 flex justify-center items-center h-full w-full">
             <DotLottieReact
@@ -40,11 +40,11 @@ const AuthLayout = ({ children, initialTab, type }) => {
         </div>
 
         
-        <div className="md:w-3/5 bg-white p-8 md:p-12 flex flex-col justify-center">
+        <div className="md:w-3/5 bg-gray-800 p-8 md:p-12 flex flex-col justify-center">
           <div className="flex justify-end mb-4">
             <Link
               to={isLogin ? `/register?role=${initialTab}` : `/login?role=${initialTab}`}
-              className="text-blue-600 hover:underline text-sm font-medium"
+              className="text-blue-400 hover:text-blue-300 hover:underline text-sm font-medium"
             >
               {isLogin ? 'Sign-up for a new account' : 'Sign-in to your account'}
             </Link>
@@ -52,14 +52,14 @@ const AuthLayout = ({ children, initialTab, type }) => {
 
           
           <Tabs value={initialTab} onValueChange={handleTabChange} className="mb-8">
-            <TabsList className="grid w-full grid-cols-3 h-auto p-1 bg-gray-100 rounded-md">
-              <TabsTrigger value="student" className="py-2.5 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-md transition-all">
+            <TabsList className="grid w-full grid-cols-3 h-auto p-1 bg-gray-700 rounded-md">
+              <TabsTrigger value="student" className="py-2.5 text-gray-300 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-md transition-all">
                 Student
               </TabsTrigger>
-              <TabsTrigger value="recruiter" className="py-2.5 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-md transition-all">
+              <TabsTrigger value="recruiter" className="py-2.5 text-gray-300 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-md transition-all">
                 Recruiter
               </TabsTrigger>
-              <TabsTrigger value="coordinator" className="py-2.5 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-md transition-all">
+              <TabsTrigger value="coordinator" className="py-2.5 text-gray-300 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-md transition-all">
                 Coordinator
               </TabsTrigger>
             </TabsList>

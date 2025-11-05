@@ -118,13 +118,13 @@ const LoginPage = () => {
 
   return (
     <AuthLayout initialTab={role} type="login">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800">Log In</h2>
+      <h2 className="text-3xl font-bold mb-6 text-gray-100">Log In</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="relative z-0 w-full mb-5 group">
           <Input
             type="email"
             id="floating_email"
-            className="block py-2.5 px-0 w-full text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+            className="block py-2.5 px-0 w-full text-gray-100 bg-transparent border-0 border-b-2 border-gray-600 appearance-none focus:outline-none focus:ring-0 focus:border-blue-400 peer"
             placeholder=" "
             required
             value={email}
@@ -132,7 +132,7 @@ const LoginPage = () => {
           />
           <Label
             htmlFor="floating_email"
-            className="peer-focus:font-medium absolute text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+            className="peer-focus:font-medium absolute text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
           >
             Email address
           </Label>
@@ -141,7 +141,7 @@ const LoginPage = () => {
           <Input
             type="password"
             id="floating_password"
-            className="block py-2.5 px-0 w-full text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+            className="block py-2.5 px-0 w-full text-gray-100 bg-transparent border-0 border-b-2 border-gray-600 appearance-none focus:outline-none focus:ring-0 focus:border-blue-400 peer"
             placeholder=" "
             required
             value={password}
@@ -149,7 +149,7 @@ const LoginPage = () => {
           />
           <Label
             htmlFor="floating_password"
-            className="peer-focus:font-medium absolute text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+            className="peer-focus:font-medium absolute text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
           >
             Password
           </Label>
@@ -174,14 +174,14 @@ const LoginPage = () => {
       </form>
 
       <div className="mt-6 text-center">
-        <Link to="/forgot-password" className="text-sm text-blue-600 hover:underline font-medium">
+        <Link to="/forgot-password" className="text-sm text-blue-400 hover:text-blue-300 hover:underline font-medium">
           Forgot your password?
         </Link>
       </div>
 
-      <div className="mt-4 text-center text-sm text-gray-600">
+      <div className="mt-4 text-center text-sm text-gray-300">
         Don't have an account?{' '}
-        <Link to={`/register?role=${role}`} className="text-blue-600 hover:underline font-medium">
+        <Link to={`/register?role=${role}`} className="text-blue-400 hover:text-blue-300 hover:underline font-medium">
           Sign up here
         </Link>
       </div>
