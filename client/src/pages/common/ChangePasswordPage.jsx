@@ -4,8 +4,6 @@ import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/ca
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
-import PasswordInput from '../../components/ui/PasswordInput';
-import { validatePassword } from '../../utils/passwordValidation';
 import userService from '../../services/userService';
 import toast from 'react-hot-toast';
 import { useNavigate, Link } from 'react-router-dom';
@@ -30,10 +28,8 @@ const ChangePasswordPage = () => {
       return;
     }
     
-    // Validate new password
-    const passwordValidation = validatePassword(newPassword);
-    if (!passwordValidation.isValid) {
-      toast.error(passwordValidation.errors[0]);
+    if (newPassword.length < 6) {
+      toast.error('New password must be at least 6 characters long');
       return;
     }
     
@@ -118,52 +114,30 @@ const ChangePasswordPage = () => {
                 </div>
               </div>
 
-              <PasswordInput
-                id="newPassword"
-                label="New Password"
-                placeholder="Enter new password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                showValidation={true}
-                showStrength={true}
-                required
-              />
+              <div>
+                <Label htmlFor="newPassword" className="text-gray-300">New Password</Label>
+                <Input
+                  id="newPassword"
+                  type={showPasswords ? "text" : "password"}
+                  placeholder="Enter new password (min 6 characters)"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
+                  required
+                />
+              </div>
 
               <div>
                 <Label htmlFor="confirmPassword" className="text-gray-300">Confirm New Password</Label>
-                <div className="relative">
-                  <Input
-                    id="confirmPassword"
-                    type={showPasswords ? "text" : "password"}
-                    placeholder="Confirm your new password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className={`
-                      bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500 pr-10
-                      ${confirmPassword && newPassword !== confirmPassword ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}
-                    `}
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPasswords(!showPasswords)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
-                  >
-                    {showPasswords ? '🙈' : '👁️'}
-                  </button>
-                </div>
-                {confirmPassword && newPassword !== confirmPassword && (
-                  <p className="text-red-400 text-xs mt-1 flex items-center">
-                    <span className="mr-1">❌</span>
-                    Passwords do not match
-                  </p>
-                )}
-                {confirmPassword && newPassword === confirmPassword && newPassword.length > 0 && (
-                  <p className="text-green-400 text-xs mt-1 flex items-center">
-                    <span className="mr-1">✅</span>
-                    Passwords match
-                  </p>
-                )}
+                <Input
+                  id="confirmPassword"
+                  type={showPasswords ? "text" : "password"}
+                  placeholder="Confirm your new password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
+                  required
+                />
               </div>
 
               <Button 

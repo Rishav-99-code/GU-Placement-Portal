@@ -3,8 +3,6 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
-import PasswordInput from '../../components/ui/PasswordInput';
-import { validatePassword } from '../../utils/passwordValidation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import BackButton from '../../components/common/BackButton';
 import toast from 'react-hot-toast';
@@ -53,10 +51,8 @@ const ResetPasswordPage = () => {
       return;
     }
 
-    // Validate password
-    const passwordValidation = validatePassword(formData.newPassword);
-    if (!passwordValidation.isValid) {
-      toast.error(passwordValidation.errors[0]);
+    if (formData.newPassword.length < 6) {
+      toast.error('Password must be at least 6 characters long');
       return;
     }
 
@@ -183,31 +179,17 @@ const ResetPasswordPage = () => {
                 </p>
               </div>
 
-              <PasswordInput
-                id="newPassword"
-                label="New Password"
-                placeholder="Enter new password"
-                value={formData.newPassword}
-                onChange={(e) => setFormData(prev => ({ ...prev, newPassword: e.target.value }))}
-                showValidation={true}
-                showStrength={true}
-                required
-              />
-
               <div>
-                <Label htmlFor="confirmPassword" className="text-gray-300">Confirm New Password</Label>
+                <Label htmlFor="newPassword" className="text-gray-300">New Password</Label>
                 <div className="relative">
                   <Input
-                    id="confirmPassword"
-                    name="confirmPassword"
+                    id="newPassword"
+                    name="newPassword"
                     type={showPassword ? "text" : "password"}
-                    value={formData.confirmPassword}
+                    value={formData.newPassword}
                     onChange={handleChange}
-                    placeholder="Confirm your new password"
-                    className={`
-                      bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500 pr-10
-                      ${formData.confirmPassword && formData.newPassword !== formData.confirmPassword ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}
-                    `}
+                    placeholder="Enter new password (min 6 characters)"
+                    className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500 pr-10"
                     required
                   />
                   <button
@@ -218,18 +200,20 @@ const ResetPasswordPage = () => {
                     {showPassword ? '🙈' : '👁️'}
                   </button>
                 </div>
-                {formData.confirmPassword && formData.newPassword !== formData.confirmPassword && (
-                  <p className="text-red-400 text-xs mt-1 flex items-center">
-                    <span className="mr-1">❌</span>
-                    Passwords do not match
-                  </p>
-                )}
-                {formData.confirmPassword && formData.newPassword === formData.confirmPassword && formData.newPassword.length > 0 && (
-                  <p className="text-green-400 text-xs mt-1 flex items-center">
-                    <span className="mr-1">✅</span>
-                    Passwords match
-                  </p>
-                )}
+              </div>
+
+              <div>
+                <Label htmlFor="confirmPassword" className="text-gray-300">Confirm New Password</Label>
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type={showPassword ? "text" : "password"}
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Confirm your new password"
+                  className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500"
+                  required
+                />
               </div>
 
               <Button 

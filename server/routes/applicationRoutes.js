@@ -101,4 +101,44 @@ router.get('/all', protect, authorizeRoles('coordinator'), async (req, res) => {
   }
 });
 
+// @desc    Get dashboard statistics for the logged-in student
+// @route   GET /api/applications/student/stats
+// @access  Private (Students only)
+router.get('/student/stats', protect, authorizeRoles('student'), async (req, res) => {
+  try {
+    const studentId = req.user._id;
+    
+    // Get all applications for this student
+    const applications = await Application.find({ student: studentId });
+    
+    // Calculate statistics
+    const totalApplications = applications.length;
+    const offersReceived = applications.filter(app => app.status === 'selected').length;
+    
+    // Get interviews scheduled (from Interview model)
+    const Interview = require('../models/Interview');
+    const now = new Date();
+    const interviewsScheduled = await Interview.countDocuments({ 
+      applicants: { $in: [studentId] }, // Student is in the applicants array
+      dateTime: { $gte: now } // Only count future interviews
+    });
+    
+    console.log(`📊 Stats for student ${req.user.email}:`, {
+      totalApplications,
+      interviewsScheduled,
+      offersReceived,
+      studentId: studentId.toString()
+    });
+    
+    res.json({
+      totalApplications,
+      interviewsScheduled,
+      offersReceived
+    });
+  } catch (err) {
+    console.error('Error fetching student stats:', err);
+    res.status(500).json({ message: 'Server error: Could not retrieve statistics.' });
+  }
+});
+
 module.exports = router;

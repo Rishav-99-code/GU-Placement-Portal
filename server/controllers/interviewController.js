@@ -218,15 +218,29 @@ const approveInterview = async (req, res) => {
   }
 };
 
-module.exports = { scheduleInterview, getPendingInterviews, approveInterview };
-
 // Get approved interviews for logged-in student
 const getStudentInterviews = async (req, res) => {
   try {
-    const interviews = await Interview.find({ status: 'approved', applicants: req.user._id })
+    const now = new Date();
+    
+    // Only fetch interviews that are in the future
+    const interviews = await Interview.find({ 
+      status: 'approved', 
+      applicants: req.user._id,
+      dateTime: { $gt: now } // Only future interviews
+    })
       .populate('job', 'title company')
       .populate('recruiter', 'name email')
       .sort({ dateTime: 1 });
+
+    console.log(`📅 Fetched ${interviews.length} upcoming interviews for student ${req.user.email}`);
+    console.log('📅 Interview details:', interviews.map(iv => ({
+      id: iv._id,
+      job: iv.job?.title,
+      company: iv.job?.company,
+      dateTime: iv.dateTime,
+      status: iv.status
+    })));
 
     res.json(interviews);
   } catch (err) {
@@ -235,4 +249,4 @@ const getStudentInterviews = async (req, res) => {
   }
 };
 
-module.exports.getStudentInterviews = getStudentInterviews; 
+module.exports = { scheduleInterview, getPendingInterviews, approveInterview, getStudentInterviews }; 

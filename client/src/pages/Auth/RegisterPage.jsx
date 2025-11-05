@@ -4,8 +4,6 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
-import PasswordInput from '../../components/ui/PasswordInput';
-import { validatePassword } from '../../utils/passwordValidation';
 import AuthLayout from '../../components/common/AuthLayout';
 import { AuthContext } from '../../context/AuthContext'; // Still import for context structure
 import authService from '../../services/authService';
@@ -34,13 +32,6 @@ const RegisterPage = () => {
 
     if (!name || !email || !password || !confirmPassword) {
       toast.error('Please fill in all fields.');
-      return;
-    }
-
-    // Validate password
-    const passwordValidation = validatePassword(password);
-    if (!passwordValidation.isValid) {
-      toast.error(passwordValidation.errors[0]);
       return;
     }
 
@@ -118,52 +109,42 @@ const RegisterPage = () => {
           </Label>
         </div>
 
-        {/* Password with Validation */}
-        <div className="space-y-2">
-          <PasswordInput
+        {/* Password */}
+        <div className="relative z-0 w-full mb-5 group">
+          <Input
+            type="password"
             id="floating_password"
-            label="Password"
-            placeholder="Enter your password"
+            className="block py-2.5 px-0 w-full text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+            placeholder=" "
+            required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            showValidation={true}
-            showStrength={true}
-            required
-            className="bg-white border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500"
           />
+          <Label
+            htmlFor="floating_password"
+            className="peer-focus:font-medium absolute text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+          >
+            Password
+          </Label>
         </div>
 
         {/* Confirm Password */}
-        <div className="space-y-2">
-          <Label htmlFor="floating_confirm_password" className="text-gray-700">
-            Confirm Password <span className="text-red-500">*</span>
+        <div className="relative z-0 w-full mb-5 group">
+          <Input
+            type="password"
+            id="floating_confirm_password"
+            className="block py-2.5 px-0 w-full text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+            placeholder=" "
+            required
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+          <Label
+            htmlFor="floating_confirm_password"
+            className="peer-focus:font-medium absolute text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+          >
+            Confirm Password
           </Label>
-          <div className="relative">
-            <Input
-              type="password"
-              id="floating_confirm_password"
-              placeholder="Confirm your password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className={`
-                bg-white border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500
-                ${confirmPassword && password !== confirmPassword ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}
-              `}
-              required
-            />
-          </div>
-          {confirmPassword && password !== confirmPassword && (
-            <p className="text-red-500 text-xs flex items-center">
-              <span className="mr-1">❌</span>
-              Passwords do not match
-            </p>
-          )}
-          {confirmPassword && password === confirmPassword && password.length > 0 && (
-            <p className="text-green-600 text-xs flex items-center">
-              <span className="mr-1">✅</span>
-              Passwords match
-            </p>
-          )}
         </div>
 
         <Button

@@ -30,7 +30,15 @@ const createEvent = asyncHandler(async (req, res) => {
 // @route GET /api/events
 // @access Public
 const getEvents = asyncHandler(async (req, res) => {
-  const events = await Event.find().sort({ dateTime: 1 });
+  const now = new Date();
+  
+  // Only fetch events that are in the future or happening today
+  const events = await Event.find({
+    dateTime: { $gte: now.setHours(0, 0, 0, 0) } // Include events from today onwards
+  }).sort({ dateTime: 1 });
+  
+  console.log(`📅 Fetched ${events.length} upcoming events`);
+  
   res.json(events);
 });
 

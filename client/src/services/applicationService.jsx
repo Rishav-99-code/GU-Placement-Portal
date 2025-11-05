@@ -66,6 +66,20 @@ const applicationService = {
     }
   },
 
+  /**
+   * Fetches dashboard statistics for the authenticated student.
+   * @returns {Promise<object>} A promise that resolves to statistics object with totalApplications, interviewsScheduled, offersReceived.
+   */
+  getStudentStats: async () => {
+    try {
+      const response = await api.get('/api/applications/student/stats');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching student statistics:', error);
+      throw error;
+    }
+  },
+
   // You might add functions to withdraw an application, etc.
   // withdrawApplication: async (applicationId) => { ... }
 };

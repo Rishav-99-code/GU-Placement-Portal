@@ -70,20 +70,9 @@ const resetPasswordWithOTP = asyncHandler(async (req, res) => {
     throw new Error('Please provide email, OTP, and new password');
   }
 
-  // Validate password strength
-  if (newPassword.length < 8) {
+  if (newPassword.length < 6) {
     res.status(400);
-    throw new Error('Password must be at least 8 characters long');
-  }
-  
-  if (!/\d/.test(newPassword)) {
-    res.status(400);
-    throw new Error('Password must contain at least 1 digit');
-  }
-  
-  if (!/[A-Z]/.test(newPassword)) {
-    res.status(400);
-    throw new Error('Password must contain at least 1 capital letter');
+    throw new Error('Password must be at least 6 characters long');
   }
 
   const user = await User.findOne({ email: email.toLowerCase() });
