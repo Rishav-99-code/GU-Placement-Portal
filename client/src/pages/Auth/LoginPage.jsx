@@ -29,15 +29,27 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    console.log('🔥 Form submitted - preventing default');
 
     if (!email || !password) {
       toast.error('Please enter email and password.');
       return;
     }
 
+    // Test toast to make sure it's working
+    console.log('🧪 Testing toast system...');
+    toast.loading('Logging in...', { id: 'login' });
+
+    setIsLoading(true);
+    console.log('🔐 Starting login process...');
+
     try {
       const userData = await authService.login({ email, password, role });
-      console.log('Login response:', userData);
+      console.log('✅ Login successful:', userData);
+      
+      // Dismiss loading toast
+      toast.dismiss('login');
       
       // Check for coordinator pending approval
       if (userData.role === 'coordinator' && !userData.isApproved) {
@@ -85,11 +97,18 @@ const LoginPage = () => {
         }
       }, 2500);
     } catch (error) {
-      const message =
-        (error.response && error.response.data && error.response.data.message) ||
-        error.message ||
-        error.toString();
-      toast.error(message);
+      console.error('❌ Login error caught:', error);
+      
+      // Dismiss loading toast
+      toast.dismiss('login');
+      
+      setIsLoading(false); // Reset loading state on error
+      
+      // Show error message
+      console.log('🚨 Showing error toast...');
+      toast.error('❌ Wrong password or email. Please try again.', {
+        duration: 5000,
+      });
     }
   };
 
@@ -136,21 +155,31 @@ const LoginPage = () => {
           </Label>
         </div>
 
-        <div className="flex justify-between items-center text-sm">
-          <Link to="/forgot-password" className="text-blue-600 hover:underline">
-            Forgot password?
-          </Link>
-        </div>
+
 
         <Button
           type="submit"
-          className="w-full py-2.5 text-lg font-semibold bg-gradient-to-r from-purple-700 via-blue-600 to-purple-900 text-white rounded-lg shadow-md transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+          disabled={isLoading}
+          className="w-full py-2.5 text-lg font-semibold bg-gradient-to-r from-purple-700 via-blue-600 to-purple-900 text-white rounded-lg shadow-md transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
         >
-          Log In
+          {isLoading ? (
+            <div className="flex items-center justify-center">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+              Logging in...
+            </div>
+          ) : (
+            'Log In'
+          )}
         </Button>
       </form>
 
-      <div className="mt-8 text-center text-sm text-gray-600">
+      <div className="mt-6 text-center">
+        <Link to="/forgot-password" className="text-sm text-blue-600 hover:underline font-medium">
+          Forgot your password?
+        </Link>
+      </div>
+
+      <div className="mt-4 text-center text-sm text-gray-600">
         Don't have an account?{' '}
         <Link to={`/register?role=${role}`} className="text-blue-600 hover:underline font-medium">
           Sign up here

@@ -97,4 +97,94 @@ const applicationRejectedTemplate = (studentName, jobTitle, company) => {
   `;
 };
 
-module.exports = { interviewScheduledTemplate, applicationSelectedTemplate, applicationRejectedTemplate };
+const passwordResetOTPTemplate = (userName, otp) => {
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+      <div style="text-align: center; margin-bottom: 30px;">
+        <h1 style="color: #dc2626; margin: 0; font-size: 28px;">🔐 Password Reset Request</h1>
+        <div style="width: 50px; height: 3px; background-color: #dc2626; margin: 10px auto;"></div>
+      </div>
+      
+      <p style="font-size: 16px; color: #374151; margin-bottom: 20px;">Dear <strong>${userName}</strong>,</p>
+      
+      <p style="font-size: 16px; color: #374151; margin-bottom: 25px;">
+        We received a request to reset your password for your GU Placement Portal account. Use the OTP below to proceed with resetting your password:
+      </p>
+      
+      <div style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); padding: 25px; border-radius: 12px; margin: 25px 0; border-left: 5px solid #dc2626; text-align: center;">
+        <p style="margin: 0; font-size: 14px; color: #6b7280; text-transform: uppercase; letter-spacing: 1px;">Your OTP Code</p>
+        <p style="margin: 10px 0 0 0; font-size: 32px; font-weight: bold; color: #dc2626; letter-spacing: 3px; font-family: 'Courier New', monospace;">${otp}</p>
+        <p style="margin: 10px 0 0 0; font-size: 12px; color: #6b7280;">This OTP will expire in 10 minutes</p>
+      </div>
+      
+      <div style="background-color: #fef3c7; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #f59e0b;">
+        <h3 style="color: #92400e; margin: 0 0 10px 0; font-size: 16px;">🛡️ Security Notice:</h3>
+        <ul style="color: #92400e; margin: 0; padding-left: 20px;">
+          <li>This OTP is valid for 10 minutes only</li>
+          <li>Do not share this OTP with anyone</li>
+          <li>If you didn't request this reset, please ignore this email</li>
+          <li>Your password will remain unchanged until you complete the reset process</li>
+        </ul>
+      </div>
+      
+      <div style="text-align: center; margin: 30px 0;">
+        <p style="font-size: 14px; color: #6b7280; margin: 0;">
+          If you're having trouble, please contact the placement office for assistance.
+        </p>
+      </div>
+      
+      <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; text-align: center;">
+        <p style="color: #6b7280; font-size: 14px; margin: 0;">
+          This email was sent by <strong>GU Placement Portal</strong><br>
+          This is an automated message, please do not reply to this email.
+        </p>
+      </div>
+    </div>
+  `;
+};
+
+const passwordResetSuccessTemplate = (userName) => {
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+      <div style="text-align: center; margin-bottom: 30px;">
+        <h1 style="color: #16a34a; margin: 0; font-size: 28px;">✅ Password Reset Successful</h1>
+        <div style="width: 50px; height: 3px; background-color: #16a34a; margin: 10px auto;"></div>
+      </div>
+      
+      <p style="font-size: 16px; color: #374151; margin-bottom: 20px;">Dear <strong>${userName}</strong>,</p>
+      
+      <p style="font-size: 16px; color: #374151; margin-bottom: 25px;">
+        Your password has been successfully reset for your GU Placement Portal account.
+      </p>
+      
+      <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); padding: 25px; border-radius: 12px; margin: 25px 0; border-left: 5px solid #16a34a; text-align: center;">
+        <p style="margin: 0; font-size: 18px; font-weight: bold; color: #16a34a;">🎉 Password Updated Successfully!</p>
+        <p style="margin: 10px 0 0 0; font-size: 14px; color: #166534;">You can now log in with your new password.</p>
+      </div>
+      
+      <div style="background-color: #fef3c7; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #f59e0b;">
+        <h3 style="color: #92400e; margin: 0 0 10px 0; font-size: 16px;">🛡️ Security Reminder:</h3>
+        <ul style="color: #92400e; margin: 0; padding-left: 20px;">
+          <li>If you didn't make this change, please contact support immediately</li>
+          <li>Keep your password secure and don't share it with anyone</li>
+          <li>Consider using a strong, unique password</li>
+        </ul>
+      </div>
+      
+      <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; text-align: center;">
+        <p style="color: #6b7280; font-size: 14px; margin: 0;">
+          This email was sent by <strong>GU Placement Portal</strong><br>
+          This is an automated message, please do not reply to this email.
+        </p>
+      </div>
+    </div>
+  `;
+};
+
+module.exports = { 
+  interviewScheduledTemplate, 
+  applicationSelectedTemplate, 
+  applicationRejectedTemplate,
+  passwordResetOTPTemplate,
+  passwordResetSuccessTemplate
+};

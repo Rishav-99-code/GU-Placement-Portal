@@ -39,6 +39,9 @@ const userSchema = mongoose.Schema(
     emailPassword: { type: String }, // For sending emails from admin's account
     resetPasswordToken: String,
     resetPasswordExpire: Date,
+    // OTP for password reset
+    resetPasswordOTP: String,
+    resetPasswordOTPExpire: Date,
   },
   {
     timestamps: true,
@@ -101,6 +104,48 @@ userSchema.methods.getResetPasswordToken = function() {
   this.resetPasswordExpire = Date.now() + 15 * 60 * 1000; // 15 minutes
 
   return resetToken;
+};
+
+// Method to generate OTP for password reset
+userSchema.methods.generateResetPasswordOTP = function() {
+  // Generate 6-digit OTP
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  
+  // Hash OTP and store
+  this.resetPasswordOTP = crypto
+    .createHash('sha256')
+    .update(otp)
+    .digest('hex');
+  
+  // Set expire time (10 minutes)
+  this.resetPasswordOTPExpire = Date.now() + 10 * 60 * 1000;
+  
+  return otp;
+};
+
+// Method to verify OTP
+userSchema.methods.verifyResetPasswordOTP = function(otp) {
+  const hashedOTP = crypto
+    .createHash('sha256')
+    .update(otp)
+    .digest('hex');
+  
+  return this.resetPasswordOTP === hashedOTP && Date.now() < this.resetPasswordOTPExpire;
+};
+
+// Method to change password with current password verification
+userSchema.methods.changePassword = async function(currentPassword, newPassword) {
+  // Verify current password
+  const isCurrentPasswordValid = await this.matchPassword(currentPassword);
+  if (!isCurrentPasswordValid) {
+    throw new Error('Current password is incorrect');
+  }
+  
+  // Update to new password
+  this.password = newPassword;
+  await this.save();
+  
+  return true;
 };
 
 const User = mongoose.model('User', userSchema);

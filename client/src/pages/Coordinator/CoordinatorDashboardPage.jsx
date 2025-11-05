@@ -272,9 +272,16 @@ const CoordinatorDashboardPage = () => {
                         onClick={async () => {
                           setApprovingInterview(true);
                           try {
-                            await interviewService.approve(iv._id);
+                            console.log('🎯 Approving interview:', iv._id);
+                            const response = await interviewService.approve(iv._id);
+                            console.log('✅ Interview approved successfully:', response);
+                            
                             await CoordinatorDashboardPage.fetchPendingInterviews();
-                            toast.success('Interview approved – students notified.');
+                            
+                            toast.success(
+                              `🎉 Interview approved successfully! Email notifications sent to students for ${iv.job?.title || 'the position'}.`,
+                              { duration: 4000 }
+                            );
                           } catch (err) {
                             toast.error('Failed to approve interview');
                           } finally {

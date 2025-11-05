@@ -364,12 +364,71 @@ const approveCoordinator = asyncHandler(async (req, res) => {
   res.json({ message: 'Coordinator approved', coordinator });
 });
 
+// @desc    Change user password with current password verification
+// @route   PUT /api/users/change-password
+// @access  Private
+const changePassword = asyncHandler(async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    res.status(400);
+    throw new Error('Please provide current password and new password');
+  }
+
+  // Validate password strength
+  if (newPassword.length < 8) {
+    res.status(400);
+    throw new Error('Password must be at least 8 characters long');
+  }
+  
+  if (!/\d/.test(newPassword)) {
+    res.status(400);
+    throw new Error('Password must contain at least 1 digit');
+  }
+  
+  if (!/[A-Z]/.test(newPassword)) {
+    res.status(400);
+    throw new Error('Password must contain at least 1 capital letter');
+  }
+
+  try {
+    const user = await User.findById(req.user._id);
+    
+    if (!user) {
+      res.status(404);
+      throw new Error('User not found');
+    }
+
+    // Use the model method to change password
+    await user.changePassword(currentPassword, newPassword);
+
+    console.log('✅ Password changed successfully for user:', user.email);
+
+    res.json({
+      success: true,
+      message: 'Password changed successfully'
+    });
+
+  } catch (error) {
+    console.error('❌ Error changing password:', error);
+    
+    if (error.message === 'Current password is incorrect') {
+      res.status(400);
+      throw new Error('Current password is incorrect');
+    }
+    
+    res.status(500);
+    throw new Error('Failed to change password');
+  }
+});
+
 module.exports = {
   getUserProfile,
   updateProfile,
   updateRecruiterLogo,
   forgotPassword, 
-  resetPassword,  
+  resetPassword,
+  changePassword,
   listStudents,
   approveStudent,
   updateStudentResume,

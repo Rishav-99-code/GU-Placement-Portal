@@ -2,10 +2,11 @@ import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import { ToastWrapper } from './context/ToastContext';
+import { Toaster } from 'react-hot-toast';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/Auth/LoginPage';
 import RegisterPage from './pages/Auth/RegisterPage';
-import ForgotPasswordPage from './pages/Auth/ForgotPassword';
+import ForgotPasswordPage from './pages/Auth/ForgotPasswordPage';
 import ResetPasswordPage from './pages/Auth/ResetPasswordPage';
 import PendingApprovalPage from './pages/Auth/PendingApprovalPage';
 
@@ -71,6 +72,16 @@ function App() {
   return (
     <Router>
       <ToastWrapper>
+        <Toaster 
+          position="top-center"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: '#363636',
+              color: '#fff',
+            },
+          }}
+        />
         <div className="flex flex-col min-h-screen">
           <Navbar />
           <main className="flex-grow">
@@ -80,7 +91,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/reset-password/:resettoken" element={<ResetPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/pending-approval" element={<PendingApprovalPage />} />
 
             {/* Dynamic redirect after login/register (or if trying to access /dashboard directly) */}

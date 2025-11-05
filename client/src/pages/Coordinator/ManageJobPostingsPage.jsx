@@ -166,11 +166,46 @@ const ManageJobPostingsPage = () => {
             <div className="flex justify-end mt-4 space-x-2">
               <Button variant="ghost" onClick={()=>setScheduleModal({ ...scheduleModal, open:false})}>Cancel</Button>
               <Button disabled={scheduleModal.selected.length===0 || !scheduleModal.dateTime} onClick={async ()=>{
+                console.log('🔥 BUTTON CLICKED - Starting interview scheduling...');
+                
                 try {
-                  await interviewService.scheduleInterview(scheduleModal.job._id,{ dateTime: scheduleModal.dateTime, applicantIds: scheduleModal.selected});
-                  toast.success('Interview scheduled');
+                  console.log('🎯 Scheduling interview...', {
+                    jobId: scheduleModal.job._id,
+                    dateTime: scheduleModal.dateTime,
+                    selectedCount: scheduleModal.selected.length
+                  });
+                  
+                  // Show immediate feedback
+                  toast.loading('Scheduling interview and sending emails...', { id: 'scheduling' });
+                  
+                  const response = await interviewService.scheduleInterview(scheduleModal.job._id,{ 
+                    dateTime: scheduleModal.dateTime, 
+                    applicantIds: scheduleModal.selected
+                  });
+                  
+                  console.log('✅ Interview scheduled successfully:', response);
+                  
+                  // Dismiss loading toast and show success
+                  toast.dismiss('scheduling');
+                  toast.success(
+                    `🎉 Interview scheduled successfully! Email notifications sent to ${scheduleModal.selected.length} student(s).`,
+                    { duration: 5000 }
+                  );
+                  
                   setScheduleModal({ ...scheduleModal, open:false});
-                } catch(err){ toast.error('Failed'); }
+                  
+                  // Refresh the jobs list to show updated status
+                  setTimeout(() => {
+                    window.location.reload();
+                  }, 1000);
+                  
+                } catch(err){ 
+                  console.error('❌ Failed to schedule interview:', err);
+                  toast.dismiss('scheduling');
+                  toast.error(`Failed to schedule interview: ${err.response?.data?.message || err.message}`, {
+                    duration: 5000
+                  });
+                }
               }}>Schedule</Button>
             </div>
           </div>

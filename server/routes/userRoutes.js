@@ -6,6 +6,7 @@ const {
   updateRecruiterLogo,
   forgotPassword, // New import
   resetPassword,  // New import
+  changePassword, // New import
   listStudents,
   approveStudent,
   updateStudentResume,
@@ -41,6 +42,7 @@ router
   .put(protect, authorizeRoles('recruiter'), upload.single('logo'), updateRecruiterLogo);
 router.post('/forgotpassword', forgotPassword); // New route
 router.put('/resetpassword/:resettoken', resetPassword); // New route
+router.put('/change-password', protect, changePassword); // New route
 router.get('/students', protect, authorizeRoles('coordinator'), listStudents);
 router.patch('/students/:studentId/approve', protect, authorizeRoles('coordinator'), approveStudent);
 router.put('/students/:studentId/resume', protect, authorizeRoles('coordinator'), upload.single('resume'), updateStudentResume);
