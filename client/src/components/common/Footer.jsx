@@ -39,14 +39,37 @@ const Footer = () => {
           <p className="text-sm text-gray-400">Phone: [+91-XXX-XXXXXXX]</p>
         </div>
 
-        {/* Social Media Column (Placeholder) */}
+        {/* Social Media Column */}
         <div>
           <h3 className="text-lg font-semibold mb-4 text-blue-300">Follow Us</h3>
-          <div className="flex space-x-4">
-            {/* Replace with actual social media icons/links */}
-            <a href="#" className="text-gray-400 hover:text-white"><i className="fab fa-linkedin fa-lg"></i></a>
-            <a href="#" className="text-gray-400 hover:text-white"><i className="fab fa-twitter fa-lg"></i></a>
-            <a href="#" className="text-gray-400 hover:text-white"><i className="fab fa-facebook-f fa-lg"></i></a>
+          <div className="space-y-3">
+            {/* Placement Cell LinkedIn Profile */}
+            <div>
+              <a 
+                href="https://www.linkedin.com/in/training-and-placement-cell-b-tech-and-m-tech-17a08414b" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="flex items-center space-x-2 text-gray-400 hover:text-blue-400 transition-colors duration-200 group"
+                title="Training and Placement Cell - LinkedIn"
+              >
+                <i className="fab fa-linkedin fa-lg group-hover:scale-110 transition-transform duration-200"></i>
+                <span className="text-sm">Training & Placement Cell</span>
+              </a>
+            </div>
+            
+            {/* Facebook Group Link */}
+            <div className="mt-4">
+              <a 
+                href="https://www.facebook.com/groups/istgu/?ref=share&mibextid=NSMWBT" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="flex items-center space-x-2 text-gray-400 hover:text-blue-500 transition-colors duration-200 group"
+                title="IST GU Facebook Group"
+              >
+                <i className="fab fa-facebook-f fa-lg group-hover:scale-110 transition-transform duration-200"></i>
+                <span className="text-sm">IST GU Community</span>
+              </a>
+            </div>
           </div>
         </div>
       </div>
