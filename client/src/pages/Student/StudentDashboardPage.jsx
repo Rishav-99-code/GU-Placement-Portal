@@ -101,7 +101,7 @@ const StudentDashboardPage = () => {
     return (
         <div className="flex flex-col lg:flex-row min-h-[calc(100vh-64px)] overflow-hidden bg-gray-900 text-gray-200">
             {/* Left Half (Darker Background for Cards) */}
-            <div className="w-full lg:w-1/2 bg-gray-800 p-4 sm:p-8 lg:p-12 flex flex-col justify-between">
+            <div className="w-full lg:w-1/2 bg-gray-800 p-4 sm:p-8 lg:p-12 flex flex-col">
                 <BackButton className="absolute top-4 left-4" />
                 {/* Profile and Welcome Section */}
                 <div className="mb-8">
@@ -134,8 +134,8 @@ const StudentDashboardPage = () => {
                     </Button>
                 </div>
 
-                {/* Quick Links / Navigation Card */}
-                <div>
+                {/* Quick Links / Navigation Card - Moved right after Edit Profile */}
+                <div className="mb-8">
                     <h3 className="text-xl font-bold text-gray-50 mb-4">Student Resources</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <Button
@@ -181,24 +181,7 @@ const StudentDashboardPage = () => {
 
             {/* Right Half (Even Darker Background for Main Content) */}
             <div className="w-full lg:w-1/2 bg-gray-900 text-gray-200 p-4 sm:p-8 lg:p-12 flex flex-col justify-between">
-                {/* Top Navbar Section (Mock - Actual Navbar is separate) */}
-                <div className="flex justify-end items-center space-x-4 mb-8">
-                    <Button variant="ghost" className="text-purple-400 hover:text-purple-300 active:scale-[0.98]" asChild>
-                        <Link to="/change-password">Change Password</Link>
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        className="text-red-400 hover:text-red-300 active:scale-[0.98]"
-                        onClick={() => {
-                            logout();
-                            navigate('/login');
-                        }}
-                    >
-                        Logout
-                    </Button>
-                    {/* Dark mode toggle - already in dark mode so this would be a light mode toggle */}
-                    <button className="text-gray-400 hover:text-gray-300 active:scale-[0.98]">☀️</button>
-                </div>
+
 
                 {/* Announcements Section */}
                 <div className="mb-8">

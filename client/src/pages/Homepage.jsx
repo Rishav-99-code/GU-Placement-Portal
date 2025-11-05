@@ -1,9 +1,10 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { useInView } from 'react-intersection-observer';
 import { Users, Building, Briefcase, Mail, Phone, GraduationCap, BriefcaseBusiness, UserCog } from 'lucide-react';
+import { AuthContext } from '../context/AuthContext';
 import guistImage from '../assets/images/guist.jpg';
 
 // Import the new image for the overview section
@@ -35,12 +36,50 @@ const PlaceholderCompanyLogo = ({ src, alt }) => (
 );
 
 const HomePage = () => {
+  const { authState } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [heroRef, heroInView] = useInView({ triggerOnce: true, threshold: 0.2 });
   const [overviewRef, overviewInView] = useInView({ triggerOnce: true, threshold: 0.2 });
   const [whyRecruitRef, whyRecruitInView] = useInView({ triggerOnce: true, threshold: 0.2 });
   const [pastRecruitersRef, pastRecruitersInView] = useInView({ triggerOnce: true, threshold: 0.2 });
   const [contactUsRef, contactUsInView] = useInView({ triggerOnce: true, threshold: 0.2 });
+
+  // Handle hash navigation when component mounts or hash changes
+  React.useEffect(() => {
+    const hash = window.location.hash.substring(1); // Remove the # symbol
+    if (hash) {
+      // Small delay to ensure the page has rendered
+      setTimeout(() => {
+        const element = document.getElementById(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  }, []);
+
+  const handleRoleButtonClick = (role) => {
+    if (authState.isAuthenticated && authState.user.role === role) {
+      // User is already logged in with this role, redirect to dashboard
+      switch (role) {
+        case 'student':
+          navigate('/student/dashboard');
+          break;
+        case 'recruiter':
+          navigate('/recruiter/dashboard');
+          break;
+        case 'coordinator':
+          navigate('/coordinator/dashboard');
+          break;
+        default:
+          navigate('/');
+      }
+    } else {
+      // User is not logged in or has different role, go to registration
+      navigate(`/register?role=${role}`);
+    }
+  };
 
   return (
     <div className="min-h-screen">
@@ -58,21 +97,30 @@ const HomePage = () => {
 
         <div className="container mx-auto px-4 py-10 text-center">
           <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <Link to="/register?role=student">
-              <Button size="lg" className="bg-blue-700 text-white hover:bg-blue-800 font-bold px-6 py-4 rounded-full shadow-lg w-full sm:w-auto flex items-center justify-center">
-                <GraduationCap className="mr-2 h-5 w-5" /> Student
-              </Button>
-            </Link>
-            <Link to="/register?role=recruiter">
-              <Button size="lg" className="bg-blue-700 text-white hover:bg-blue-800 font-bold px-6 py-4 rounded-full shadow-lg w-full sm:w-auto flex items-center justify-center">
-                <BriefcaseBusiness className="mr-2 h-5 w-5" /> Recruiter
-              </Button>
-            </Link>
-            <Link to="/register?role=coordinator">
-              <Button size="lg" className="bg-blue-700 text-white hover:bg-blue-800 font-bold px-6 py-4 rounded-full shadow-lg w-full sm:w-auto flex items-center justify-center">
-                <UserCog className="mr-2 h-5 w-5" /> Coordinator
-              </Button>
-            </Link>
+            <Button 
+              size="lg" 
+              className="bg-blue-700 text-white hover:bg-blue-800 font-bold px-6 py-4 rounded-full shadow-lg w-full sm:w-auto flex items-center justify-center"
+              onClick={() => handleRoleButtonClick('student')}
+            >
+              <GraduationCap className="mr-2 h-5 w-5" /> 
+              {authState.isAuthenticated && authState.user.role === 'student' ? 'Dashboard' : 'Student'}
+            </Button>
+            <Button 
+              size="lg" 
+              className="bg-blue-700 text-white hover:bg-blue-800 font-bold px-6 py-4 rounded-full shadow-lg w-full sm:w-auto flex items-center justify-center"
+              onClick={() => handleRoleButtonClick('recruiter')}
+            >
+              <BriefcaseBusiness className="mr-2 h-5 w-5" /> 
+              {authState.isAuthenticated && authState.user.role === 'recruiter' ? 'Dashboard' : 'Recruiter'}
+            </Button>
+            <Button 
+              size="lg" 
+              className="bg-blue-700 text-white hover:bg-blue-800 font-bold px-6 py-4 rounded-full shadow-lg w-full sm:w-auto flex items-center justify-center"
+              onClick={() => handleRoleButtonClick('coordinator')}
+            >
+              <UserCog className="mr-2 h-5 w-5" /> 
+              {authState.isAuthenticated && authState.user.role === 'coordinator' ? 'Dashboard' : 'Coordinator'}
+            </Button>
           </div>
         </div>
       </section>

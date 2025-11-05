@@ -104,7 +104,7 @@ const RecruiterDashboardPage = () => {
     <div className="flex flex-col lg:flex-row min-h-[calc(100vh-64px)] overflow-hidden bg-gray-900 text-gray-200">
       
       {/* Left Panel */}
-      <div className="w-full lg:w-1/2 bg-gray-800 p-4 sm:p-8 lg:p-12 flex flex-col justify-between">
+      <div className="w-full lg:w-1/2 bg-gray-800 p-4 sm:p-8 lg:p-12 flex flex-col">
         <BackButton className="absolute top-4 left-4" />
         
         {/* Profile & Welcome */}
@@ -130,8 +130,8 @@ const RecruiterDashboardPage = () => {
           </Button>
         </div>
 
-        {/* Quick Actions */}
-        <div>
+        {/* Quick Actions - Moved right after Edit Profile */}
+        <div className="mb-8">
           <h3 className="text-xl font-bold text-gray-50 mb-4">Quick Actions</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Button asChild className="group h-28 bg-gray-700 text-gray-200 hover:bg-gray-600 hover:scale-[1.02] shadow-md hover:shadow-lg transition-all duration-300 ease-in-out flex flex-col justify-center items-center rounded-lg active:scale-[0.98] active:shadow-inner">
@@ -165,16 +165,7 @@ const RecruiterDashboardPage = () => {
       {/* Right Panel */}
       <div className="w-full lg:w-1/2 bg-gray-900 text-gray-200 p-4 sm:p-8 lg:p-12 flex flex-col justify-between">
         
-        {/* Top Navbar Actions */}
-        <div className="flex justify-end items-center space-x-4 mb-8">
-          <Button variant="ghost" className="text-blue-400 hover:text-blue-300 active:scale-[0.98]" asChild>
-            <Link to="/change-password">Change Password</Link>
-          </Button>
-          <Button variant="ghost" className="text-red-400 hover:text-red-300 active:scale-[0.98]" onClick={logout}>
-            Logout
-          </Button>
-          <button className="text-gray-400 hover:text-gray-300 active:scale-[0.98]">☀️</button>
-        </div>
+
 
         {/* Latest Updates */}
         <div className="mb-8">

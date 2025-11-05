@@ -29,11 +29,14 @@ const Navbar = () => {
   const handleNavLinkClick = (id) => {
     setIsOpen(false); 
     if (location.pathname !== '/') {
-      window.history.pushState({}, '', `/#${id}`);
-    }
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      // Navigate to homepage with hash
+      navigate(`/#${id}`);
+    } else {
+      // Already on homepage, just scroll to section
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   };
 
@@ -89,19 +92,39 @@ const Navbar = () => {
                   variant="ghost" 
                   className="relative h-10 w-10 rounded-full overflow-hidden border-2 border-gray-200 hover:border-blue-500 transition-colors duration-200"
                 >
-                  {authState.user?.profilePicture ? (
-                    <img 
-                      src={authState.user.profilePicture} 
-                      alt="profile" 
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <div className="h-full w-full bg-blue-500 flex items-center justify-center">
-                      <span className="text-white text-lg font-medium">
-                        {authState.user?.firstName?.charAt(0) || 'U'}
-                      </span>
-                    </div>
-                  )}
+                  {(() => {
+                    // Get profile picture URL based on user role
+                    let profilePicUrl = null;
+                    
+                    if (authState.user?.role === 'student' && authState.user?.studentProfile?.profilePicUrl) {
+                      profilePicUrl = authState.user.studentProfile.profilePicUrl;
+                    } else if (authState.user?.role === 'recruiter' && authState.user?.recruiterProfile?.logoUrl) {
+                      profilePicUrl = authState.user.recruiterProfile.logoUrl;
+                    }
+
+                    // Convert relative path to absolute URL
+                    if (profilePicUrl && !profilePicUrl.startsWith('http')) {
+                      profilePicUrl = `http://localhost:5000${profilePicUrl}`;
+                    }
+
+                    return profilePicUrl ? (
+                      <img 
+                        src={profilePicUrl} 
+                        alt="profile" 
+                        className="absolute inset-0 h-full w-full object-cover rounded-full"
+                        onError={(e) => {
+                          // Hide broken image and show fallback
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      <div className="h-full w-full bg-blue-500 flex items-center justify-center">
+                        <span className="text-white text-lg font-medium">
+                          {authState.user?.name?.charAt(0) || 'U'}
+                        </span>
+                      </div>
+                    );
+                  })()}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent 

@@ -140,13 +140,18 @@ const AvailableJobsPage = () => {
               : 'https://placehold.co/100x100?text=Logo';
 
             return (
-              <Card key={job._id || job.id} className="bg-gray-800 text-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg overflow-hidden">
+              <Card key={job._id || job.id} className={`bg-gray-800 text-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg overflow-hidden ${job.isExpired ? 'opacity-75 border-2 border-red-500' : ''}`}>
                 <CardHeader className="border-b border-gray-700 pb-4 flex items-center space-x-4">
                   <img src={logoUrl} alt={`${job.company} Logo`} className="w-16 h-16 object-contain rounded-md" />
-                  <div>
-                    <CardTitle className="text-xl font-bold text-blue-400">
-                      <a href={companyUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">{job.company}</a>
-                    </CardTitle>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-xl font-bold text-blue-400">
+                        <a href={companyUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">{job.company}</a>
+                      </CardTitle>
+                      {job.isExpired && (
+                        <Badge className="bg-red-600 text-white ml-2">EXPIRED</Badge>
+                      )}
+                    </div>
                     <CardDescription className="text-gray-400">{job.title}</CardDescription>
                   </div>
                 </CardHeader>
@@ -154,6 +159,13 @@ const AvailableJobsPage = () => {
                   <div className="space-y-2 text-sm">
                     <p><strong>Location:</strong> {job.location || 'N/A'}</p>
                     <p><strong>Type:</strong> <Badge className="bg-purple-600 hover:bg-purple-700 text-white">{job.type || 'N/A'}</Badge></p>
+                    {job.applicationDeadline && (
+                      <p><strong>Deadline:</strong> 
+                        <span className={job.isExpired ? 'text-red-400 ml-1' : 'text-gray-300 ml-1'}>
+                          {new Date(job.applicationDeadline).toLocaleDateString()}
+                        </span>
+                      </p>
+                    )}
                     <p className="text-gray-300 line-clamp-3">{job.description || 'No description provided.'}</p>
                   </div>
                   <Separator className="my-4 bg-gray-700" />
@@ -161,9 +173,15 @@ const AvailableJobsPage = () => {
                     <span className="text-xs text-gray-500">
                       Posted: {job.createdAt ? new Date(job.createdAt).toLocaleDateString() : 'N/A'}
                     </span>
-                    <Button asChild className="bg-purple-600 hover:bg-purple-700 text-white transition-colors duration-200">
-                      <Link to={`/student/jobs/${job._id || job.id}`}>View Details</Link>
-                    </Button>
+                    {job.isExpired ? (
+                      <Button disabled className="bg-gray-600 text-gray-400 cursor-not-allowed">
+                        Application Closed
+                      </Button>
+                    ) : (
+                      <Button asChild className="bg-purple-600 hover:bg-purple-700 text-white transition-colors duration-200">
+                        <Link to={`/student/jobs/${job._id || job.id}`}>View Details</Link>
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>

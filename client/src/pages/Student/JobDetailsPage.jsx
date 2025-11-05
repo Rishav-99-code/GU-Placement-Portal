@@ -43,6 +43,15 @@ const JobDetailsPage = () => {
   }, [jobId]);
 
   const handleApply = async () => {
+    // Check if job is expired
+    const now = new Date();
+    const isExpired = job.applicationDeadline && new Date(job.applicationDeadline) < now;
+    
+    if (isExpired) {
+      toast.error('This job application deadline has passed.');
+      return;
+    }
+
     if (!authState.isAuthenticated || authState.user?.role !== 'student') {
       toast.error('Please log in as a student to apply for jobs.');
       navigate('/login');
@@ -152,20 +161,47 @@ const JobDetailsPage = () => {
             </ul>
           </div>
 
-          {job.applicationDeadline && (
-            <p className="text-sm text-red-400 font-medium">
-              Application Deadline: {new Date(job.applicationDeadline).toLocaleDateString()}
-            </p>
-          )}
+          {job.applicationDeadline && (() => {
+            const now = new Date();
+            const isExpired = new Date(job.applicationDeadline) < now;
+            return (
+              <div className="flex items-center space-x-2">
+                <p className={`text-sm font-medium ${isExpired ? 'text-red-400' : 'text-yellow-400'}`}>
+                  Application Deadline: {new Date(job.applicationDeadline).toLocaleDateString()}
+                </p>
+                {isExpired && (
+                  <Badge className="bg-red-600 text-white">EXPIRED</Badge>
+                )}
+              </div>
+            );
+          })()}
 
           <div className="flex justify-center mt-6">
-            <Button
-              onClick={handleApply}
-              disabled={isApplying}
-              className="w-full sm:w-auto bg-purple-700 hover:bg-purple-800 text-white font-semibold py-2 px-8 rounded-md transition-all duration-200 active:scale-[0.98] active:shadow-inner"
-            >
-              {isApplying ? 'Applying...' : 'Apply Now'}
-            </Button>
+            {(() => {
+              const now = new Date();
+              const isExpired = job.applicationDeadline && new Date(job.applicationDeadline) < now;
+              
+              if (isExpired) {
+                return (
+                  <Button
+                    disabled
+                    className="w-full sm:w-auto bg-gray-600 text-gray-400 cursor-not-allowed font-semibold py-2 px-8 rounded-md"
+                  >
+                    Application Closed
+                  </Button>
+                );
+              }
+              
+              return (
+                <Button
+                  onClick={handleApply}
+                  disabled={isApplying}
+                  className="w-full sm:w-auto bg-purple-700 hover:bg-purple-800 text-white font-semibold py-2 px-8 rounded-md transition-all duration-200 active:scale-[0.98] active:shadow-inner"
+                >
+                  {isApplying ? 'Applying...' : 'Apply Now'}
+                </Button>
+              );
+            })()}
           </div>
         </CardContent>
       </Card>

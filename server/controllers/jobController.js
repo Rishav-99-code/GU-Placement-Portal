@@ -35,15 +35,21 @@ const getApprovedJobsWithLogo = async (req, res) => {
       select: 'recruiterProfile',
     });
     
-    // Map jobs to include logoUrl from recruiterProfile
+    // Map jobs to include logoUrl and check expiration status
     const jobsWithLogo = jobs.map(job => {
       let logoUrl = '';
       if (job.postedBy && job.postedBy.recruiterProfile && job.postedBy.recruiterProfile.logoUrl) {
         logoUrl = job.postedBy.recruiterProfile.logoUrl;
       }
+      
+      // Check if job is expired
+      const now = new Date();
+      const isExpired = job.applicationDeadline && new Date(job.applicationDeadline) < now;
+      
       return {
         ...job.toObject(),
         recruiterLogoUrl: logoUrl,
+        isExpired: isExpired,
       };
     });
     

@@ -204,16 +204,7 @@ const CoordinatorDashboardPage = () => {
       {/* Right Panel: Pending Jobs and Stats */}
       <div className="w-full lg:w-1/2 bg-gray-900 text-gray-200 p-4 sm:p-8 lg:p-12 flex flex-col justify-between">
         
-        {/* Top Right Controls (Logout, Change Password, Theme Toggle) */}
-        <div className="flex justify-end items-center space-x-4 mb-8">
-            <Button variant="ghost" className="text-purple-400 hover:text-purple-300 active:scale-[0.98]" asChild>
-              <Link to="/change-password">Change Password</Link>
-            </Button>
-            <Button variant="ghost" className="text-red-400 hover:text-red-300 active:scale-[0.98]" onClick={logout}>
-              <LogOutIcon className="inline-block h-4 w-4 mr-1" /> Logout
-            </Button>
-            <button className="text-gray-400 hover:text-gray-300 active:scale-[0.98]">☀️</button>
-        </div>
+
 
         {/* Pending Job Approvals */}
         <div className="mb-8">
